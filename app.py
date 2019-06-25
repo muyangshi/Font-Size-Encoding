@@ -32,7 +32,15 @@ app = flask.Flask(__name__)
 # 			print(e, file=sys.stderr)
 # 	return connection
 
-words = ['apple','orange','pear','peach','tangerine','banana']
+words = ['Apples', 'Apricots', 'Avocados',
+    'Bananas', 'Boysenberries', 'Blueberries', 'Bing Cherry',
+    'Cherries', 'Cantaloupe', 'Crab apples', 'Clementine', 'Cucumbers',
+    'Damson plum', 'Dinosaur Eggs', 'Dates', 'Dewberries', 'Dragon Fruit',
+    'Elderberry', 'Eggfruit', 'Evergreen Huckleberry', 'Entawak',
+    'Fig', 'Farkleberry', 'Finger Lime',
+    'Grapefruit', 'Grapes', 'Gooseberries', 'Guava',
+    'Honeydew melon', 'Hackberry', 'Honeycrisp Apples',
+    'Indian Prune', 'Indonesian Lime', 'Imbe', 'Indian Fig']
 
 @app.after_request
 def set_headers(response):
