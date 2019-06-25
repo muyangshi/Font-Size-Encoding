@@ -12,10 +12,22 @@
         
         <h2>Hello, Tuckers</h2>
         <p><input id="numberOfWords"></p>
-        <p><button id="Button_getWC">Get WordCloud</button></p>
+        <p>
+            <button id="Button_getWordList">Get WordList</button>
+            <button id="Button_getWordCloud">Get WordCloud</button>
+        </p>
         
         <p><table id="Cloud_Table"></table></p>
-        <script type="text/javascript" src="static/WordCloud.js"></script>
+
+        <div id="vis">
+            <svg width = "960" height = "600" id="WordCloud">
+
+            </svg>
+        </div>
+        <script type="text/javascript" src="static/d3.v3.js"></script>
+        <script type="text/javascript" src="static/d3.layout.cloud.js"></script>
+        <script type="text/javascript" src="static/index.js"></script>
+        
     </body>
     
 </html>
