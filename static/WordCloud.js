@@ -5,7 +5,7 @@
  * Question: how to embed the Jason Davie word cloud into here
  */
 
-// initialize();
+initialize();
 
 function initialize() {
     var element = document.getElementById('Button_getWC');
@@ -14,14 +14,14 @@ function initialize() {
     }
 }
 
-function getBaseUrl() {
+function getBaseURL() {
     var baseURL = window.location.protocol + '//' + window.location.hostname + ':' + '5000';
     return baseURL
 }
 
 function onGetWCButtonClicked() {
     var numberOfWords = document.getElementById('numberOfWords').value;
-    var url = getBaseUrl + '/' + numberOfWords;
+    var url = getBaseURL() + '/randomStim/' + numberOfWords;
 
     fetch(url, {method: 'get'})
 
