@@ -40,16 +40,17 @@ def set_headers(response):
     return response
 
 @app.route('/')
-def hello():
-	return 'Hello, Tuckers.'
+def get_hello_page():
+	return flask.render_template('index.html')
 
 @app.route('/randomStim/<numberOfWords>')
-def get_random_cloud(numberOfWords):
+def randomStim(numberOfWords):
     try:
         random_words = random.sample(words, int(numberOfWords))
+        return json.dumps(random_words)
     except ValueError:
         print('numberOfWords is too big!')
-    return json.dumps(random_words)
+    
 
 
 if __name__ == '__main__':
