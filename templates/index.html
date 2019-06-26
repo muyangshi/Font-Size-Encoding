@@ -9,31 +9,34 @@
 	</head>
 
 	<body>
-        <h1>Sample Random WordCloud</h1>
+        <h1 style="text-align: center;">Sample Random WordCloud</h1>
         
-        <h2>Hello, Tuckers</h2>
-        <p><input id="numberOfWords"></p>
-        <p>
+        <h2 style="text-align: center;">Hello, Tuckers</h2>
+        <p style="text-align: center;">
+            <input id="numberOfWords"></p>
+        <p style="text-align: center;">
             <button id="Button_getWordList">Get WordList</button>
-            <button id="Button_getWordCloud">Get WordCloud</button>
+            <!-- <button id="Button_getWordCloud">Get WordCloud</button> -->
             <button id="Button_getJQWC">Get JQWordCloud</button>
         </p>
         
-        <p><table id="Cloud_Table"></table></p>
+        <!-- <p><table id="Cloud_Table"></table></p> -->
 
-
-        <div id="JQWC" style="width: 550px; height: 350px;">
-
+        <div id="WordCloudContainer" style="text-align: center;">
+            <div id="JQWC" style="width: 550px; height: 350px; display: inline-block;"></div>
         </div>
-        <div id="vis">
-            <svg width = "960" height = "600" id="WordCloud">
+        
 
-            </svg>
-        </div>
+        <!-- </div> -->
+        <!-- <div id="vis"> -->
+            <!-- <svg width = "960" height = "600" id="WordCloud"> -->
+
+            <!-- </svg> -->
+        <!-- </div> -->
         <script type="text/javascript" src="static/jquery-3.4.1.min.js"></script>
         <script type="text/javascript" src="static/jqcloud-1.0.4.js"></script>
-        <script type="text/javascript" src="static/d3.v3.js"></script>
-        <script type="text/javascript" src="static/d3.layout.cloud.js"></script>
+        <!-- <script type="text/javascript" src="static/d3.v3.js"></script> -->
+        <!-- <script type="text/javascript" src="static/d3.layout.cloud.js"></script> -->
         <script type="text/javascript" src="static/index.js"></script>
         
     </body>
