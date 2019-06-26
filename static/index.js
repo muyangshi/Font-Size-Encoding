@@ -16,6 +16,10 @@ function initialize() {
     if (getWordCloud) {
         getWordCloud.onclick = onGetWordCloudButtonClicked;
     }
+    var getJQWC = document.getElementById('Button_getJQWC')
+    if (getJQWC) {
+        getJQWC.onclick = onGetJQWCButtonClicked;
+    }
 }
 
 function getBaseURL() {
@@ -86,4 +90,15 @@ function onGetWordCloudButtonClicked() {
             });
     }
     cloudLayout.start();
+}
+
+function onGetJQWCButtonClicked() {
+    words = words.map(function(d) {
+        return {text: d, weight: 10};
+    });
+
+    $(function() {
+        // When DOM is ready, select the container element and call the jQCloud method, passing the array of words as the first argument.
+        $("#JQWC").jQCloud(words);
+      });
 }
