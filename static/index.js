@@ -12,10 +12,6 @@ function initialize() {
     if (getWordList) {
         getWordList.onclick = onGetWordListButtonClicked;
     }
-    // var getWordCloud = document.getElementById('Button_getWordCloud')
-    // if (getWordCloud) {
-    //     getWordCloud.onclick = onGetWordCloudButtonClicked;
-    // }
     var getJQWC = document.getElementById('Button_getJQWC')
     if (getJQWC) {
         getJQWC.onclick = onGetJQWCButtonClicked;
@@ -33,9 +29,7 @@ function onGetWordListButtonClicked() {
     var numberOfWords = document.getElementById('numberOfWords').value;
     var url = getBaseURL() + '/randomStim/' + numberOfWords;
 
-    fetch(url, {method: 'get'})
-
-    .then((response) => response.json())
+    fetch(url, {method: 'get'}).then((response) => response.json())
 
     .then(function(wordList) {
         for (var k = 0; k < wordList.length; k++) {
@@ -48,14 +42,37 @@ function onGetWordListButtonClicked() {
 
 function onGetJQWCButtonClicked() {
     words = words.map(function(d) {
-        return {text: d, weight: 10 + Math.random() * 90};
+        return { 
+            text: d, 
+            weight: 10 + Math.random() * 90,
+            html: {"class": "CloudWord"}
+            // handlers: { click: function() { alert("I was clicked!"); } }
+        };
     });
 
     $(function() {
-        // When DOM is ready, select the container element and call the jQCloud method, passing the array of words as the first argument.
-        $("#JQWC").jQCloud(words);
-      });
+        // $("#JQWC").jQCloud(words);
+        $("#JQWC").jQCloud(words, {
+            afterCloudRender: function() { 
+                $(".CloudWord").click(function() {
+                    var left = $(this).css("left");
+                    var top = $(this).css("top");
+                    alert($(this)[0].innerHTML);
+                    alert("left: " + left + "," + "top: " + top);
+
+                    var numberOfCloudWords = document.getElementById("JQWC").childElementCount;
+                    alert(numberOfCloudWords);
+
+                    var theCloud = document.getElementById("JQWC");
+                    alert(theCloud.innerHTML);
+                }) 
+            }
+        });
+    });
 }
+
+
+
 
 // function onGetWordCloudButtonClicked() {
 //     // var numberOfWords = document.getElementById('numberOfWords').value;
