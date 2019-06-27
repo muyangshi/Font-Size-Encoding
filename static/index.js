@@ -51,7 +51,8 @@ function onGetJQWCButtonClicked() {
     });
 
     createCloud();   
-    //sendData();               
+    //sendData();           
+    
 }
 
 
@@ -74,7 +75,7 @@ function createCloud() {
                     "cloud": theCloud,
                 };
 
-                $.post("/randomStim/receive_data", word_data);
+                $.post("/randomStim/post_data", word_data);
 
                 // $.ajax({
                 //     type: 'POST',
