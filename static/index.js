@@ -50,26 +50,54 @@ function onGetJQWCButtonClicked() {
         };
     });
 
-    $(function() {
-        // $("#JQWC").jQCloud(words);
-        $("#JQWC").jQCloud(words, {
-            afterCloudRender: function() { 
-                $(".CloudWord").click(function() {
-                    var left = $(this).css("left");
-                    var top = $(this).css("top");
-                    alert($(this)[0].innerHTML);
-                    alert("left: " + left + "," + "top: " + top);
+    createCloud();   
+    //sendData();               
+}
 
-                    var numberOfCloudWords = document.getElementById("JQWC").childElementCount;
-                    alert(numberOfCloudWords);
 
-                    var theCloud = document.getElementById("JQWC");
-                    alert(theCloud.innerHTML);
-                }) 
-            }
-        });
+function createCloud() {
+    $("#JQWC").jQCloud(words, {
+        afterCloudRender: function() {  //click and gain data
+            var container = document.getElementById("JQWC");
+            var containerSize = $(".jqcloud").css(['width','height']);
+            var numberOfCloudWords = container.childElementCount;
+            var theCloud = container.innerHTML;
+            
+            $(".CloudWord").click(function() {
+                var wordPosition = $(this).css(["left","top"]);
+                
+                var word_data = {
+                    "container size": containerSize,
+                    "word": $(this)[0].innerHTML, //the word itself, but why $(this)[0]
+                    "word position": wordPosition,
+                    "number of Stim": numberOfCloudWords,
+                    "cloud": theCloud,
+                };
+
+                $.post("/randomStim/receive_data", word_data);
+
+                // $.ajax({
+                //     type: 'POST',
+                //     url: '/randomStim/receive_data',
+                //     data: word_data,
+                //     success: function(response) {
+                //         alert('success!');
+                //         console.log(response);
+                //     },
+                //     error: function(error) {
+                //         alert('error saving data');
+                //         console.log(error);
+                //     }
+                // });
+
+            }) 
+        }
     });
 }
+
+// function sendData() {
+
+// }
 
 
 

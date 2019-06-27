@@ -5,8 +5,9 @@
 
 import sys
 import json
-import random
 import flask
+import random
+import csv
 # import config
 # import psycopg2
 
@@ -58,7 +59,25 @@ def randomStim(numberOfWords):
         return json.dumps(random_words)
     except ValueError:
         print('numberOfWords is too big!')
-    
+        
+@app.route('/randomStim/receive_data', methods = ['POST'])
+def receive_data():
+    data = flask.request.form.to_dict()
+    clickedword = data["word"]
+    word_x = data["word position[left]"]
+    word_y = data["word position[top]"]
+    cloud_width = data["container size[width]"]
+    cloud_height = data["container size[height]"]
+    num_of_Stim = data["number of Stim"]
+    cloud_info = data["cloud"]
+
+    print('clicked word: ' + clickedword, word_x, word_y)
+    print('cloud information: ' + num_of_Stim, cloud_info)
+    with open('client_data.csv','w', newline='') as csvfile:
+        # fieldnames = ['clickedword','word_x','word_y','cloud_width','cloud_height','num_of_Stim','cloud_info']
+        writer = csv.writer(csvfile, delimiter = ',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+        writer.writerow([clickedword, word_x, word_y, cloud_width, cloud_height, num_of_Stim, cloud_info])
+    return json.dumps(data)
 
 
 if __name__ == '__main__':
