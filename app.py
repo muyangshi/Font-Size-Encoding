@@ -41,6 +41,24 @@ words = ['Apples', 'Apricots', 'Avocados',
     'Fig', 'Farkleberry', 'Finger Lime',
     'Grapefruit', 'Grapes', 'Gooseberries', 'Guava',
     'Honeydew melon', 'Hackberry', 'Honeycrisp Apples',
+    'Indian Prune', 'Indonesian Lime', 'Imbe', 'Indian Fig',
+    'Apples', 'Apricots', 'Avocados',
+    'Bananas', 'Boysenberries', 'Blueberries', 'Bing Cherry',
+    'Cherries', 'Cantaloupe', 'Crab apples', 'Clementine', 'Cucumbers',
+    'Damson plum', 'Dinosaur Eggs', 'Dates', 'Dewberries', 'Dragon Fruit',
+    'Elderberry', 'Eggfruit', 'Evergreen Huckleberry', 'Entawak',
+    'Fig', 'Farkleberry', 'Finger Lime',
+    'Grapefruit', 'Grapes', 'Gooseberries', 'Guava',
+    'Honeydew melon', 'Hackberry', 'Honeycrisp Apples',
+    'Indian Prune', 'Indonesian Lime', 'Imbe', 'Indian Fig',
+    'Apples', 'Apricots', 'Avocados',
+    'Bananas', 'Boysenberries', 'Blueberries', 'Bing Cherry',
+    'Cherries', 'Cantaloupe', 'Crab apples', 'Clementine', 'Cucumbers',
+    'Damson plum', 'Dinosaur Eggs', 'Dates', 'Dewberries', 'Dragon Fruit',
+    'Elderberry', 'Eggfruit', 'Evergreen Huckleberry', 'Entawak',
+    'Fig', 'Farkleberry', 'Finger Lime',
+    'Grapefruit', 'Grapes', 'Gooseberries', 'Guava',
+    'Honeydew melon', 'Hackberry', 'Honeycrisp Apples',
     'Indian Prune', 'Indonesian Lime', 'Imbe', 'Indian Fig']
 
 @app.after_request
@@ -52,6 +70,36 @@ def set_headers(response):
 def get_hello_page():
 	return flask.render_template('index.html')
 
+
+@app.route('/word_cognition_study')
+def get_landing_page():
+    return flask.render_template('landing.html')
+
+@app.route('/word_cognition_study/tucker_id', methods = ['POST'])
+def receive_id():
+    data = flask.request.form
+    tucker_id = data["tucker_id"]
+    print('receive tucker id: ' + tucker_id)
+    with open('client_id.csv','a', newline='') as csvfile:
+        writer = csv.writer(csvfile, delimiter = ',', quotechar='"')
+        writer.writerow([tucker_id])
+    return json.dumps({'id':tucker_id})
+
+@app.route('/word_cognition_study/description/<tucker_id>')
+def get_description(tucker_id):
+    return flask.render_template('description.html', ID = tucker_id)
+
+
+@app.route('/word_cognition_study/<tucker_id>/stimulus')
+def get_stimulus(tucker_id):
+    return flask.render_template('index.html')
+
+# @app.route('')
+
+
+
+
+
 @app.route('/randomStim/<numberOfWords>')
 def randomStim(numberOfWords):
     try:
@@ -60,7 +108,7 @@ def randomStim(numberOfWords):
     except ValueError:
         print('numberOfWords is too big!')
 
-span_tags =''
+
 
 @app.route('/randomStim/post_data', methods = ['POST'])
 def post_data():
@@ -78,17 +126,8 @@ def post_data():
     with open('client_data.csv','a', newline='') as csvfile:
         writer = csv.writer(csvfile, delimiter = ',', quotechar='"')
         writer.writerow([clickedword, word_x, word_y, cloud_width, cloud_height, num_of_Stim, span_tags])
-
-    # with open('client_data.csv',newline='') as csvfile:
-    #     text = csv.reader(csvfile,delimiter = ',', quotechar='"')
-    #     for row in text:
-    #         print(','.join(row))
     return json.dumps(data)
 
-# @app.route('/received_data/<>')
-# def something(the_cloud):
-#     the_cloud = span_tags
-#     return flask.render_template('receive_data.html', cloud_info=the_cloud)
 
 if __name__ == '__main__':
 	if len(sys.argv) != 3:

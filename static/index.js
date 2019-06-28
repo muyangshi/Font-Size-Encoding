@@ -27,7 +27,7 @@ var words = [];
 
 function onGetWordListButtonClicked() {
     var numberOfWords = document.getElementById('numberOfWords').value;
-    var url = getBaseURL() + '/randomStim/' + numberOfWords;
+    var url = '/randomStim/' + numberOfWords;
 
     fetch(url, {method: 'get'}).then((response) => response.json())
 

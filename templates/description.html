@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Task Description</title>
+        <meta charset="UTF-8">
+		
+	</head>
+
+	<body>
+        <h1 style="text-align: center;">Hello {{ ID }}</h1>
+        
+        <h2 style="text-align: center;">Task Description</h2>
+        <div style="text-align: center;">
+            <p>WordCloud<br/>
+                WordCloud<br/>
+                WordCloud<br/>
+                WordCloud<br/>
+                WordCloud<br/>
+                WordCloud<br/>
+                WordCloud<br/>
+                WordCloud<br/>
+            </p></div>
+        <p style="text-align: center;">
+            When you are ready, click the next button<br/>
+            <button id="start_stim">Start!</button>
+        </p>
+        
+        <script>
+            var turker_id ={{ ID }};  
+        </script>
+        <script type="text/javascript" src="{{url_for('static',filename='description.js')}}"></script>
+        
+    </body>
+    
+</html>

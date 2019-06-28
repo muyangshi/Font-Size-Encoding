@@ -7,7 +7,7 @@ from bs4 import BeautifulSoup
 receive_data = """<!DOCTYPE html>
 <html>
 	<head>
-		<title>WordCloud</title>
+		<title>Turk's Image</title>
         <meta charset="UTF-8">
         <link rel="stylesheet" href="../static/jqcloud.css">
 		
