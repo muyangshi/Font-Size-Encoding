@@ -92,14 +92,31 @@ def get_description(tucker_id):
 
 @app.route('/word_cognition_study/<tucker_id>/stimuli')
 def get_stimulus(tucker_id):
-    return flask.render_template('stimuli.html',ID = tucker_id)
+    return flask.render_template('stimuli.html',ID = tucker_id, List_From_Server=list_of_stimuli())
 
 # @app.route('')
 
 def list_of_stimuli():
-    return [5,6,7,8]
+    with open('client_tasklist.csv','r',newline='') as csvfile:
+        reader = csv.reader(csvfile, delimiter = ',', quotechar='"')
+        task_list = []
+        for row in reader:
+            for num in row:
+                task_list.append(int(num))
+        print(task_list)
+    return task_list
 
-
+# def list_of_stimuli():
+#     with open('client_tasklist.csv','r',newline='') as csvfile:
+#         reader = csv.reader(csvfile, delimiter = ',', quotechar='"')
+#         task_list = []
+#         row_count = sum(1 for row in reader)
+#         random_row = random.randint(0,row_count)
+#         for i in range(row_count):
+#             next(reader)
+#         for num in row:
+#             task_list.append(int(num))
+#     return task_list
 
 # Return a list of words in JSON format
 @app.route('/randomStim/<numberOfWords>')
