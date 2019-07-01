@@ -13,105 +13,81 @@ function initialize() {
 
 
 var words;
+var task_list = read_list; // to be passed from the server, which read a csv
+alert(task_list);
+
 
 function onStartButtonClicked() {
-    var num = 15; //somthing to be read from an Array, that is from the CSV
+    var num = task_list[0]; //somthing to be read from an Array, that is from the CSV
 
     $.ajax({
         url: '/randomStim/'+ num,
         // data: data,
         success: 
             function(data){
-                //forming data
                 formed_data = data.map(function(word) {
                     return { 
                         text: word, 
                         weight: 10 + Math.random() * 90,
-                        html: {"class": "CloudWord"}
-                        // handlers: { click: function() { alert("I was clicked!"); } }
-                    };
+                        html: {"class": "CloudWord"},
+                        handlers: { 
+                            click: function() {postData($(this));} 
+                        }
+                    }
                 });
-                console.log(formed_data)
-                words = formed_data;
-                createCloud();
+            console.log(formed_data);
+            words = formed_data;
+            createCloud();
             },
         dataType: "json"
     });
 }
 
-function alertData(){
-    console.log(words)
-}
-
-
-
-
-
-function getBaseURL() {
-    var baseURL = window.location.protocol + '//' + window.location.hostname + ':' + '5000';
-    return baseURL
-}
-
-var words = [];
-
-function onGetWordListButtonClicked() {
-    var numberOfWords = document.getElementById('numberOfWords').value;
-    var url = '/randomStim/' + numberOfWords;
-
-    fetch(url, {method: 'get'})
-    
-    .then((response) => response.json())
-
-    .then(function(wordList) {
-        for (var k = 0; k < wordList.length; k++) {
-            words.push(wordList[k]);
-        }
-    })
-
-
-
-    // onGetJQWCButtonClicked(createCloud);
-
-}
-
-
 function createCloud() {
-    console.log(words)
-    $("#JQWC").jQCloud(words, {
-        afterCloudRender: function() {  //click and gain data
-            var container = document.getElementById("JQWC");
-            var containerSize = $(".jqcloud").css(['width','height']);
-            var numberOfCloudWords = container.childElementCount;
-            var theCloud = container.innerHTML;
-            
-            $(".CloudWord").click(function() {
-                var wordPosition = $(this).css(["left","top"]);
-                
-                var word_data = {
-                    "container size": containerSize,
-                    "word": $(this)[0].innerHTML, //the word itself, but why $(this)[0]
-                    "word position": wordPosition,
-                    "number of Stim": numberOfCloudWords,
-                    "cloud": theCloud,
-                };
+    $("#JQWC").jQCloud(words);
+}
 
-                // $.post("/randomStim/post_data", word_data);
+function postData(theWord){
+    var container = document.getElementById("JQWC");
+    var containerSize = $(".jqcloud").css(['width','height']);
+    var numberOfCloudWords = container.childElementCount;
+    var theCloud = container.innerHTML;
+    
+    var wordPosition = theWord.css(["left","top"]);
+        
+    var word_data = {
+        "container size": containerSize,
+        "word": theWord[0].innerHTML, //the word itself, but why $(this)[0]
+        "word position": wordPosition,
+        "number of Stim": numberOfCloudWords,
+        "cloud": theCloud,
+    };
 
-                $.ajax({
-                    type: 'POST',
-                    url: '/randomStim/post_data',
-                    data: word_data,
-                    success: function(response) {
-                        alert('success!');
-                        console.log(response);
-                    },
-                    error: function(error) {
-                        alert('error saving data');
-                        console.log(error);
-                    }
-                });
+    // $.post("/randomStim/post_data", word_data);
 
-            }); 
+    $.ajax({
+        type: 'POST',
+        url: '/randomStim/post_data',
+        data: word_data,
+        success: function(response) {
+            alert('Response collected, please be ready for the next one');
+            nextTask();
+            console.log(response);
+        },
+        error: function(error) {
+            alert('error saving data');
+            console.log(error);
         }
     });
+}
+
+function nextTask(){
+    document.getElementById('JQWC').innerHTML = "";
+    task_list.shift();
+    if (task_list.length == 0){
+        alert('Im Done')
+        return;
+    } else {
+    onStartButtonClicked();
+    }
 }
