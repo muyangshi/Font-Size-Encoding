@@ -90,16 +90,18 @@ def get_description(tucker_id):
     return flask.render_template('description.html', ID = tucker_id)
 
 
-@app.route('/word_cognition_study/<tucker_id>/stimulus')
+@app.route('/word_cognition_study/<tucker_id>/stimuli')
 def get_stimulus(tucker_id):
-    return flask.render_template('index.html')
+    return flask.render_template('stimuli.html',ID = tucker_id)
 
 # @app.route('')
 
+def list_of_stimuli():
+    return [5,6,7,8]
 
 
 
-
+# Return a list of words in JSON format
 @app.route('/randomStim/<numberOfWords>')
 def randomStim(numberOfWords):
     try:
