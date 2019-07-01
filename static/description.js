@@ -37,6 +37,6 @@ function onNextClicked() {
     //     }
     // });
 
-    var url = '/word_cognition_study/' + turker_id + '/stimulus' 
+    var url = '/word_cognition_study/' + turker_id + '/stimuli' 
     window.open(url,'_self',false)
 }
