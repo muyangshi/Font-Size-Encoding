@@ -20,7 +20,9 @@
         <div id="WordCloudContainer" style="text-align: center;">
             <div id="JQWC" style="width: 650px; height: 450px; display: inline-block;"></div>
         </div>
-        
+        <script>
+            var read_list ={{ List_From_Server }};  
+        </script>
         <script type="text/javascript" src="{{url_for('static', filename='jquery-3.4.1.min.js')}}"></script>
         <script type="text/javascript" src="{{url_for('static', filename='jqcloud-1.0.4.js')}}"></script>
         <script type="text/javascript" src="{{url_for('static', filename='stimuli.js')}}"></script>
