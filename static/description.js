@@ -14,29 +14,11 @@ function initialize() {
     if (next) {
         next.onclick = onNextClicked;
     }
-    alert(turker_id)
+    // alert(turker_id)
 }
 
 
 function onNextClicked() {
-    // var tucker_id = document.getElementById('tucker_id').value;
-    // var ID = {
-        // 'tucker_id': tucker_id,
-    // };
-    // $.post("/word_cognition_study/tucker_id", ID);
-    // $.ajax({
-    //     type: 'POST',
-    //     url: '/word_cognition_study/tucker_id',
-    //     data: ID,
-    //     success: function(response) {
-    //         console.log(response);
-    //     },
-    //     error: function(error) {
-    //         alert('error saving data');
-    //         console.log(error);
-    //     }
-    // });
-
-    var url = '/word_cognition_study/' + turker_id + '/stimuli' 
-    window.open(url,'_self',false)
+    var input = $("<input>").attr("name","turker_id").val(turker_id);
+    $('#get_stimuli_page').append(input).submit();
 }

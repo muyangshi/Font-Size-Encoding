@@ -70,7 +70,7 @@ function postData(theWord){
         url: '/randomStim/post_data',
         data: word_data,
         success: function(response) {
-            alert('Response collected, please be ready for the next one');
+            // alert('Response collected, please be ready for the next one');
             nextTask();
             console.log(response);
         },
@@ -86,7 +86,8 @@ function nextTask(){
     task_list.shift();
     if (task_list.length == 0){
         alert('Im Done')
-        return;
+        var input = $("<input>").attr("name","turker_id").val(turker_id);
+        $('#get_completion_page').append(input).submit();
     } else {
     onStartButtonClicked();
     }

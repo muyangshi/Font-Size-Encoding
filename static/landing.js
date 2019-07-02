@@ -10,7 +10,7 @@
 initialize();
 
 function initialize() {
-    var next = document.getElementById('tucker_next');
+    var next = document.getElementById('next');
     if (next) {
         next.onclick = onNextClicked;
     }
@@ -18,19 +18,15 @@ function initialize() {
 }
 
 function onNextClicked() {
-    var tucker_id = document.getElementById('tucker_id').value; // How to proceed after validating the ID?
-    var ID = {
-        'tucker_id': tucker_id,
-    };
-    // $.post("/word_cognition_study/tucker_id", ID);
+    var turker_id = document.getElementById('turker_id').value; // How to proceed after validating the ID?
     $.ajax({
         type: 'POST',
-        url: '/word_cognition_study/tucker_id',
-        data: ID,
+        url: '/word_cognition_study/turker_id',
+        data: {'turker_id': turker_id,},
         success: function(response) {
             console.log(response);
-            var url = '/word_cognition_study/description/' + tucker_id 
-            window.open(url,'_self',false)
+            var input = $("<input>").attr("name","turker_id").val(turker_id);
+            $('#get_description_page').append(input).submit();
         },
         error: function(error) {
             alert('error saving data');
