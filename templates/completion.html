@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Completion Page</title>
+        <meta charset="UTF-8">
+		
+	</head>
+
+	<body>
+        <h1 style="text-align: center;">Completion page</h1>
+        
+        <h2 style="text-align: center;">Completion Page {{ Hash_Code }}</h2>
+        <div style="text-align: center;">
+            <p>{{ Hash_Code }}
+            </p></div>
+        
+        
+        <!-- <script type="text/javascript" src="{{url_for('static',filename='description.js')}}"></script> -->
+        <script>
+            var code = {{ Hash_Code }};
+        </script>
+    </body>
+    
+</html>
