@@ -11,23 +11,25 @@
         
         <h2 style="text-align: center;">Task Description</h2>
         <div style="text-align: center;">
-            <p>WordCloud<br/>
-                WordCloud<br/>
-                WordCloud<br/>
-                WordCloud<br/>
-                WordCloud<br/>
-                WordCloud<br/>
-                WordCloud<br/>
-                WordCloud<br/>
-            </p></div>
+            <p>In this study, you will do the following:<br/>
+                1.After are ready, click start<br/>
+                2.Cloud will shown, and you clik on your favorite cloud<br/>
+                3.Cloud will keep generate itself, until your task is finished<br/>
+            </p>
+        </div>
+
         <p style="text-align: center;">
             When you are ready, click the next button<br/>
-            <button id="start_stim">Start!</button>
+            <button id="start_stim">Next</button>
         </p>
         
+        <form action="{{url_for('get_stimuli')}}" method = "POST" id="get_stimuli_page"></form>
+
+
         <script>
             var turker_id ={{ ID }};  
         </script>
+        <script type="text/javascript" src="{{url_for('static',filename='jquery-3.4.1.min.js')}}"></script>
         <script type="text/javascript" src="{{url_for('static',filename='description.js')}}"></script>
         
     </body>

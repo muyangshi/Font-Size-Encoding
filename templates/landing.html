@@ -12,17 +12,16 @@
         <h2 style="text-align: center;">Hello, Tuckers</h2>
         <div style="text-align: center;">
             <p>Please provide you Amazon Tucker ID</p>
-            <input id="tucker_id"></div>
+            <input id="turker_id"></div>
         <p style="text-align: center;">
-            In this study, you will do the following:<br/>
-            1.<br/>
-            2.<br/>
-            3.<br/>
-            BALBLABLABLABLABLABLABLA<br/>
-            BLABLABLABLABLABLABLABLABLA<br/>
+            Here are some confirmation</br>
+            You need to be honest</br>
+            You need to answer the questions</br>
             If you consent, please click the Next button<br/>
-            <button id="tucker_next">Next</button>
+            <button id="next">Next</button>
         </p>
+
+        <form action="{{url_for('get_description')}}" method = "POST" id="get_description_page"></form>
         
         <script type="text/javascript" src="static/jquery-3.4.1.min.js"></script>
         <script type="text/javascript" src="../static/landing.js"></script>
