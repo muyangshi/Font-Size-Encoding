@@ -70,30 +70,51 @@ def set_headers(response):
 def get_hello_page():
 	return flask.render_template('index.html')
 
-
 @app.route('/word_cognition_study')
 def get_landing_page():
     return flask.render_template('landing.html')
 
-@app.route('/word_cognition_study/tucker_id', methods = ['POST'])
+# Get the description page, with turker_id as the data passed from HTML form from landing page
+@app.route('/word_cognition_study/description', methods = ['POST'])
+def get_description():
+    turker_id = flask.request.form['turker_id']
+    return flask.render_template('description.html', ID = turker_id)
+
+# Get the description page; turker_id is passed from description page through HTML form
+@app.route('/word_cognition_study/stimuli', methods = ['POST'])
+def get_stimuli():
+    turker_id = flask.request.form['turker_id']
+    return flask.render_template('stimuli.html', ID = turker_id, List_From_Server=list_of_stimuli())
+
+
+@app.route('/word_cognition_study/completion', methods=['POST'])
+def get_completion():
+    data = flask.request.form
+    hash_code = hash(data['turker_id'] + 'Carleton')
+    # print(hash_code,type(hash_code))
+    return flask.render_template('completion.html', Hash_Code = hash_code)
+
+
+
+
+
+
+# Write the turker's id into a csvfile --> client_id.csv
+@app.route('/word_cognition_study/turker_id', methods = ['POST'])
 def receive_id():
     data = flask.request.form
-    tucker_id = data["tucker_id"]
+    tucker_id = data["turker_id"]
     print('receive tucker id: ' + tucker_id)
     with open('client_id.csv','a', newline='') as csvfile:
         writer = csv.writer(csvfile, delimiter = ',', quotechar='"')
         writer.writerow([tucker_id])
     return json.dumps({'id':tucker_id})
+ 
 
-@app.route('/word_cognition_study/description/<tucker_id>')
-def get_description(tucker_id):
-    return flask.render_template('description.html', ID = tucker_id)
-
-
-@app.route('/word_cognition_study/<tucker_id>/stimuli')
-def get_stimulus(tucker_id):
-    return flask.render_template('stimuli.html',ID = tucker_id, List_From_Server=list_of_stimuli())
-
+# @app.route('/word_cognition_study/completion_code', methods=['POST'])
+# def receive_completion_code():
+#     data = flask.request.form
+#     code = data['completion code']
 # @app.route('')
 
 def list_of_stimuli():
