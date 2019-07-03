@@ -103,41 +103,38 @@ def get_completion():
 @app.route('/word_cognition_study/turker_id', methods = ['POST'])
 def receive_id():
     data = flask.request.form
-    tucker_id = data["turker_id"]
-    print('receive tucker id: ' + tucker_id)
+    turker_id = data["turker_id"]
+    print('receive turker id: ' + turker_id)
     with open('client_id.csv','a', newline='') as csvfile:
         writer = csv.writer(csvfile, delimiter = ',', quotechar='"')
-        writer.writerow([tucker_id])
-    return json.dumps({'id':tucker_id})
+        hashcode = hash(turker_id+'Carleton')
+        writer.writerow([turker_id,hashcode])
+    return json.dumps({'id':turker_id,'hashcode':hashcode})
  
 
-# @app.route('/word_cognition_study/completion_code', methods=['POST'])
-# def receive_completion_code():
-#     data = flask.request.form
-#     code = data['completion code']
-# @app.route('')
-
 def list_of_stimuli():
+    # Messy Pointer, so read the file first time for length, 
+    # and then read it again for use
+    row_count = -1
     with open('client_tasklist.csv','r',newline='') as csvfile:
-        reader = csv.reader(csvfile, delimiter = ',', quotechar='"')
+        row_counter = csv.reader(csvfile, delimiter = ',', quotechar='"')
+        # row_count = len(list(reader))
+        row_count = sum(1 for row in row_counter)
+        print(row_count)
+    # Return a random row in the tasklist
+    with open('client_tasklist.csv','r',newline='') as csvfile:
+        client_tasklist = csv.reader(csvfile,delimiter = ',', quotechar='"')
         task_list = []
-        for row in reader:
-            for num in row:
-                task_list.append(int(num))
+        random_row = random.randint(1,row_count) # 1 <= n <= row_count
+        print(random_row)
+        for i in range(random_row-1):
+            next(client_tasklist)
+        row = next(client_tasklist)
+        print(row)
+        for num in row:
+            task_list.append(int(num))
         print(task_list)
     return task_list
-
-# def list_of_stimuli():
-#     with open('client_tasklist.csv','r',newline='') as csvfile:
-#         reader = csv.reader(csvfile, delimiter = ',', quotechar='"')
-#         task_list = []
-#         row_count = sum(1 for row in reader)
-#         random_row = random.randint(0,row_count)
-#         for i in range(row_count):
-#             next(reader)
-#         for num in row:
-#             task_list.append(int(num))
-#     return task_list
 
 # Return a list of words in JSON format
 @app.route('/randomStim/<numberOfWords>')
@@ -153,6 +150,7 @@ def randomStim(numberOfWords):
 @app.route('/randomStim/post_data', methods = ['POST'])
 def post_data():
     data = flask.request.form
+    turker_id = data["turker_id"]
     clickedword = data["word"]
     word_x = data["word position[left]"]
     word_y = data["word position[top]"]
@@ -165,8 +163,17 @@ def post_data():
     # print('cloud information: ' + span_tags)
     with open('client_data.csv','a', newline='') as csvfile:
         writer = csv.writer(csvfile, delimiter = ',', quotechar='"')
-        writer.writerow([clickedword, word_x, word_y, cloud_width, cloud_height, num_of_Stim, span_tags])
+        writer.writerow([turker_id,clickedword, word_x, word_y, cloud_width, cloud_height, num_of_Stim, span_tags])
     return json.dumps(data)
+
+
+def check_hashcode(hashcode):
+    with open('client_id.csv','r',newline='') as csvfile:
+        reader = csv.reader(csvfile, delimiter = ',', quotechar='"')
+        for row in reader:
+            if str(hashcode) == row[1]:
+                return True
+    return False
 
 
 if __name__ == '__main__':
