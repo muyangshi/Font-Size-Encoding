@@ -31,11 +31,13 @@ receive_data = """<!DOCTYPE html>
 
 def find_by_id(id):
     spanContents = ''
+    id = id-1
     with open('client_data.csv',newline='') as csvfile:
         reader = csv.reader(csvfile,delimiter = ',', quotechar='"')
         for i in range(id):
             next(reader)
         row = next(reader)
+        # print(row)
         spanContents = row[-1]
     return spanContents
 
