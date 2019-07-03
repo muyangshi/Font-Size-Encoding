@@ -56,6 +56,7 @@ function postData(theWord){
     var wordPosition = theWord.css(["left","top"]);
         
     var word_data = {
+        "turker_id": turker_id,
         "container size": containerSize,
         "word": theWord[0].innerHTML, //the word itself, but why $(this)[0]
         "word position": wordPosition,
