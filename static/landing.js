@@ -22,7 +22,7 @@ function onNextClicked() {
     alert(typeof turker_id);
     $.ajax({
         type: 'POST',
-        url: '/word_cognition_study/turker_id',
+        url: turker_id_url,
         data: {'turker_id': turker_id,},
         success: function(response) {
             console.log(response);
