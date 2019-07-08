@@ -19,7 +19,6 @@ function initialize() {
 
 function onNextClicked() {
     var turker_id = document.getElementById('turker_id').value; // How to proceed after validating the ID?
-    alert(typeof turker_id);
     $.ajax({
         type: 'POST',
         url: turker_id_url,
@@ -30,7 +29,7 @@ function onNextClicked() {
             $('#get_description_page').append(input).submit();
         },
         error: function(error) {
-            alert('error saving data');
+            alert('error saving turker id');
             console.log(error);
         }
     });

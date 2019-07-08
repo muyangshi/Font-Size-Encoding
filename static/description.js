@@ -14,7 +14,7 @@ function initialize() {
     if (next) {
         next.onclick = onNextClicked;
     }
-    alert(turker_id)
+    console.log(turker_id);
 }
 
 
