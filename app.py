@@ -8,10 +8,12 @@ import json
 import flask
 import random
 import csv
+from flask_util_js import FlaskUtilJs
 # import config
 # import psycopg2
 
 app = flask.Flask(__name__)
+fujs = FlaskUtilJs(app)
 
 # def get_connection():
 # 	'''
@@ -68,7 +70,7 @@ def set_headers(response):
 
 @app.route('/')
 def get_hello_page():
-	return flask.render_template('index.html')
+	return flask.redirect(flask.url_for('get_landing_page'))
 
 @app.route('/word_cognition_study')
 def get_landing_page():
@@ -84,7 +86,7 @@ def get_description():
 @app.route('/word_cognition_study/stimuli', methods = ['POST'])
 def get_stimuli():
     turker_id = flask.request.form['turker_id']
-    print(turker_id)
+    # print(turker_id)
     return flask.render_template('stimuli.html', ID = turker_id, List_From_Server=list_of_stimuli())
 
 
@@ -105,7 +107,7 @@ def get_completion():
 def receive_id():
     data = flask.request.form
     turker_id = data["turker_id"]
-    print('receive turker id: ' + turker_id)
+    # print('receive turker id: ' + turker_id)
     with open('client_id.csv','a', newline='') as csvfile:
         writer = csv.writer(csvfile, delimiter = ',', quotechar='"')
         hashcode = hash(turker_id+'Carleton')
@@ -121,20 +123,20 @@ def list_of_stimuli():
         row_counter = csv.reader(csvfile, delimiter = ',', quotechar='"')
         # row_count = len(list(reader))
         row_count = sum(1 for row in row_counter)
-        print(row_count)
+        # print(row_count)
     # Return a random row in the tasklist
     with open('client_tasklist.csv','r',newline='') as csvfile:
         client_tasklist = csv.reader(csvfile,delimiter = ',', quotechar='"')
         task_list = []
         random_row = random.randint(1,row_count) # 1 <= n <= row_count
-        print(random_row)
+        # print(random_row)
         for i in range(random_row-1):
             next(client_tasklist)
         row = next(client_tasklist)
-        print(row)
+        # print(row)
         for num in row:
             task_list.append(int(num))
-        print(task_list)
+        # print(task_list)
     return task_list
 
 # Return a list of words in JSON format

@@ -4,7 +4,7 @@
 		<title>WordCloud</title>
         <meta charset="UTF-8">
         <link rel="stylesheet" href="{{url_for('static', filename='jqcloud.css')}}">
-		
+		{{ flask_util_js.js }}
 	</head>
 
 	<body>
@@ -29,7 +29,8 @@
 
         <script>
             var turker_id = '{{ ID }}';
-            var read_list ={{ List_From_Server }};  
+            var read_list ={{ List_From_Server }};
+            var post_data_url = '{{url_for("post_data")}}'
         </script>
         <script type="text/javascript" src="{{url_for('static', filename='jquery-3.4.1.min.js')}}"></script>
         <script type="text/javascript" src="{{url_for('static', filename='jqcloud-1.0.4.js')}}"></script>
