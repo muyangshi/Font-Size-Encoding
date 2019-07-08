@@ -35,7 +35,7 @@ function onStartButtonClicked() {
                         }
                     }
                 });
-            console.log(formed_data);
+            // console.log(formed_data);
             words = formed_data;
             createCloud();
             },
@@ -44,7 +44,7 @@ function onStartButtonClicked() {
 }
 
 function createCloud() {
-    $("#JQWC").jQCloud(words);
+    $("#JQWC").jQCloud(words,{delayedMode: true});
 }
 
 function postData(theWord){
@@ -87,7 +87,7 @@ function nextTask(){
     task_list.shift();
     if (task_list.length == 0){
         alert('Im Done')
-        var input = $("<input>").attr("name","turker_id").val(turker_id);
+        var input = $("<input>").attr("type","hidden").attr("name","turker_id").val(turker_id);
         $('#get_completion_page').append(input).submit();
     } else {
     onStartButtonClicked();

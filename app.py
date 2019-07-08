@@ -84,6 +84,7 @@ def get_description():
 @app.route('/word_cognition_study/stimuli', methods = ['POST'])
 def get_stimuli():
     turker_id = flask.request.form['turker_id']
+    print(turker_id)
     return flask.render_template('stimuli.html', ID = turker_id, List_From_Server=list_of_stimuli())
 
 

@@ -14,11 +14,11 @@ function initialize() {
     if (next) {
         next.onclick = onNextClicked;
     }
-    // alert(turker_id)
+    alert(turker_id)
 }
 
 
 function onNextClicked() {
-    var input = $("<input>").attr("name","turker_id").val(turker_id);
+    var input = $("<input>").attr("type","hidden").attr("name","turker_id").val(turker_id);
     $('#get_stimuli_page').append(input).submit();
 }
