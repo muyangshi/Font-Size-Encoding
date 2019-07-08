@@ -11,6 +11,11 @@ function initialize() {
     start.onclick = onStartButtonClicked;
 }
 
+if (window.devicePixelRatio != 1){
+    alert('Please adjust the zoom of your webpage to be 100%')
+    console.log('Your zoom is', window.devicePixelRatio)
+}
+
 
 var words;
 var task_list = read_list; // to be passed from the server, which read a csv
