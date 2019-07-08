@@ -14,14 +14,14 @@ function initialize() {
 
 var words;
 var task_list = read_list; // to be passed from the server, which read a csv
-alert(task_list);
+console.log(task_list);
 
 
 function onStartButtonClicked() {
     var num = task_list[0]; //somthing to be read from an Array, that is from the CSV
 
     $.ajax({
-        url: '/randomStim/'+ num,
+        url: flask_util.url_for('randomStim', {numberOfWords: num}),
         // data: data,
         success: 
             function(data){
@@ -44,7 +44,7 @@ function onStartButtonClicked() {
 }
 
 function createCloud() {
-    $("#JQWC").jQCloud(words,{delayedMode: true});
+    $("#JQWC").jQCloud(words,{delayedMode: false});
 }
 
 function postData(theWord){
@@ -68,7 +68,7 @@ function postData(theWord){
 
     $.ajax({
         type: 'POST',
-        url: '/randomStim/post_data',
+        url: post_data_url,
         data: word_data,
         success: function(response) {
             // alert('Response collected, please be ready for the next one');
@@ -86,7 +86,7 @@ function nextTask(){
     document.getElementById('JQWC').innerHTML = "";
     task_list.shift();
     if (task_list.length == 0){
-        alert('Im Done')
+        console.log('All tasks completed')
         var input = $("<input>").attr("type","hidden").attr("name","turker_id").val(turker_id);
         $('#get_completion_page').append(input).submit();
     } else {
