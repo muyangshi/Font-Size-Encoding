@@ -23,8 +23,8 @@
 
         <form action="{{url_for('get_description')}}" method = "POST" id="get_description_page"></form>
         
-        <script type="text/javascript" src="static/jquery-3.4.1.min.js"></script>
-        <script type="text/javascript" src="../static/landing.js"></script>
+        <script type="text/javascript" src="{{url_for('static',filename = 'jquery-3.4.1.min.js')}}"></script>
+        <script type="text/javascript" src="{{url_for('static', filename = 'landing.js')}}"></script>
         
     </body>
     
