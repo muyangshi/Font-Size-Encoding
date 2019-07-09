@@ -26,15 +26,16 @@ function onStartButtonClicked() {
     var num = task_list[0]; //somthing to be read from an Array, that is from the CSV
 
     $.ajax({
-        url: flask_util.url_for('randomStim', {numberOfWords: num}),
+        url: flask_util.url_for('getStim', {numberOfWords: num}),
         // data: data,
-        success: 
+        success:
             function(data){
-                formed_data = data.map(function(word) {
+                console.log(data);
+                formed_data = data.map(function(dictionary) {
                     return { 
-                        text: word, 
-                        weight: 10 + Math.random() * 90,
-                        html: {"class": "CloudWord"},
+                        text: dictionary['text'], 
+                        weight: dictionary['fontsize'],
+                        html: {class: dictionary['html']},
                         handlers: { 
                             click: function() {postData($(this));} 
                         }
@@ -49,8 +50,17 @@ function onStartButtonClicked() {
 }
 
 function createCloud() {
-    $("#JQWC").jQCloud(words,{delayedMode: false});
+    $("#JQWC").jQCloud(words,
+        {delayedMode: false,
+            afterCloudRender: () => {
+                for (let i = 0; i < $(".target").length; i++) {
+                    $(".target")[i].style.color = 'black';
+                }
+            }
+        }
+    );
 }
+
 
 function postData(theWord){
     var container = document.getElementById("JQWC");
