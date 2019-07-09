@@ -148,7 +148,34 @@ def randomStim(numberOfWords):
     except ValueError:
         print('numberOfWords is too big!')
 
+@app.route('/getStim/<numberOfWords>')
+def getStim(numberOfWords, word = 'pseudoword'): # word = config.experiment
+    if word == 'pseudoword':
+        # Generate n pseudoword
+        # target1 = config.target1, target2 = config.target2
+        return get_pseudo_stimuli(numberOfWords,{'length':5, 'fontsize':20}, {'length':5,'fontsize':21})
 
+def get_pseudo_stimuli(numberOfWords, target1, target2):
+    words = []
+    target_words = []
+    distractor_words = []
+
+    target_word_1 = {'text': pseudoword(size = target1['length']), 'fontsize': target1['fontsize'], 'html': 'target'}
+    target_word_2 = {'text': pseudoword(size = target2['length']), 'fontsize': target2['fontsize'], 'html': 'target'}
+    target_words.append(target_word_1)
+    target_words.append(target_word_2)
+
+    for i in range(int(numberOfWords) - 2):
+        distractor = {'text': pseudoword(size = random.randint(5,8)), 'fontsize': random.randint(20,24), 'html': 'distractor'}
+        distractor_words.append(distractor)
+
+    print(target_words)
+    print(distractor_words)
+    print('combined: ', target_words + distractor_words)
+    return json.dumps(target_words + distractor_words)
+
+def pseudoword(size = 5, charset = "weruosazxcvnm"):
+    return ''.join(random.choice(charset) for _ in range(size))
 
 @app.route('/randomStim/post_data', methods = ['POST'])
 def post_data():
@@ -177,7 +204,6 @@ def check_hashcode(hashcode):
             if str(hashcode) == row[1]:
                 return True
     return False
-
 
 if __name__ == '__main__':
 	if len(sys.argv) != 3:
