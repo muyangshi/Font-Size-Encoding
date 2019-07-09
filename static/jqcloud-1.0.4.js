@@ -88,6 +88,7 @@
                     quarter_turns = 0.0,
 
                     weight = 5,
+                    font_size = word['weight'],
                     custom_class = "",
                     inner_html = "",
                     word_span;
@@ -148,6 +149,7 @@
                     word_style.position = "absolute";
                     word_style.left = left + "px";
                     word_style.top = top + "px";
+                    word_style.fontSize = font_size + "px";
 
                 while(hitTest(word_span[0], already_placed_words)) {
                     // option shape is 'rectangular' so move the word in a rectangular spiral
