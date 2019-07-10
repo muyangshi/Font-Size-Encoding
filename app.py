@@ -5,10 +5,12 @@
 
 import sys
 import json
+import ast
 import flask
 import random
 import csv
 from flask_util_js import FlaskUtilJs
+from Configures import test_length_config as config
 # import config
 # import psycopg2
 
@@ -84,10 +86,10 @@ def get_description():
 
 # Get the description page; turker_id is passed from description page through HTML form
 @app.route('/word_cognition_study/stimuli', methods = ['POST'])
-def get_stimuli():
+def get_stimuli_page():
     turker_id = flask.request.form['turker_id']
     # print(turker_id)
-    return flask.render_template('stimuli.html', ID = turker_id, List_From_Server=list_of_stimuli())
+    return flask.render_template('stimuli.html', ID = turker_id, List_From_Server=get_tasklist())
 
 
 @app.route('/word_cognition_study/completion', methods=['POST'])
@@ -114,6 +116,16 @@ def receive_id():
         writer.writerow([turker_id,hashcode])
     return json.dumps({'id':turker_id,'hashcode':hashcode})
  
+# Get the tasklist from test_length_config.py, the tasklist is from test_length.csv
+# The format of the tasklist is 
+# [{'target_1_fontsize':int,'target_1_length':int,'target_2_fontsize':int,'target_2_length':int},{},{},...]
+def get_tasklist():
+    tasklist = config.tasklist
+    return json.dumps(tasklist)
+
+
+
+
 
 def list_of_stimuli():
     # Messy Pointer, so read the file first time for length, 
@@ -148,12 +160,15 @@ def randomStim(numberOfWords):
     except ValueError:
         print('numberOfWords is too big!')
 
-@app.route('/getStim/<numberOfWords>')
-def getStim(numberOfWords, word = 'pseudoword'): # word = config.experiment
+@app.route('/getStim/<target_1_fontsize>/<target_1_length>/<target_2_fontsize>/<target_2_length>')
+def getStim(target_1_fontsize,target_1_length,target_2_fontsize,target_2_length, word = config.word): # word = config.experiment
     if word == 'pseudoword':
         # Generate n pseudoword
         # target1 = config.target1, target2 = config.target2
-        return get_pseudo_stimuli(numberOfWords,{'length':5, 'fontsize':20}, {'length':5,'fontsize':21})
+        # print(type(task))
+        # print(ast.literal_eval(task))
+        # print(json.loads(task))
+        return get_pseudo_stimuli(int(config.numberOfWords),{'length':int(target_1_length), 'fontsize':int(target_1_fontsize)}, {'length':int(target_2_length),'fontsize':int(target_2_fontsize)})
 
 def get_pseudo_stimuli(numberOfWords, target1, target2):
     words = []
@@ -169,9 +184,9 @@ def get_pseudo_stimuli(numberOfWords, target1, target2):
         distractor = {'text': pseudoword(size = random.randint(5,8)), 'fontsize': random.randint(20,24), 'html': 'distractor'}
         distractor_words.append(distractor)
 
-    print(target_words)
-    print(distractor_words)
-    print('combined: ', target_words + distractor_words)
+    # print(target_words)
+    # print(distractor_words)
+    # print('combined: ', target_words + distractor_words)
     return json.dumps(target_words + distractor_words)
 
 def pseudoword(size = 5, charset = "weruosazxcvnm"):
@@ -184,6 +199,8 @@ def post_data():
     clickedword = data["word"]
     word_x = data["word position[left]"]
     word_y = data["word position[top]"]
+    target_distance = data['targets distance']
+    correct_word = data['correct word']
     cloud_width = data["container size[width]"]
     cloud_height = data["container size[height]"]
     num_of_Stim = data["number of Stim"]
@@ -193,7 +210,8 @@ def post_data():
     # print('cloud information: ' + span_tags)
     with open('client_data.csv','a', newline='') as csvfile:
         writer = csv.writer(csvfile, delimiter = ',', quotechar='"')
-        writer.writerow([turker_id,clickedword, word_x, word_y, cloud_width, cloud_height, num_of_Stim, span_tags])
+        # writer.writerow(['turker_id','clickedword', 'word_x', 'word_y', 'target_distance', 'correct_word', 'cloud_width', 'cloud_height', 'num_of_Stim', 'span_tags'])
+        writer.writerow([turker_id,clickedword, word_x, word_y, target_distance, correct_word, cloud_width, cloud_height, num_of_Stim, span_tags])
     return json.dumps(data)
 
 
