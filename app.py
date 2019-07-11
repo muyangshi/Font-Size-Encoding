@@ -170,6 +170,7 @@ def getStim(target_1_fontsize,target_1_length,target_2_fontsize,target_2_length,
         # print(json.loads(task))
         return get_pseudo_stimuli(int(config.numberOfWords),{'length':int(target_1_length), 'fontsize':int(target_1_fontsize)}, {'length':int(target_2_length),'fontsize':int(target_2_fontsize)})
     if word == 'english':
+        # print(target_1_length,target_1_fontsize)
         return get_english_stimuli(int(config.numberOfWords),{'length':int(target_1_length), 'fontsize':int(target_1_fontsize)}, {'length':int(target_2_length),'fontsize':int(target_2_fontsize)})
 
 def get_pseudo_stimuli(numberOfWords, target1, target2):
@@ -183,7 +184,7 @@ def get_pseudo_stimuli(numberOfWords, target1, target2):
     target_words.append(target_word_2)
 
     for i in range(int(numberOfWords) - 2):
-        distractor = {'text': pseudoword(size = random.randint(5,8)), 'fontsize': random.randint(20,24), 'html': 'distractor'}
+        distractor = {'text': pseudoword(size = random.randint(config.minLen,config.maxLen)), 'fontsize': random.randint(config.minSize,config.maxSize), 'html': 'distractor'}
         distractor_words.append(distractor)
 
     # print(target_words)
@@ -191,13 +192,14 @@ def get_pseudo_stimuli(numberOfWords, target1, target2):
     # print('combined: ', target_words + distractor_words)
     return json.dumps(target_words + distractor_words)
 
+# No adescenders
 def pseudoword(size = 5, charset = "weruosazxcvnm"):
     return ''.join(random.choice(charset) for _ in range(size))
 
 def get_english_stimuli(numberOfWords, target1, target2):
     # print(target1,target2)
     # print(target1['length'],target1['fontsize'])
-    legit_words = get_legit_word(whole_word_list,5,8)
+    legit_words = get_legit_word(whole_word_list,config.minLen,config.maxLen)
     # words = []
     target_words = []
     distractor_words = []
@@ -226,7 +228,7 @@ def get_english_stimuli(numberOfWords, target1, target2):
     target_words.append(target_word_2)
 
     for i in range(int(numberOfWords) - 2):
-        distractor = {'text': random.choice(legit_words), 'fontsize': random.randint(20,24), 'html': 'distractor'}
+        distractor = {'text': random.choice(legit_words), 'fontsize': random.randint(config.minSize,config.maxSize), 'html': 'distractor'}
         distractor_words.append(distractor)
 
     return json.dumps(target_words + distractor_words)
@@ -271,6 +273,7 @@ def load_all_word():
     return whole_word_list
 whole_word_list = load_all_word()
 
+# no adescenders
 def get_legit_word(wordlist,minLen,maxLen):
     legit_word_list = []
     adescenders = r"qtyiplkjhgfdb"
