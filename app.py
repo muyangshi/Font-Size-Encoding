@@ -169,6 +169,8 @@ def getStim(target_1_fontsize,target_1_length,target_2_fontsize,target_2_length,
         # print(ast.literal_eval(task))
         # print(json.loads(task))
         return get_pseudo_stimuli(int(config.numberOfWords),{'length':int(target_1_length), 'fontsize':int(target_1_fontsize)}, {'length':int(target_2_length),'fontsize':int(target_2_fontsize)})
+    if word == 'english':
+        return get_english_stimuli(int(config.numberOfWords),{'length':int(target_1_length), 'fontsize':int(target_1_fontsize)}, {'length':int(target_2_length),'fontsize':int(target_2_fontsize)})
 
 def get_pseudo_stimuli(numberOfWords, target1, target2):
     words = []
@@ -191,6 +193,43 @@ def get_pseudo_stimuli(numberOfWords, target1, target2):
 
 def pseudoword(size = 5, charset = "weruosazxcvnm"):
     return ''.join(random.choice(charset) for _ in range(size))
+
+def get_english_stimuli(numberOfWords, target1, target2):
+    # print(target1,target2)
+    # print(target1['length'],target1['fontsize'])
+    legit_words = get_legit_word(whole_word_list,5,8)
+    # words = []
+    target_words = []
+    distractor_words = []
+
+    # target_1_length = target1['length']
+    # target_2_length = target2['length']
+
+    target1_text = ''
+    while True:
+        target1_text = random.choice(legit_words)
+        if(len(target1_text) == target1['length']):
+            legit_words.remove(target1_text)
+            break
+    
+    target2_text = ''
+    while True:
+        target2_text = random.choice(legit_words)
+        if(len(target2_text) == target2['length']):
+            legit_words.remove(target2_text)
+            break
+    # print(target1)
+    # print(target2)
+    target_word_1 = {'text': target1_text, 'fontsize': target1['fontsize'], 'html': 'target'}
+    target_word_2 = {'text': target2_text, 'fontsize': target2['fontsize'], 'html': 'target'}
+    target_words.append(target_word_1)
+    target_words.append(target_word_2)
+
+    for i in range(int(numberOfWords) - 2):
+        distractor = {'text': random.choice(legit_words), 'fontsize': random.randint(20,24), 'html': 'distractor'}
+        distractor_words.append(distractor)
+
+    return json.dumps(target_words + distractor_words)
 
 @app.route('/randomStim/post_data', methods = ['POST'])
 def post_data():
@@ -222,6 +261,27 @@ def check_hashcode(hashcode):
             if str(hashcode) == row[1]:
                 return True
     return False
+
+whole_word_list = []
+def load_all_word():
+    with open('COCA_UNQ.csv', 'r') as csvfile:
+        reader = csv.reader(csvfile)
+        for row in reader:
+            whole_word_list.append(row[0])
+    return whole_word_list
+whole_word_list = load_all_word()
+
+def get_legit_word(wordlist,minLen,maxLen):
+    legit_word_list = []
+    adescenders = r"qtyiplkjhgfdb"
+    for word in wordlist:
+        if not any(char in word for char in adescenders):
+            if not (len(word) < minLen or len(word) > maxLen):
+                legit_word_list.append(word)
+    return legit_word_list
+
+
+
 
 if __name__ == '__main__':
 	if len(sys.argv) != 3:
