@@ -1,7 +1,8 @@
 import csv
 import os
 
-word = 'pseudoword'
+# word = 'pseudoword'
+word = 'english'
 numberOfWords = 40
 minSize = 10
 maxSize = 30
