@@ -94,12 +94,12 @@ def parallel_hist():
     correct_hist = figure.add_subplot(2,1,1)
     correct_hist.hist(correct_dist, num_bins, facecolor='blue',range=(0,650),alpha = 0.5)
     pyplot.title('Histogram of correct and wrong')
-    pyplot.ylabel('N')
+    pyplot.ylabel('N Correct')
 
     # Create the bottom histogram
     wrong_hist = figure.add_subplot(2,1,2)
     wrong_hist.hist(wrong_dist, num_bins, facecolor = 'red',range=(0,650),alpha = 0.5)
     pyplot.xlabel('distance between the two words')
-    pyplot.ylabel('N')
+    pyplot.ylabel('N Wrong')
 
     pyplot.show()
