@@ -5,7 +5,7 @@ import os
 word = 'english'
 numberOfWords = 40
 minSize = 10
-maxSize = 30
+maxSize = 23
 minLen = 3
 maxLen = 10
 
