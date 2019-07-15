@@ -69,8 +69,9 @@
             }
 
             // Sort word_array from the word with the highest weight to the one with the lowest
-            word_array.sort(function(a, b) { if (a.weight < b.weight) {return 1;} else if (a.weight > b.weight) {return -1;} else {return 0;} });
-
+            // word_array.sort(function(a, b) { if (a.weight < b.weight) {return 1;} else if (a.weight > b.weight) {return -1;} else {return 0;} });
+            word_array.sort(() => Math.random() - 0.5);
+            
             var step = (options.shape === "rectangular") ? 18.0 : 2.0,
                 already_placed_words = [],
                 aspect_ratio = options.width / options.height;
