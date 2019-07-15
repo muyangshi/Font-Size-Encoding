@@ -45,7 +45,7 @@ def position_correct_data():
 def position_scatter():
     result = position_correct_data()
     datas = (result[0],result[1]) #the list of tuples of correct, the list of tuples of wrong
-    print(datas)
+    # print(datas)
     colors = ("blue","red")
     groups = ("correct","wrong")
 
@@ -101,5 +101,45 @@ def parallel_hist():
     wrong_hist.hist(wrong_dist, num_bins, facecolor = 'red',range=(0,650),alpha = 0.5)
     pyplot.xlabel('distance between the two words')
     pyplot.ylabel('N Wrong')
+
+    pyplot.show()
+#############################################################################
+# Use matplotlib to print a histogram and a barplot
+# that shows the accuracy versus the distance between the two target words
+# I should assume that the barplot is right skewed (if closer distance means higher accuracy)
+def dist_accuracy():
+    result = distance_correct_data()
+
+    correct_dist = []
+    for data_pair in result[0]:
+        correct_dist.append(data_pair[0])
+    wrong_dist = []
+    for data_pair in result[1]:
+        wrong_dist.append(data_pair[0])
+
+    num_bins = 50
+
+    # Create plot 
+    figure = pyplot.figure()
+    acc_histogram = figure.add_subplot(2,1,1)
+
+    correct_plot = acc_histogram.hist(correct_dist,num_bins,facecolor='blue',range=(0,650),alpha=0.5,label = 'correct')
+    wrong_plot = acc_histogram.hist(wrong_dist,num_bins,facecolor='red',range=(0,650),alpha=0.5,label = 'wrong')
+    
+    pyplot.legend(loc='upper right')
+    pyplot.title('Histogram of number correct and wrong')
+    pyplot.ylabel('N')
+
+    # print(type(correct_plot[0][0]))
+    # print(wrong_plot[0],wrong_plot[1])
+    percentage = [float((a)/(a+b)) if (a+b) != 0 else 0 for a,b in zip(correct_plot[0],wrong_plot[0])]
+    # print(percentage)
+    x_coordinate = [int(a) for a in correct_plot[1]]
+    x_coordinate.pop(-1)
+    # print(x_coordinate)
+    percent_bar = figure.add_subplot(2,1,2)
+    percent_bar.bar(x_coordinate,percentage,width=8)
+    pyplot.ylabel('Percentage Correct')
+    pyplot.xlabel('Distance between the two words')
 
     pyplot.show()
