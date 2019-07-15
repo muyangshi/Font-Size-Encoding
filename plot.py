@@ -56,7 +56,7 @@ def position_scatter():
     for data, color, group in zip(datas, colors, groups):
         for data_pair in data:
             x,y = data_pair[0],data_pair[1]
-            scatterplot.scatter(x,y,c=color,label=group)
+            scatterplot.scatter(x,y,c=color,label=group,alpha = 0.85)
 
     pyplot.title('Scatterplot of Word\'s Position versus Correctness')
     pyplot.xlabel('x position (px)')
