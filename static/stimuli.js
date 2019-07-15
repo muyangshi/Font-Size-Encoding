@@ -10,10 +10,13 @@ function initialize() {
     var start = document.getElementById('Button_startStimuli')
     start.onclick = onStartButtonClicked;
 }
-alert(window.devicePixelRatio);
+console.log(window.devicePixelRatio);
 
 do {
-    alert('Please adjust zoom to 100%', 'current: ',window.devicePixelRatio)
+    if (window.devicePixelRatio != 1) {
+    alert('Please adjust zoom to 100%', 'current: ',window.devicePixelRatio);
+    }
+    window.devicePixelRatio = 1;
 } while (window.devicePixelRatio != 1)
 
 
