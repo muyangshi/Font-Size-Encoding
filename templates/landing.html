@@ -12,14 +12,16 @@
         <h2 style="text-align: center;">Hello, Turkers</h2>
         <div style="text-align: center;">
             <p>Please provide you Amazon Turker ID</p>
-            <input id="turker_id"></div>
-        <p style="text-align: center;">
-            Here are some confirmation</br>
-            You need to be honest</br>
-            You need to answer the questions</br>
-            If you consent, please click the Next button<br/>
+            <input id="turker_id">
+        </div>
+        <div style="text-align: center;">
+            <p>
+            Here we need to show them the agreements</br>
+            Talk about this project</br>
+            </p>
             <button id="next">Next</button>
-        </p>
+        </div>
+        
 
         <form action="{{url_for('get_description')}}" method = "POST" id="get_description_page"></form>
         <script type="text/javascript">
