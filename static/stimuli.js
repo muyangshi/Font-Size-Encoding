@@ -16,7 +16,7 @@ do {
     if (window.devicePixelRatio != 1) {
     alert('Please adjust zoom to 100%', 'current: ',window.devicePixelRatio);
     }
-    window.devicePixelRatio = 1;
+    // window.devicePixelRatio = 1;
 } while (window.devicePixelRatio != 1)
 
 
@@ -57,13 +57,22 @@ function onStartButtonClicked() {
             function(data){
                 console.log(data);
                 formed_data = data.map(function(dictionary) {
-                    return { 
-                        text: dictionary['text'], 
-                        weight: dictionary['fontsize'],
-                        html: {class: dictionary['html']},
-                        handlers: { 
-                            click: function() {postData($(this));},
-                            mouseover: function() {this.style.cursor = 'pointer';} 
+                    if (dictionary["html"] === "target"){
+                        return { 
+                            text: dictionary['text'], 
+                            weight: dictionary['fontsize'],
+                            html: {class: dictionary['html']},
+                            handlers: { 
+                                click: function() {postData($(this));},
+                                mouseover: function() {this.style.cursor = 'pointer';} 
+                            }
+                        }
+                    }
+                    else {
+                        return { 
+                            text: dictionary['text'], 
+                            weight: dictionary['fontsize'],
+                            html: {class: dictionary['html']}
                         }
                     }
                 });
