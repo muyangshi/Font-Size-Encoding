@@ -56,7 +56,7 @@ if __name__ == '__main__':
     span_soup = BeautifulSoup(span_text,'html.parser')
 
     mydiv.insert(0,span_soup)
-    print(soup)
+    # print(soup)
 
     directory = os.path.join(os.getcwd(), 'results', '')
 
