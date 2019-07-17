@@ -86,11 +86,22 @@ function onStartButtonClicked() {
 
 function createCloud() {
     $("#JQWC").jQCloud(words,
-        {delayedMode: false,
+        {   delayedMode: false,
             afterCloudRender: () => {
                 for (let i = 0; i < $(".target").length; i++) {
                     $(".target")[i].style.color = 'black';
                 }
+                
+                //measure the distance between the two target words
+                var targets_left = []
+                var targets_top = []
+                $('.target').each(function(){targets_left.push(parseInt($(this).css('left'),10));});
+                $('.target').each(function(){targets_top.push(parseInt($(this).css('top'),10));});
+                var targets_x_distiance = Math.abs(targets_left[0] - targets_left[1]);
+                var targets_y_distance = Math.abs(targets_top[0] - targets_top[1]);
+
+                var targets_distance = Math.sqrt(Math.pow(targets_x_distiance,2)+Math.pow(targets_y_distance,2))
+                console.log(targets_distance)
             }
         }
     );
@@ -108,7 +119,7 @@ function postData(clickedWord){
     var targets_left = []
     var targets_top = []
     $('.target').each(function(){targets_left.push(parseInt($(this).css('left'),10));});
-    $('.target').each(function(){targets_top.push(parseInt($(this).css('left'),10));});
+    $('.target').each(function(){targets_top.push(parseInt($(this).css('top'),10));});
     var targets_x_distiance = Math.abs(targets_left[0] - targets_left[1]);
     var targets_y_distance = Math.abs(targets_top[0] - targets_top[1]);
 
