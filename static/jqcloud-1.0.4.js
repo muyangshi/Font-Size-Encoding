@@ -70,7 +70,31 @@
 
             // Sort word_array from the word with the highest weight to the one with the lowest
             // word_array.sort(function(a, b) { if (a.weight < b.weight) {return 1;} else if (a.weight > b.weight) {return -1;} else {return 0;} });
-            word_array.sort(() => Math.random() - 0.5);
+            
+            //random shuffle the distractor words, so that they are not subsequntely
+            //placed in a weight ordered archimedean spiral
+            
+            //push both to the front
+            //push both to the end
+            // var targets = [word_array.shift(),word_array.shift()];
+            // console.log(targets[0]);
+            // targets.sort(()=> Math.random() - 0.5);
+
+            // word_array.sort(()=> Math.random() - 0.5);
+            
+            // word_array.push(targets[1]);
+            // word_array.push(targets[0]);
+
+            //unshift on to the front, push on the other to the end
+            // target words in a random order
+            // var targets = [word_array.shift(),word_array.shift()];
+            // targets.sort(()=>Math.random()-0.5);
+            // // shuffle the order of distractors
+            // word_array.sort(()=>Math.random() - 0.5);
+            // word_array.unshift(targets[0]);
+            // word_array.push(targets[1]);
+            //randomize
+
             
             var step = (options.shape === "rectangular") ? 18.0 : 2.0,
                 already_placed_words = [],

@@ -37,6 +37,9 @@ function onStartButtonClicked() {
     var task = tasklist[0]; //somthing to be read from an Array, that is from the CSV
     // var target_1_fontsize = this_task["target_1_fontsize"];
 
+    var betw_targets_dist = task["betw_targets_dist"];
+    console.log(betw_targets_dist);
+
     var this_task = {
         "target_1_fontsize": task["target_1_fontsize"],
         "target_1_length": task["target_1_length"],
@@ -76,8 +79,35 @@ function onStartButtonClicked() {
                         }
                     }
                 });
-            // console.log(formed_data);
             words = formed_data;
+            switch (betw_targets_dist){
+                case "random":
+                    words.sort(()=>Math.random() - 0.5)
+                    break;
+                case "center": 
+                    // seemingly the distance between the two target words
+                    // is within 40px
+                    // Both target words are fixated at the center of cloud
+                    var targets = [words.shift(),words.shift()]
+                    targets.sort(()=>Math.random() - 0.5)
+                    words.sort(()=>Math.random() - 0.5)
+                    words.unshift(targets[0])
+                    words.unshift(targets[1])
+                    break;
+                case "far":
+                    // seemingly the distance between the two target words
+                    // is beyond 100px
+                    // One target word is fixated at the center of cloud
+                    // the other one is at the boarder of the wordcloud
+                    var targets = [words.shift(),words.shift()]
+                    targets.sort(()=>Math.random() - 0.5)
+                    words.sort(()=>Math.random() - 0.5)
+                    words.unshift(targets[0])
+                    words.push(targets[1])
+                    break;
+                default:
+                    alert("Error")
+            }
             createCloud();
             },
         dataType: "json"
@@ -149,7 +179,7 @@ function postData(clickedWord){
         success: function(response) {
             // alert('Response collected, please be ready for the next one');
             nextTask();
-            console.log(response);
+            // console.log(response);
         },
         error: function(error) {
             alert('error saving data');
