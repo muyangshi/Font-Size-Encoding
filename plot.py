@@ -157,7 +157,7 @@ def dist_accuracy():
     percent_bar = figure.add_subplot(2,1,2)
     percent_bar.bar(x_coordinate,percentage,width=8)
     pyplot.ylabel('Percentage Correct')
-    pyplot.xlabel('Distance of the click from center (px)')
+    pyplot.xlabel('Distance between the two target words (px)')
 
     pyplot.show()
 
@@ -193,6 +193,6 @@ def center_accuracy():
     percent_bar = figure.add_subplot(2,1,2)
     percent_bar.bar(x_coordinate,percentage,width=6,alpha = 0.8)
     pyplot.ylabel('Percentage Correct')
-    pyplot.xlabel('Distance between the two words')
+    pyplot.xlabel('Distance of the click from center (px)')
 
     pyplot.show()
