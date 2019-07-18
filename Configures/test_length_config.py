@@ -16,8 +16,9 @@ def loadTask(tasklist_csv_path):
         heading = next(reader) # Do not use reader.next() because that is python 2
         for row in reader:
             this_task = {}
-            for i in range(len(heading)):
+            for i in range(len(heading)-1):
                 this_task[heading[i]] = int(row[i])
+            this_task[heading[-1]] = row[-1]
             tasklist.append(this_task)
     # print(tasklist)
     return tasklist
