@@ -27,6 +27,7 @@ do {
 
 
 var words;
+var distance_satisfied = true;
 console.log(tasklist,tasklist[0]);
 // console.log(read_list);
 // var task_list = read_list; // to be passed from the server, which read a csv
@@ -59,7 +60,7 @@ function onStartButtonClicked() {
         // data: data,
         success:
             function(data){
-                console.log(data);
+                // console.log(data);
                 formed_data = data.map(function(dictionary) {
                     if (dictionary["html"] === "target"){
                         return { 
@@ -83,7 +84,11 @@ function onStartButtonClicked() {
             words = formed_data;
             switch (betw_targets_dist){
                 case "random":
-                    words.sort(()=>Math.random() - 0.5)
+                    words.sort(()=>Math.random() - 0.5);
+                    break;
+                case "random400":
+                    words.sort(()=>Math.random() - 0.5);
+                    distance_satisfied = false;
                     break;
                 case "center": 
                     // seemingly the distance between the two target words
@@ -109,14 +114,14 @@ function onStartButtonClicked() {
                 default:
                     alert("Error")
             }
-            createCloud();
+            createCloud(words);
             },
         dataType: "json"
     });
 }
 
-function createCloud() {
-    $("#JQWC").jQCloud(words,
+function createCloud(word_array) {
+    $("#JQWC").jQCloud(word_array,
         {   delayedMode: false,
             afterCloudRender: () => {
                 for (let i = 0; i < $(".target").length; i++) {
@@ -133,6 +138,18 @@ function createCloud() {
 
                 var targets_distance = Math.sqrt(Math.pow(targets_x_distiance,2)+Math.pow(targets_y_distance,2))
                 console.log(targets_distance)
+                do{
+                    if (targets_distance < 400){
+                        document.getElementById('JQWC').innerHTML = "";
+                        // console.log($('.target'));
+                        words.sort(()=>Math.random()-0.5)
+                        createCloud(words);
+                        // onStartButtonClicked();
+                    }
+                    else {
+                        distance_satisfied = true;
+                    }
+                } while (distance_satisfied = false)
             }
         }
     );
