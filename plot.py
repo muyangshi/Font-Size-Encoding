@@ -107,20 +107,20 @@ def parallel_hist():
     correct_dist = [data_pair[0] for data_pair in result[0]]
     wrong_dist = [data_pair[0] for data_pair in result[1]]
 
-    num_bins = 50
+    num_bins = 100
 
     # Create plot 
     figure = pyplot.figure()
 
     # Create the upper histogram
     correct_hist = figure.add_subplot(2,1,1)
-    correct_hist.hist(correct_dist, num_bins, facecolor='blue',range=(0,650),alpha = 0.5)
+    correct_hist.hist(correct_dist, num_bins, facecolor='blue',range=(0,1000),alpha = 0.5)
     pyplot.title('Histogram of correct and wrong')
     pyplot.ylabel('N Correct')
 
     # Create the bottom histogram
     wrong_hist = figure.add_subplot(2,1,2)
-    wrong_hist.hist(wrong_dist, num_bins, facecolor = 'red',range=(0,650),alpha = 0.5)
+    wrong_hist.hist(wrong_dist, num_bins, facecolor = 'red',range=(0,1000),alpha = 0.5)
     pyplot.xlabel('distance between the two words')
     pyplot.ylabel('N Wrong')
 
@@ -134,14 +134,14 @@ def dist_accuracy():
     correct_dist = [data_pair[0] for data_pair in result[0]]
     wrong_dist = [data_pair[0] for data_pair in result[1]]
 
-    num_bins = 50
+    num_bins = 100
 
     # Create plot 
     figure = pyplot.figure()
     acc_histogram = figure.add_subplot(2,1,1)
 
-    correct_plot = acc_histogram.hist(correct_dist,num_bins,facecolor='blue',range=(0,650),alpha=0.5,label = 'correct')
-    wrong_plot = acc_histogram.hist(wrong_dist,num_bins,facecolor='red',range=(0,650),alpha=0.5,label = 'wrong')
+    correct_plot = acc_histogram.hist(correct_dist,num_bins,facecolor='blue',range=(0,1000),alpha=0.5,label = 'correct')
+    wrong_plot = acc_histogram.hist(wrong_dist,num_bins,facecolor='red',range=(0,1000),alpha=0.5,label = 'wrong')
     
     pyplot.legend(loc='upper right')
     pyplot.title('Histogram of number correct and wrong')
@@ -171,15 +171,15 @@ def center_accuracy():
     correct_dist = [data_pair[0] for data_pair in result[0]]
     wrong_dist = [data_pair[0] for data_pair in result[1]]
 
-    num_bins = 50
+    num_bins = 100
 
     # Create plot 
     figure = pyplot.figure()
     # The first plot is a histogram that overlay the correct and the wrong together
     acc_histogram = figure.add_subplot(2,1,1)
 
-    correct_plot = acc_histogram.hist(correct_dist,num_bins,facecolor='blue',range=(0,400),alpha=0.5,label = 'correct')
-    wrong_plot = acc_histogram.hist(wrong_dist,num_bins,facecolor='red',range=(0,400),alpha=0.5,label = 'wrong')
+    correct_plot = acc_histogram.hist(correct_dist,num_bins,facecolor='blue',range=(0,1000),alpha=0.5,label = 'correct')
+    wrong_plot = acc_histogram.hist(wrong_dist,num_bins,facecolor='red',range=(0,1000),alpha=0.5,label = 'wrong')
     
     pyplot.legend(loc='upper right')
     pyplot.title('Histogram of number correct and wrong')
