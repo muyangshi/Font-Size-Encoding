@@ -64,9 +64,9 @@
             };
 
             // Make sure every weight is a number before sorting
-            for (var i = 0; i < word_array.length; i++) {
-                word_array[i].weight = parseFloat(word_array[i].weight, 10);
-            }
+            // for (var i = 0; i < word_array.length; i++) {
+            //     word_array[i].weight = parseFloat(word_array[i].weight, 10);
+            // }
 
             // Sort word_array from the word with the highest weight to the one with the lowest
             // word_array.sort(function(a, b) { if (a.weight < b.weight) {return 1;} else if (a.weight > b.weight) {return -1;} else {return 0;} });
@@ -121,11 +121,13 @@
                 // Extend word html options with defaults
                 word.html = $.extend(word.html, {id: word_id});
 
+                // console.log(word.html,word.html["class"],custom_class)
                 // If custom class was specified, put them into a variable and remove it from html attrs, to avoid overwriting classes set by jQCloud
                 if (word.html && word.html["class"]) {
                     custom_class = word.html["class"];
-                    delete word.html["class"];
+                    // delete word.html["class"];
                 }
+                // console.log(word.html,word.html["class"],custom_class)
 
                 // Check if min(weight) > max(weight) otherwise use default
                 // if (word_array[0].weight > word_array[word_array.length - 1].weight) {
@@ -250,6 +252,7 @@
             }
             else {
                 $.each(word_array, drawOneWord);
+                console.log($this);
                 if ($.isFunction(options.afterCloudRender)) {
                 options.afterCloudRender.call($this);
                 }
