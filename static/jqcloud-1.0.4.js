@@ -128,12 +128,16 @@
                 }
 
                 // Check if min(weight) > max(weight) otherwise use default
-                if (word_array[0].weight > word_array[word_array.length - 1].weight) {
-                    // Linearly map the original weight to a discrete scale from 1 to 10
-                    weight = Math.round((word.weight - word_array[word_array.length - 1].weight) /
-                                        (word_array[0].weight - word_array[word_array.length - 1].weight) * 9.0) + 1;
-                }
-                word_span = $('<span>').attr(word.html).addClass('w' + weight + " " + custom_class);
+                // if (word_array[0].weight > word_array[word_array.length - 1].weight) {
+                //     // Linearly map the original weight to a discrete scale from 1 to 10
+                //     weight = Math.round((word.weight - word_array[word_array.length - 1].weight) /
+                //                         (word_array[0].weight - word_array[word_array.length - 1].weight) * 9.0) + 1;
+                // }
+
+                // word_span = $('<span>').attr(word.html).addClass('w' + weight + " " + custom_class); 
+                // Commented out the above code made it a lot faster
+                word_span = $('<span>').attr(word.html).addClass(custom_class);
+
 
                 // Append link if word.url attribute was set
                 if (word.link) {
@@ -202,8 +206,8 @@
                         radius += step;
                         angle += (index % 2 === 0 ? 1 : -1)*step;
 
-                        left = options.center.x - (width / 2.0) + (radius*Math.cos(angle)) * aspect_ratio;
-                        top = options.center.y + radius*Math.sin(angle) - (height / 2.0);
+                        left = options.center.x - (width / 2.0) + (radius*Math.cos(angle)) * aspect_ratio * 10;
+                        top = options.center.y + radius*Math.sin(angle) * 8 - (height / 2.0);
                     }
                     word_style.left = left + "px";
                     word_style.top = top + "px";
