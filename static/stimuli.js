@@ -34,6 +34,7 @@ console.log(tasklist,tasklist[0]);
 
 
 function onStartButtonClicked() {
+    document.getElementById('Button_startStimuli').style.visibility = 'hidden';
     var task = tasklist[0]; //somthing to be read from an Array, that is from the CSV
     // var target_1_fontsize = this_task["target_1_fontsize"];
 
