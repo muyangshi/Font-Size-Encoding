@@ -3,7 +3,7 @@ import os
 
 # word = 'pseudoword'
 word = 'english'
-numberOfWords = 40
+numberOfWords = 150
 minSize = 10
 maxSize = 23
 minLen = 3
