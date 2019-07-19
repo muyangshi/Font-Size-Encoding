@@ -252,7 +252,7 @@
             }
             else {
                 $.each(word_array, drawOneWord);
-                console.log($this);
+                // console.log($this);
                 if ($.isFunction(options.afterCloudRender)) {
                 options.afterCloudRender.call($this);
                 }

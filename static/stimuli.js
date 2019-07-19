@@ -10,7 +10,7 @@ function initialize() {
     var start = document.getElementById('Button_startStimuli')
     start.onclick = onStartButtonClicked;
 }
-console.log(window.devicePixelRatio);
+console.log("device pixel ratio is: " + window.devicePixelRatio);
 
 do {
     if (window.devicePixelRatio != 1) {
@@ -40,7 +40,7 @@ function onStartButtonClicked() {
     // var target_1_fontsize = this_task["target_1_fontsize"];
 
     var betw_targets_dist = task["betw_targets_dist"];
-    console.log(betw_targets_dist);
+    // console.log(betw_targets_dist);
 
     var this_task = {
         "target_1_fontsize": task["target_1_fontsize"],
@@ -48,7 +48,7 @@ function onStartButtonClicked() {
         "target_2_fontsize": task["target_2_fontsize"],
         "target_2_length": task["target_2_length"],
     };
-    console.log(this_task)
+    // console.log(this_task)
 
     
     $.ajax({
