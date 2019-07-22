@@ -11,7 +11,7 @@ def distance_correct_data():
     # distance = []
     correct_ans = []
     wrong_ans = []
-    with open('client_data.csv','r') as csvdata:
+    with open('client_data_limited.csv','r') as csvdata:
         reader = csv.reader(csvdata,delimiter = ',')
         heading = next(reader)
         for row in reader:
@@ -25,7 +25,7 @@ def distance_correct_data():
 def position_correct_data():
     correct_ans = []
     wrong_ans = []
-    with open('client_data.csv','r') as csvdata:
+    with open('client_data_limited.csv','r') as csvdata:
         reader =csv.reader(csvdata,delimiter = ',')
         heading = next(reader)
         for row in reader:
@@ -41,7 +41,7 @@ def position_correct_data():
 def dist_from_center():
     correct_ans = []
     wrong_ans = []
-    with open('client_data.csv','r') as csvdata:
+    with open('client_data_limited.csv','r') as csvdata:
         reader =csv.reader(csvdata,delimiter = ',')
         heading = next(reader)
         for row in reader:
@@ -54,6 +54,71 @@ def dist_from_center():
                 correct_ans.append((dist_from_center,True))
     return correct_ans,wrong_ans
 
+# Load target distance between, middle to center distance, and correctness
+def dist_dist_accuracy():
+    correct_ans = []
+    wrong_ans = []
+    with open('client_data.csv','r') as csvdata:
+        reader = csv.reader(csvdata,delimiter = ',')
+        heading = next(reader)
+        for row in reader:
+            # print("word: ",row[1])
+        # Distance between the two words
+            dist_betw = float(row[4])
+        # Distence between the middle of the two words to the center of cloud
+            mid_x_pos = (float(re.search(r'\d+',row[6]).group()) + float(re.search(r'\d+',row[9]).group()))/2
+            mid_y_pos = (float(re.search(r'\d+',row[7]).group()) + float(re.search(r'\d+',row[10]).group()))/2
+            center_x = float(re.search(r'\d+',row[11]).group())/2
+            center_y = float(re.search(r'\d+',row[12]).group())/2
+            mid_dist_from_center = math.sqrt(pow(mid_x_pos - center_x,2)+pow(mid_y_pos - center_y,2))
+            if row[1] != row[5]:
+                wrong_ans.append((dist_betw,mid_dist_from_center,False))
+            else:
+                correct_ans.append((dist_betw,mid_dist_from_center,True))
+    return correct_ans,wrong_ans
+#############################################################################
+# Use Matplotlib to print one scatter plot
+# Each point in the scatter represent a relation 
+# of the distance between the two target words and the center-distance of the 
+# middle of the two target words (as a relative distance to the center)
+# and the color represent it's correctness
+def dist_dist_scatter():
+    result = dist_dist_accuracy()
+    datas = (result[0],result[1]) #(the list of tuples of correct, the list of tuples of wrong)
+    # print(datas)
+    colors = ("blue","red")
+    groups = ("correct","wrong")
+
+    # Create plot
+    figure = pyplot.figure()
+    scatterplot = figure.add_subplot(1,1,1)
+
+    for data, color, group in zip(datas, colors, groups):
+        for data_tuple in data:
+            dist_betw,mid_center_dist = data_tuple[0],data_tuple[1]
+            scatterplot.scatter(mid_center_dist,dist_betw,c=color,label=group,alpha = 0.6)
+    
+    # Calculating the mean values for the x,y coordinates for the correct clicks and the wrong clicks
+    # correct_pos_mean = (sum(datum[0] for datum in result[0])/len(result[0]),sum(datum[1] for datum in result[0])/len(result[0]))
+    # wrong_pos_mean = (sum(datum[0] for datum in result[1])/len(result[1]),sum(datum[1] for datum in result[1])/len(result[1]))
+    # print(correct_pos_mean,wrong_pos_mean)
+
+    # Plot the mean value coordinates for the correct and wrong clicks
+    # scatterplot.scatter(correct_pos_mean[0],correct_pos_mean[1],c='blue',marker="s")
+    # scatterplot.scatter(wrong_pos_mean[0],wrong_pos_mean[1],c='red',marker="s")
+
+
+    pyplot.title('Dist Dist Correctness scatterplot')
+    pyplot.xlabel('Distance of the middle point to the center')
+    pyplot.ylabel('Distance between the two target words')
+
+    # StackOverflow solution
+    # Dealing with replicated entries in legend
+    handles, labels = pyplot.gca().get_legend_handles_labels()
+    by_label = OrderedDict(zip(labels, handles))
+    pyplot.legend(by_label.values(), by_label.keys(),loc=2)
+
+    pyplot.show()
 #############################################################################
 # Use Matplotlib to print one scatter plot
 # Each point in the scatter represent a click, 
