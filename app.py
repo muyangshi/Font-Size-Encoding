@@ -237,23 +237,28 @@ def get_english_stimuli(numberOfWords, target1, target2):
 def post_data():
     data = flask.request.form
     turker_id = data["turker_id"]
-    clickedword = data["word"]
-    word_x = data["word position[left]"]
-    word_y = data["word position[top]"]
-    target_distance = data['targets distance']
+    clickedword = data["clickedword"]
+    word_left = data["clicked position[left]"]
+    word_top = data["clicked position[top]"]
+    target_distance = data['betw targets distance']
     correct_word = data['correct word']
+    correct_word_left = data["correct word position[left]"]
+    correct_word_top = data["correct word position[top]"]
+    wrong_word = data['wrong word']
+    wrong_word_left = data["wrong word position[left]"]
+    wrong_word_top = data["wrong word position[top]"]
     cloud_width = data["container size[width]"]
     cloud_height = data["container size[height]"]
     num_of_Stim = data["number of Stim"]
     span_tags = data["cloud"]
 
-    # print('clicked word: ' + clickedword, word_x, word_y)
+    # print('clicked word: ' + clickedword, word_left, word_top)
     # print('cloud information: ' + span_tags)
     with open('client_data.csv','a', newline='') as csvfile:
         writer = csv.writer(csvfile, delimiter = ',', quotechar='"')
-        # writer.writerow(['turker_id','clickedword', 'word_x', 'word_y', 'target_distance', 'correct_word', 'cloud_width', 'cloud_height', 'num_of_Stim', 'span_tags'])
-        writer.writerow([turker_id,clickedword, word_x, word_y, target_distance, correct_word, cloud_width, cloud_height, num_of_Stim, span_tags])
-    return json.dumps(data)
+        # writer.writerow(['turker_id','clickedword','word_left','word_top','target_distance','correct_word','correct_word_left','correct_word_top','wrong_word','wrong_word_left','wrong_word_top','cloud_width','cloud_height','num_of_Stim','span_tags'])
+        writer.writerow([turker_id,clickedword, word_left, word_top, target_distance, correct_word, correct_word_left, correct_word_top, wrong_word,wrong_word_left,wrong_word_top,cloud_width, cloud_height, num_of_Stim, span_tags])
+    return json.dumps("Success")
 
 
 def check_hashcode(hashcode):

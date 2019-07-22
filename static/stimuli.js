@@ -138,18 +138,21 @@ function createCloud(word_array) {
 
                 var targets_distance = Math.sqrt(Math.pow(targets_x_distiance,2)+Math.pow(targets_y_distance,2))
                 console.log(targets_distance)
-                do{
-                    if (targets_distance < 400){
-                        document.getElementById('JQWC').innerHTML = "";
-                        // console.log($('.target'));
-                        words.sort(()=>Math.random()-0.5)
-                        createCloud(words);
-                        // onStartButtonClicked();
-                    }
-                    else {
-                        distance_satisfied = true;
-                    }
-                } while (distance_satisfied = false)
+                if (distance_satisfied = false){
+                    do{
+                        if (targets_distance < 400){
+                            document.getElementById('JQWC').innerHTML = "";
+                            // console.log($('.target'));
+                            words.sort(()=>Math.random()-0.5)
+                            createCloud(words);
+                            // onStartButtonClicked();
+                        }
+                        else {
+                            distance_satisfied = true;
+                        }
+                    } while (distance_satisfied = false)   
+                }
+                
             }
         }
     );
@@ -160,30 +163,43 @@ function postData(clickedWord){
     var container = document.getElementById("JQWC");
     var containerSize = $(".jqcloud").css(['width','height']);
     var numberOfCloudWords = container.childElementCount;
-    var theCloud = container.innerHTML;
-    
+    var theCloud = container.innerHTML; //the span content
     var clickedWordPosition = clickedWord.css(["left","top"]);
 
     var targets_left = []
     var targets_top = []
     $('.target').each(function(){targets_left.push(parseInt($(this).css('left'),10));});
     $('.target').each(function(){targets_top.push(parseInt($(this).css('top'),10));});
+
     var targets_x_distiance = Math.abs(targets_left[0] - targets_left[1]);
     var targets_y_distance = Math.abs(targets_top[0] - targets_top[1]);
 
-    var targets_distance = Math.sqrt(Math.pow(targets_x_distiance,2)+Math.pow(targets_y_distance,2))
+    // var middle_x_pos = Math.abs(targets_left[0] + targets_left[1])/2;
+    // var middle_y_pos = Math.abs(targets_top[0] + targets_top[1])/2;
 
-    var targets_word = []
-    $('.target').each(function(){targets_word.push($(this));})
-    var correct_word = (parseInt(targets_word[0].css('font-size')) > parseInt(targets_word[1].css('font-size'))) ? targets_word[0]:targets_word[1]
+    var targets_distance = Math.sqrt(Math.pow(targets_x_distiance,2)+Math.pow(targets_y_distance,2));
+    // var mid_to_center = Math.sqrt()
+
+    var targets_word = [];
+    $('.target').each(function(){targets_word.push($(this));});
+    var correct_word = (parseInt(targets_word[0].css('font-size')) > parseInt(targets_word[1].css('font-size'))) ? targets_word[0]:targets_word[1];
+    var wrong_word = targets_word.filter(function(value,index,arr){return value != correct_word;})[0];
+    // alert("correct word:" + correct_word[0].innerHTML + "wrong word:" + wrong_word[0].innerHTML);
+
+    correct_word_position = correct_word.css(["left","top"]);
+    wrong_word_position = wrong_word.css(["left","top"]);
+
 
     var word_data = {
         "turker_id": turker_id,
         "container size": containerSize,
-        "word": clickedWord[0].innerHTML,
-        "word position": clickedWordPosition,
-        "targets distance": targets_distance,
+        "clickedword": clickedWord[0].innerHTML,
+        "clicked position": clickedWordPosition,
+        "betw targets distance": targets_distance,
         "correct word": correct_word[0].innerHTML,
+        "correct word position": correct_word_position,
+        "wrong word": wrong_word[0].innerHTML,
+        "wrong word position": wrong_word_position,
         "number of Stim": numberOfCloudWords,
         "cloud": theCloud,
     };
