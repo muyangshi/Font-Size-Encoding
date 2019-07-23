@@ -10,8 +10,8 @@
     */
 
 (function( $ ) {
-    "use strict";
-    $.fn.jQCloud = function(word_array, options) {
+    // "use strict";
+    $.fn.jQCloud = function(word_array, already_placed_targets, word_type, options) {
         // Reference to the container element
         var $this = this;
         // Namespace word ids to avoid collisions between multiple clouds
@@ -25,7 +25,7 @@
                 x: ((options && options.width) ? options.width : $this.width()) / 2.0,
                 y: ((options && options.height) ? options.height : $this.height()) / 2.0
             },
-            delayedMode: word_array.length > 50,
+            delayedMode: word_array.length > 100,
             shape: false, // It defaults to elliptic shape
             encodeURI: true,
             removeOverflowing: true
@@ -38,7 +38,7 @@
 
         // Container's CSS position cannot be 'static'
         if ($this.css("position") === "static") {
-        $this.css("position", "relative");
+            $this.css("position", "relative");
         }
 
         var drawWordCloud = function() {
@@ -95,9 +95,8 @@
             // word_array.push(targets[1]);
             //randomize
 
-            
+            var already_placed_words = already_placed_targets;
             var step = (options.shape === "rectangular") ? 18.0 : 2.0,
-                already_placed_words = [],
                 aspect_ratio = options.width / options.height;
 
             // Function to draw a word, by moving it in spiral until it finds a suitable empty place. This will be iterated on each word.
@@ -171,9 +170,25 @@
                 $this.append(word_span);
 
                 var width = word_span.width(),
-                    height = word_span.height(),
-                    left = options.center.x - width / 2.0,
+                    height = word_span.height();
+                    // left = options.center.x - width / 2.0,
+                    // top = options.center.y - height / 2.0;
+                var left;
+                var top;
+
+                if (word_type != "target"){
+                    left = options.center.x - width / 2.0;
                     top = options.center.y - height / 2.0;
+                }
+                else{
+                    do {
+                        left = options.center.x - width / 2.0 + Math.floor(Math.random() * (250 - (-250)) ) + (-250);
+                        top = options.center.y - width / 2.0 + Math.floor(Math.random() * (250 - (-250)) ) + (-250);
+                    } while (Math.sqrt(Math.pow(left-options.center.x,2)+Math.pow(top-options.center.y,2))> 250 || Math.sqrt(Math.pow(left-options.center.x,2)+Math.pow(top-options.center.y,2))< 50)
+                }
+                // console.log("left: " + left);
+                // console.log("top: " + top);
+
 
                 // Save a reference to the style property, for better performance
                 var word_style = word_span[0].style;
@@ -223,6 +238,7 @@
 
 
                 already_placed_words.push(word_span[0]);
+                // console.log(word_span[0]+word_span[0].offsetLeft)
 
                     // Invoke callback if existing
                 if ($.isFunction(word.afterWordRender)) {
