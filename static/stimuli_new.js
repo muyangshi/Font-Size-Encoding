@@ -34,17 +34,23 @@ var targetslist;
 
 
 function onStartButtonClicked() {
+    // Reset the flag, and empty the word arrays
     distance_satisfied = true;
     targetslist = [];
     already_placed_targets = [];
-    document.getElementById('Button_startStimuli').style.visibility = 'hidden';
-    var task = tasklist[0]; //somthing to be read from an Array, that is from the CSV
-    // var target_1_fontsize = this_task["target_1_fontsize"];
 
+    // document.getElementById('Button_startStimuli').style.visibility = 'hidden';
+    document.getElementById("Greeting").innerHTML = "";
+
+    // Specifications about the targets, coming from the tasklist.
+    var task = tasklist[0];
     var betw_targets_dist = task["betw_targets_dist"];
     var dist_to_center = task["radius"];
-    // console.log(dist_to_center);
-    // console.log(betw_targets_dist);
+
+    var outer_radius = task["outer_radius"];
+    var inner_radius = task["inner_radius"];
+    var fixed_betw_dist = task["fixed_betw_dist"];
+
 
     // Specifications about the target words are loaded
     // from the csv to the tasklist
@@ -121,30 +127,26 @@ function onStartButtonClicked() {
                         alert("Error")
                 }
 
-                // drawTargetCloud will call drawNextCloud, which will
-                // eventually draw the distractor clouds
-                // drawTargetCloud(targetslist,already_placed_targets,dist_to_center);
-
                 // draw the targets first, 
                 // then draw the distractors as a callback
-                drawTargetCloud(targetslist,dist_to_center,drawDistractors);
+                drawTargetCloud(targetslist,outer_radius,inner_radius,fixed_betw_dist,drawDistractors);
 
             },
         dataType: "json"
     });
 }
 
-function drawTargetCloud(target_array,dist_to_center,callback_drawDistractors) {
+function drawTargetCloud(target_array,outer_radius,inner_radius,fixed_betw_dist,callback_drawDistractors) {
     $("#JQWC").addClass("jqcloud")
-    drawTargets(target_array,dist_to_center);
+    drawTargets(target_array,outer_radius,inner_radius,fixed_betw_dist);
 
     callback_drawDistractors();
 }
 
-function drawTargets(target_array,dist_to_center){
+function drawTargets(target_array,outer_radius,inner_radius,fixed_betw_dist){
     target_array.forEach((target,index)=>{
-        console.log(target);
-        console.log(index);
+        // console.log(target);
+        // console.log(index);
         var font_size = target["weight"];
         var word_span = $('<span>').attr(target.html).addClass("target");
         word_span.append(target.text);
@@ -158,7 +160,17 @@ function drawTargets(target_array,dist_to_center){
         do {
             left = cloud_center_x - width / 2.0 + Math.floor(Math.random() * (500)) + (-250);
             top = cloud_center_y - height / 2.0 + Math.floor(Math.random() * (500)) + (-250);
-        } while (Math.sqrt(Math.pow(left-cloud_center_x,2) + Math.pow(top - cloud_center_y,2)) > dist_to_center)
+            distance_to_center = Math.sqrt(Math.pow((left-cloud_center_x),2) + Math.pow((top-cloud_center_y),2));
+            console.log("left: " + left);
+            console.log("top: " + top);
+            console.log("outer_radius: " + outer_radius);
+            console.log("inner_radius: " + inner_radius);
+            console.log("distance_to_center: " + distance_to_center);
+            console.log(distance_to_center > outer_radius);
+            console.log(distance_to_center < inner_radius);
+        } while (distance_to_center > outer_radius || distance_to_center < inner_radius)
+
+        console.log(word_span[0].innerHTML + Math.sqrt(Math.pow(left-cloud_center_x,2) + Math.pow(top - cloud_center_y,2)));
 
         word_span[0].style.position = "absolute";
         word_span[0].style.left = left + "px";
@@ -182,12 +194,12 @@ function drawTargets(target_array,dist_to_center){
     console.log("distance between the two target is: " + targets_distance);
 
     while (distance_satisfied === false){
-        if (targets_distance < 400) {
+        if (targets_distance < 300) {
             document.getElementById('JQWC').innerHTML = "";
             already_placed_targets = [];
             // console.log(targetslist);
             // console.log('dist_to_center: '+dist_to_center);
-            drawTargets(targetslist,drawDistractors);
+            drawTargets(targetslist,outer_radius,inner_radius,fixed_betwe_dist);
         }
         else{
             distance_satisfied = true;
@@ -199,16 +211,18 @@ function drawDistractors(){
     $("#JQWC").jQCloud(words,already_placed_targets,"distractor",
         {   delayedMode: false,
             afterCloudRender: () => {
-            var dot_span = $('<span>').addClass("dot");
-            $("#JQWC").append(dot_span);
-               $(".dot")[0].style.position = "relative";
-               $(".dot")[0].style.top = "50%";
-            //    $(".dot")[0].style.left = "50%";
-               $(".dot")[0].style.height = "5px";
-               $(".dot")[0].style.width = "5px";
-               $(".dot")[0].style.backgroundColor = "red";
-               $(".dot")[0].style.borderRadius = "35%";
-               $(".dot")[0].style.display = "inline-block";
+
+                // Creating a red dot at the center of the WordCloud
+                var dot_span = $('<span>').addClass("dot");
+                $("#JQWC").append(dot_span);
+                $(".dot")[0].style.position = "relative";
+                $(".dot")[0].style.top = "50%";
+                // $(".dot")[0].style.left = "50%";
+                $(".dot")[0].style.height = "5px";
+                $(".dot")[0].style.width = "5px";
+                $(".dot")[0].style.backgroundColor = "red";
+                $(".dot")[0].style.borderRadius = "35%";
+                $(".dot")[0].style.display = "inline-block";
             }
         }
     );
