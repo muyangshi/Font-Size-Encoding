@@ -1,8 +1,8 @@
 target_1_fontsize,target_1_length,target_2_fontsize,target_2_length,outer_radius,inner_radius,fixed_betw_dist,betw_targets_dist
 20,6,21,6,250,150,320,fixed
+20,6,21,6,250,150,320,fixed
 20,6,21,6,250,150,320,distant
-20,6,21,6,250,150,320,distant
-20,6,21,6,250,150,320,distant
+20,6,21,6,250,150,320,fixed
 20,6,21,6,250,150,320,distant
 20,6,21,6,250,150,320,distant
 20,6,21,6,250,150,320,distant

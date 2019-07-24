@@ -107,33 +107,11 @@ function onStartButtonClicked() {
                     case "fixed":
                         fixed_distance = true;
                         break;
-                    // case "center": 
-                    //     // seemingly the distance between the two target words
-                    //     // is within 40px
-                    //     // Both target words are fixated at the center of cloud
-                    //     var targets = [words.shift(),words.shift()]
-                    //     targets.sort(()=>Math.random() - 0.5)
-                    //     words.sort(()=>Math.random() - 0.5)
-                    //     words.unshift(targets[0])
-                    //     words.unshift(targets[1])
-                    //     break;
-                    // case "far":
-                    //     // seemingly the distance between the two target words
-                    //     // is beyond 100px
-                    //     // One target word is fixated at the center of cloud
-                    //     // the other one is at the boarder of the wordcloud
-                    //     var targets = [words.shift(),words.shift()]
-                    //     targets.sort(()=>Math.random() - 0.5)
-                    //     words.sort(()=>Math.random() - 0.5)
-                    //     words.unshift(targets[0])
-                    //     words.push(targets[1])
-                    //     break;
                     default:
-                        alert("Error")
+                        alert("Error reading tasklist");
                 }
 
-                // draw the targets first, 
-                // then draw the distractors as a callback
+                // draw the targets first, then draw the distractors in the callback function
                 drawTargetCloud(targetslist,outer_radius,inner_radius,fixed_betw_dist,drawDistractors);
 
             },
@@ -149,7 +127,9 @@ function drawTargetCloud(target_array,outer_radius,inner_radius,fixed_betw_dist,
 }
 
 function drawTargets(target_array,outer_radius,inner_radius,fixed_betw_dist){
-    if (fixed_distance === true) {
+    if (fixed_distance === true) { 
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // we have two target words, and we want to fix the distance between these two words
         var cloud_center_x = $("#JQWC").width() / 2.0;
         var cloud_center_y = $("#JQWC").height() / 2.0;
 
@@ -191,12 +171,13 @@ function drawTargets(target_array,outer_radius,inner_radius,fixed_betw_dist){
             var left;
             var top;
 
-            console.log("target1_left: " + target1_left);
-            console.log("target_1_top: " + target1_top);
-            var x = Math.random() * (fixed_betw_dist + fixed_betw_dist) - fixed_betw_dist;
-            // var x = Math.floor(Math.random() * Math.floor(fixed_betw_dist));
-            left = target1_left + x;
-            top = target1_top + Math.sqrt(Math.pow(fixed_betw_dist,2)-Math.pow(x,2));
+            // console.log("target1_left: " + target1_left);
+            // console.log("target_1_top: " + target1_top);
+            do {
+                var x = Math.random() * (fixed_betw_dist + fixed_betw_dist) - fixed_betw_dist;
+                left = target1_left + x;
+                top = target1_top + Math.sqrt(Math.pow(fixed_betw_dist,2)-Math.pow(x,2));
+            } while (left > 1000 || top > 1000)
             // do {
             //     var x = Math.random() * (fixed_betw_dist + fixed_betw_dist) - fixed_betw_dist;
             //     // var x = Math.floor(Math.random() * Math.floor(fixed_betw_dist));
@@ -217,6 +198,9 @@ function drawTargets(target_array,outer_radius,inner_radius,fixed_betw_dist){
             already_placed_targets.push(word_span[0])
     }
     else {
+        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // we dont care that much about the exact distance between the two target words,
+        // as long as they are all within the same ring, also on the opposite side of the ring.
         target_array.forEach((target,index)=>{
             // console.log(target);
             // console.log(index);
@@ -265,8 +249,6 @@ function drawTargets(target_array,outer_radius,inner_radius,fixed_betw_dist){
         var targets_y_distance = Math.abs(targets_top[0] - targets_top[1]);
         var targets_distance = Math.sqrt(Math.pow(targets_x_distiance,2)+Math.pow(targets_y_distance,2))
         console.log("distance between the two target is: " + targets_distance);
-
-
 
         // This is based on randomization,
         // making sure the distance between the two target words
