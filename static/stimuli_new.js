@@ -30,12 +30,14 @@ var words;
 var distance_satisfied;
 var already_placed_targets;
 var targetslist;
+var fixed_distance;
 // console.log(tasklist,tasklist[0]);
 
 
 function onStartButtonClicked() {
     // Reset the flag, and empty the word arrays
     distance_satisfied = true;
+    fixed_distance = false;
     targetslist = [];
     already_placed_targets = [];
 
@@ -102,6 +104,9 @@ function onStartButtonClicked() {
                         // words.sort(()=>Math.random() - 0.5);
                         distance_satisfied = false;
                         break;
+                    case "fixed":
+                        fixed_distance = true;
+                        break;
                     // case "center": 
                     //     // seemingly the distance between the two target words
                     //     // is within 40px
@@ -144,65 +149,139 @@ function drawTargetCloud(target_array,outer_radius,inner_radius,fixed_betw_dist,
 }
 
 function drawTargets(target_array,outer_radius,inner_radius,fixed_betw_dist){
-    target_array.forEach((target,index)=>{
-        // console.log(target);
-        // console.log(index);
-        var font_size = target["weight"];
-        var word_span = $('<span>').attr(target.html).addClass("target");
-        word_span.append(target.text);
-        $("#JQWC").append(word_span);
-        var width = word_span.width();
-        var height = word_span.height();
+    if (fixed_distance === true) {
         var cloud_center_x = $("#JQWC").width() / 2.0;
         var cloud_center_y = $("#JQWC").height() / 2.0;
-        var left;
-        var top;
-        do {
-            left = cloud_center_x - width / 2.0 + Math.floor(Math.random() * (500)) + (-250);
-            top = cloud_center_y - height / 2.0 + Math.floor(Math.random() * (500)) + (-250);
-            distance_to_center = Math.sqrt(Math.pow((left-cloud_center_x),2) + Math.pow((top-cloud_center_y),2));
-            console.log("left: " + left);
-            console.log("top: " + top);
-            console.log("outer_radius: " + outer_radius);
-            console.log("inner_radius: " + inner_radius);
-            console.log("distance_to_center: " + distance_to_center);
-            console.log(distance_to_center > outer_radius);
-            console.log(distance_to_center < inner_radius);
-        } while (distance_to_center > outer_radius || distance_to_center < inner_radius)
 
-        console.log(word_span[0].innerHTML + Math.sqrt(Math.pow(left-cloud_center_x,2) + Math.pow(top - cloud_center_y,2)));
+        target1 = target_array[0];
+        var font_size = target1["weight"];
+            var word_span = $('<span>').attr(target1.html).addClass("target");
+            word_span.append(target1.text);
+            $("#JQWC").append(word_span);
+            var width = word_span.width();
+            var height = word_span.height();
+            var left;
+            var top;
+            do {
+                left = cloud_center_x - width / 2.0 + Math.floor(Math.random() * (500)) + (-250);
+                top = cloud_center_y - height / 2.0 + Math.floor(Math.random() * (500)) + (-250);
+                distance_to_center = Math.sqrt(Math.pow((left-cloud_center_x),2) + Math.pow((top-cloud_center_y),2));
+            } while (distance_to_center > outer_radius || distance_to_center < inner_radius)
 
-        word_span[0].style.position = "absolute";
-        word_span[0].style.left = left + "px";
-        word_span[0].style.top = top + "px";
-        word_span[0].style.fontSize = font_size + "px";
-        word_span[0].style.color = "black";
-
-        $(word_span).bind("click", function(){postData($(this));});
-        $(word_span).bind("mouseover", function() {this.style.cursor = 'pointer';});
+            word_span[0].style.position = "absolute";
+            word_span[0].style.left = left + "px";
+            word_span[0].style.top = top + "px";
+            word_span[0].style.fontSize = font_size + "px";
+            word_span[0].style.color = "black";
+            // console.log(target1_left);
+            $(word_span).bind("click", function(){postData($(this));});
+            $(word_span).bind("mouseover", function() {this.style.cursor = 'pointer';});
 
         already_placed_targets.push(word_span[0])
-    });
+        
+        target1_left = left;
+        target1_top = top;            
+        target2 = target_array[1];
+        var font_size = target2["weight"];
+            var word_span = $('<span>').attr(target2.html).addClass("target");
+            word_span.append(target2.text);
+            $("#JQWC").append(word_span);
+            var width = word_span.width();
+            var height = word_span.height();
+            var left;
+            var top;
 
-    var targets_left = []
-    var targets_top = []
-    $('.target').each(function(){targets_left.push(parseInt($(this).css('left'),10));});
-    $('.target').each(function(){targets_top.push(parseInt($(this).css('top'),10));});
-    var targets_x_distiance = Math.abs(targets_left[0] - targets_left[1]);
-    var targets_y_distance = Math.abs(targets_top[0] - targets_top[1]);
-    var targets_distance = Math.sqrt(Math.pow(targets_x_distiance,2)+Math.pow(targets_y_distance,2))
-    console.log("distance between the two target is: " + targets_distance);
+            console.log("target1_left: " + target1_left);
+            console.log("target_1_top: " + target1_top);
+            var x = Math.random() * (fixed_betw_dist + fixed_betw_dist) - fixed_betw_dist;
+            // var x = Math.floor(Math.random() * Math.floor(fixed_betw_dist));
+            left = target1_left + x;
+            top = target1_top + Math.sqrt(Math.pow(fixed_betw_dist,2)-Math.pow(x,2));
+            // do {
+            //     var x = Math.random() * (fixed_betw_dist + fixed_betw_dist) - fixed_betw_dist;
+            //     // var x = Math.floor(Math.random() * Math.floor(fixed_betw_dist));
+            //     left = target1_left + x;
+            //     top = target1_top + Math.sqrt(Math.pow(fixed_betw_dist,2)-Math.pow(x,2));
+            //     distance_to_center = Math.sqrt(Math.pow((left-cloud_center_x),2) + Math.pow((top-cloud_center_y),2));
+            // } while (distance_to_center > outer_radius || distance_to_center < inner_radius)
 
-    while (distance_satisfied === false){
-        if (targets_distance < 300) {
-            document.getElementById('JQWC').innerHTML = "";
-            already_placed_targets = [];
-            // console.log(targetslist);
-            // console.log('dist_to_center: '+dist_to_center);
-            drawTargets(targetslist,outer_radius,inner_radius,fixed_betwe_dist);
-        }
-        else{
-            distance_satisfied = true;
+            word_span[0].style.position = "absolute";
+            word_span[0].style.left = left + "px";
+            word_span[0].style.top = top + "px";
+            word_span[0].style.fontSize = font_size + "px";
+            word_span[0].style.color = "black";
+
+            $(word_span).bind("click", function(){postData($(this));});
+            $(word_span).bind("mouseover", function() {this.style.cursor = 'pointer';});
+
+            already_placed_targets.push(word_span[0])
+    }
+    else {
+        target_array.forEach((target,index)=>{
+            // console.log(target);
+            // console.log(index);
+            var font_size = target["weight"];
+            var word_span = $('<span>').attr(target.html).addClass("target");
+            word_span.append(target.text);
+            $("#JQWC").append(word_span);
+            var width = word_span.width();
+            var height = word_span.height();
+            var cloud_center_x = $("#JQWC").width() / 2.0;
+            var cloud_center_y = $("#JQWC").height() / 2.0;
+            var left;
+            var top;
+            do {
+                left = cloud_center_x - width / 2.0 + Math.floor(Math.random() * (500)) + (-250);
+                top = cloud_center_y - height / 2.0 + Math.floor(Math.random() * (500)) + (-250);
+                distance_to_center = Math.sqrt(Math.pow((left-cloud_center_x),2) + Math.pow((top-cloud_center_y),2));
+                // console.log("left: " + left);
+                // console.log("top: " + top);
+                // console.log("outer_radius: " + outer_radius);
+                // console.log("inner_radius: " + inner_radius);
+                // console.log("distance_to_center: " + distance_to_center);
+                // console.log(distance_to_center > outer_radius);
+                // console.log(distance_to_center < inner_radius);
+            } while (distance_to_center > outer_radius || distance_to_center < inner_radius)
+
+            console.log(word_span[0].innerHTML + Math.sqrt(Math.pow(left-cloud_center_x,2) + Math.pow(top - cloud_center_y,2)));
+
+            word_span[0].style.position = "absolute";
+            word_span[0].style.left = left + "px";
+            word_span[0].style.top = top + "px";
+            word_span[0].style.fontSize = font_size + "px";
+            word_span[0].style.color = "black";
+
+            $(word_span).bind("click", function(){postData($(this));});
+            $(word_span).bind("mouseover", function() {this.style.cursor = 'pointer';});
+
+            already_placed_targets.push(word_span[0])
+        });
+
+        var targets_left = []
+        var targets_top = []
+        $('.target').each(function(){targets_left.push(parseInt($(this).css('left'),10));});
+        $('.target').each(function(){targets_top.push(parseInt($(this).css('top'),10));});
+        var targets_x_distiance = Math.abs(targets_left[0] - targets_left[1]);
+        var targets_y_distance = Math.abs(targets_top[0] - targets_top[1]);
+        var targets_distance = Math.sqrt(Math.pow(targets_x_distiance,2)+Math.pow(targets_y_distance,2))
+        console.log("distance between the two target is: " + targets_distance);
+
+
+
+        // This is based on randomization,
+        // making sure the distance between the two target words
+        // is at least 2 times the inner radius
+        while (distance_satisfied === false){
+            if (targets_distance < inner_radius*2) {
+                document.getElementById('JQWC').innerHTML = "";
+                already_placed_targets = [];
+                // console.log(targetslist);
+                // console.log('dist_to_center: '+dist_to_center);
+                drawTargets(targetslist,outer_radius,inner_radius,fixed_betw_dist);
+            }
+            else{
+                distance_satisfied = true;
+            }
         }
     }
 }
