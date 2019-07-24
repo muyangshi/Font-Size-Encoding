@@ -27,13 +27,14 @@ do {
 
 
 var words;
-var distance_satisfied = true;
-var already_placed_targets = [];
-var targetslist = [];
+var distance_satisfied;
+var already_placed_targets;
+var targetslist;
 // console.log(tasklist,tasklist[0]);
 
 
 function onStartButtonClicked() {
+    distance_satisfied = true;
     targetslist = [];
     already_placed_targets = [];
     document.getElementById('Button_startStimuli').style.visibility = 'hidden';
@@ -73,7 +74,10 @@ function onStartButtonClicked() {
                         return { 
                             text: dictionary['text'], 
                             weight: dictionary['fontsize'],
-                            html: {class: dictionary['html']}
+                            html: {class: dictionary['html']},
+                            handlers: {
+                                mouseover: function() {this.style.cursor = "default";}
+                            }
                         }
                     }
                 });
@@ -121,25 +125,26 @@ function onStartButtonClicked() {
                 // eventually draw the distractor clouds
                 // drawTargetCloud(targetslist,already_placed_targets,dist_to_center);
 
-                // drawTargets();
-                // appendDrawnWord();
-                // drawDistractors();
-                drawWordCloud(targetslist,words);
+                // draw the targets first, 
+                // then draw the distractors as a callback
+                drawTargetCloud(targetslist,dist_to_center,drawDistractors);
 
             },
         dataType: "json"
     });
 }
 
-function drawWordCloud(target_array,distractor_array) {
+function drawTargetCloud(target_array,dist_to_center,callback_drawDistractors) {
     $("#JQWC").addClass("jqcloud")
-    drawTargets(target_array,drawDistractors);
-    
+    drawTargets(target_array,dist_to_center);
+
+    callback_drawDistractors();
 }
 
-function drawTargets(target_array,callback){
+function drawTargets(target_array,dist_to_center){
     target_array.forEach((target,index)=>{
         console.log(target);
+        console.log(index);
         var font_size = target["weight"];
         var word_span = $('<span>').attr(target.html).addClass("target");
         word_span.append(target.text);
@@ -153,7 +158,7 @@ function drawTargets(target_array,callback){
         do {
             left = cloud_center_x - width / 2.0 + Math.floor(Math.random() * (500)) + (-250);
             top = cloud_center_y - height / 2.0 + Math.floor(Math.random() * (500)) + (-250);
-        } while (Math.sqrt(Math.pow(left-cloud_center_x,2) + Math.pow(top - cloud_center_y,2)) > 250)
+        } while (Math.sqrt(Math.pow(left-cloud_center_x,2) + Math.pow(top - cloud_center_y,2)) > dist_to_center)
 
         word_span[0].style.position = "absolute";
         word_span[0].style.left = left + "px";
@@ -167,22 +172,43 @@ function drawTargets(target_array,callback){
         already_placed_targets.push(word_span[0])
     });
 
-    callback();
+    var targets_left = []
+    var targets_top = []
+    $('.target').each(function(){targets_left.push(parseInt($(this).css('left'),10));});
+    $('.target').each(function(){targets_top.push(parseInt($(this).css('top'),10));});
+    var targets_x_distiance = Math.abs(targets_left[0] - targets_left[1]);
+    var targets_y_distance = Math.abs(targets_top[0] - targets_top[1]);
+    var targets_distance = Math.sqrt(Math.pow(targets_x_distiance,2)+Math.pow(targets_y_distance,2))
+    console.log("distance between the two target is: " + targets_distance);
+
+    while (distance_satisfied === false){
+        if (targets_distance < 400) {
+            document.getElementById('JQWC').innerHTML = "";
+            already_placed_targets = [];
+            // console.log(targetslist);
+            // console.log('dist_to_center: '+dist_to_center);
+            drawTargets(targetslist,drawDistractors);
+        }
+        else{
+            distance_satisfied = true;
+        }
+    }
 }
 
 function drawDistractors(){
     $("#JQWC").jQCloud(words,already_placed_targets,"distractor",
         {   delayedMode: false,
             afterCloudRender: () => {
-                var targets_left = []
-                var targets_top = []
-                $('.target').each(function(){targets_left.push(parseInt($(this).css('left'),10));});
-                $('.target').each(function(){targets_top.push(parseInt($(this).css('top'),10));});
-                var targets_x_distiance = Math.abs(targets_left[0] - targets_left[1]);
-                var targets_y_distance = Math.abs(targets_top[0] - targets_top[1]);
-
-                var targets_distance = Math.sqrt(Math.pow(targets_x_distiance,2)+Math.pow(targets_y_distance,2))
-                console.log("distance between the two target is: " + targets_distance);
+            var dot_span = $('<span>').addClass("dot");
+            $("#JQWC").append(dot_span);
+               $(".dot")[0].style.position = "relative";
+               $(".dot")[0].style.top = "50%";
+            //    $(".dot")[0].style.left = "50%";
+               $(".dot")[0].style.height = "5px";
+               $(".dot")[0].style.width = "5px";
+               $(".dot")[0].style.backgroundColor = "red";
+               $(".dot")[0].style.borderRadius = "35%";
+               $(".dot")[0].style.display = "inline-block";
             }
         }
     );
