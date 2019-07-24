@@ -171,21 +171,22 @@
 
                 var width = word_span.width(),
                     height = word_span.height();
-                    // left = options.center.x - width / 2.0,
-                    // top = options.center.y - height / 2.0;
-                var left;
-                var top;
+                var left = options.center.x - width / 2.0;;
+                var top = options.center.y - height / 2.0;;
 
-                if (word_type != "target"){
-                    left = options.center.x - width / 2.0;
-                    top = options.center.y - height / 2.0;
-                }
-                else{
-                    do {
-                        left = options.center.x - width / 2.0 + Math.floor(Math.random() * (250 - (-250)) ) + (-250);
-                        top = options.center.y - width / 2.0 + Math.floor(Math.random() * (250 - (-250)) ) + (-250);
-                    } while (Math.sqrt(Math.pow(left-options.center.x,2)+Math.pow(top-options.center.y,2))> 250 || Math.sqrt(Math.pow(left-options.center.x,2)+Math.pow(top-options.center.y,2))< 50)
-                }
+                // Normal placement for distractors
+                // if (word_type != "target"){
+                //     left = options.center.x - width / 2.0;
+                //     top = options.center.y - height / 2.0;
+                // }
+                // else{
+                //     do {
+                //         // center plus or minus the radius
+                //         left = options.center.x - width / 2.0 + Math.floor(Math.random() * (500)) + (-250);
+                //         top = options.center.y - width / 2.0 + Math.floor(Math.random() * (500)) + (-250);
+                //         console.log("distance to center is: " + Math.sqrt(Math.pow(left-options.center.x,2)+Math.pow(top-options.center.y,2)));
+                //     } while (Math.sqrt(Math.pow(left-options.center.x,2)+Math.pow(top-options.center.y,2))> dist_to_center || Math.sqrt(Math.pow(left-options.center.x,2)+Math.pow(top-options.center.y,2))< 50)
+                // }
                 // console.log("left: " + left);
                 // console.log("top: " + top);
 
