@@ -27,31 +27,36 @@ do {
 
 
 var words;
-var distance_satisfied;
 var already_placed_targets;
 var targetslist;
-var fixed_distance;
+var in_same_ring;
+
+// var distance_satisfied;
+// var fixed_distance;
 // console.log(tasklist,tasklist[0]);
 
 
 function onStartButtonClicked() {
-    // Reset the flag, and empty the word arrays
-    distance_satisfied = true;
-    fixed_distance = false;
+    document.getElementById("Greeting").innerHTML = "";
+
+
+    // Reset the flag
+    // empty the word arrays
     targetslist = [];
     already_placed_targets = [];
-
-    // document.getElementById('Button_startStimuli').style.visibility = 'hidden';
-    document.getElementById("Greeting").innerHTML = "";
+    // distance_satisfied = true;
+    // fixed_distance = false;
+    in_same_ring = false;
+    
 
     // Specifications about the targets, coming from the tasklist.
     var task = tasklist[0];
-    var betw_targets_dist = task["betw_targets_dist"];
-    var dist_to_center = task["radius"];
 
     var outer_radius = task["outer_radius"];
     var inner_radius = task["inner_radius"];
-    var fixed_betw_dist = task["fixed_betw_dist"];
+    var distance_between = task["distance_between"];
+    var rule = task["rule"];
+    // var fixed_betw_dist = task["fixed_betw_dist"];
 
 
     // Specifications about the target words are loaded
@@ -96,58 +101,119 @@ function onStartButtonClicked() {
                     targetslist.push(words.shift());
                 }
 
-                switch (betw_targets_dist){
-                    case "random":
-                        // words.sort(()=>Math.random() - 0.5);
-                        break;
-                    case "distant":
-                        // words.sort(()=>Math.random() - 0.5);
-                        distance_satisfied = false;
-                        break;
-                    case "fixed":
-                        fixed_distance = true;
-                        break;
-                    default:
-                        alert("Error reading tasklist");
-                }
+                // switch (betw_targets_dist){
+                //     case "random":
+                //         // words.sort(()=>Math.random() - 0.5);
+                //         break;
+                //     case "distant":
+                //         // words.sort(()=>Math.random() - 0.5);
+                //         distance_satisfied = false;
+                //         break;
+                //     case "ring":
+                //         fixed_distance = true;
+                //         break;
+                //     default:
+                //         alert("Error reading tasklist");
+                // }
 
                 // draw the targets first, then draw the distractors in the callback function
-                drawTargetCloud(targetslist,outer_radius,inner_radius,fixed_betw_dist,drawDistractors);
+                drawTargetCloud(rule,targetslist,outer_radius,inner_radius,distance_between,drawDistractorsCallback);
 
             },
         dataType: "json"
     });
 }
 
-function drawTargetCloud(target_array,outer_radius,inner_radius,fixed_betw_dist,callback_drawDistractors) {
-    $("#JQWC").addClass("jqcloud")
-    drawTargets(target_array,outer_radius,inner_radius,fixed_betw_dist);
+function drawTargetCloud(rule,target_array,outer_radius,inner_radius,distance_between,callback_drawDistractors) {
+    $("#JQWC").addClass("jqcloud");
+    drawTargets(rule,target_array,outer_radius,inner_radius,distance_between);
 
     callback_drawDistractors();
 }
 
-function drawTargets(target_array,outer_radius,inner_radius,fixed_betw_dist){
-    if (fixed_distance === true) { 
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        // we have two target words, and we want to fix the distance between these two words
-        var cloud_center_x = $("#JQWC").width() / 2.0;
-        var cloud_center_y = $("#JQWC").height() / 2.0;
+function drawTargets(rule,target_array,outer_radius,inner_radius,distance_between){
+    var cloud_center_x = $("#JQWC").width() / 2.0;
+    var cloud_center_y = $("#JQWC").height() / 2.0;
 
-        target1 = target_array[0];
-        var font_size = target1["weight"];
-            var word_span = $('<span>').attr(target1.html).addClass("target");
-            word_span.append(target1.text);
-            $("#JQWC").append(word_span);
-            var width = word_span.width();
-            var height = word_span.height();
-            var left;
-            var top;
-            do {
-                left = cloud_center_x - width / 2.0 + Math.floor(Math.random() * (500)) + (-250);
-                top = cloud_center_y - height / 2.0 + Math.floor(Math.random() * (500)) + (-250);
-                distance_to_center = Math.sqrt(Math.pow((left-cloud_center_x),2) + Math.pow((top-cloud_center_y),2));
-            } while (distance_to_center > outer_radius || distance_to_center < inner_radius)
+    switch (rule){
+        case "in_ring":
+            target_array.forEach((target,index)=>{
+                var font_size = target["weight"];
+                var word_span = $('<span>').attr(target.html).addClass("target"+index);
+                word_span.append(target.text);
+                $("#JQWC").append(word_span);
+                var width = word_span.width();
+                var height = word_span.height();
+                var left;
+                var top;
 
+                // Making the position of this target
+                // to be in the ring
+                // ineer_radius < dist_to_center < outer_radius
+                do {
+                    left = cloud_center_x - width / 2.0 + Math.floor(Math.random() * (500)) + (-250);
+                    top = cloud_center_y - height / 2.0 + Math.floor(Math.random() * (500)) + (-250);
+                    distance_to_center = Math.sqrt(Math.pow((left + width/2.0 - cloud_center_x),2) + Math.pow((top + height/2.0 - cloud_center_y),2));
+                } while (distance_to_center > outer_radius || distance_to_center < inner_radius)
+    
+                console.log(word_span[0].innerHTML + distance_to_center);
+    
+                word_span[0].style.position = "absolute";
+                word_span[0].style.left = left + "px";
+                word_span[0].style.top = top + "px";
+                word_span[0].style.fontSize = font_size + "px";
+                word_span[0].style.color = "black";    
+                $(word_span).bind("click", function(){postData($(this));});
+                $(word_span).bind("mouseover", function() {this.style.cursor = 'pointer';});
+    
+                already_placed_targets.push(word_span[0])
+            });
+
+            var targets_left = []
+            var targets_top = []
+            $('.target').each(function(){targets_left.push(parseInt($(this).css('left'),10));});
+            $('.target').each(function(){targets_top.push(parseInt($(this).css('top'),10));});
+            var targets_x_distiance = Math.abs(targets_left[0] - targets_left[1]);
+            var targets_y_distance = Math.abs(targets_top[0] - targets_top[1]);
+            var targets_distance = Math.sqrt(Math.pow(targets_x_distiance,2)+Math.pow(targets_y_distance,2))
+            console.log("distance between the two target is: " + targets_distance);
+
+            // This is based on randomization,
+            // making sure the distance between the two target words
+            // is at least 2 times the inner radius
+            while (in_same_ring === false){
+                if (targets_distance < inner_radius*2) {
+                    document.getElementById('JQWC').innerHTML = '<span class="dot" style="position: absolute;top: 500px;left: 500px;height: 5px;width: 5px;background-color: red;border-radius: 35%;display: inline-block;"></span>';
+                    already_placed_targets = [];
+                    // console.log(targetslist);
+                    // console.log('dist_to_center: '+dist_to_center);
+                    drawTargets(rule,targetslist,outer_radius,inner_radius,distance_between);
+                }
+                else{
+                    in_same_ring = true;
+                }
+            }
+            break;
+        case "on_circle":
+            // we have two target wrods, and we want to fix them onto a circle
+            // that has the diameter of distance_between
+            target1 = target_array[0];
+            var font_size = target1["weight"];
+                var word_span = $('<span>').attr(target1.html).addClass("target1");
+                word_span.append(target1.text);
+                $("#JQWC").append(word_span);
+                var width = word_span.width();
+                var height = word_span.height();
+                var left;
+                var top;
+                var radius = distance_between / 2.0
+                var x = Math.random()*(radius*2)-radius;
+                var y = Math.sqrt(Math.pow(radius,2) - Math.pow(x,2));
+                console.log("x: "+x+" y: " + y);
+                left = cloud_center_x - width / 2.0 - x;
+                top = cloud_center_y - height / 2.0 - y;
+                distance_to_center = Math.sqrt(Math.pow((left + width/2.0 - cloud_center_x),2) + Math.pow((top + height/2.0 - cloud_center_y),2));
+                console.log("target1: " + distance_to_center);
             word_span[0].style.position = "absolute";
             word_span[0].style.left = left + "px";
             word_span[0].style.top = top + "px";
@@ -157,140 +223,216 @@ function drawTargets(target_array,outer_radius,inner_radius,fixed_betw_dist){
             $(word_span).bind("click", function(){postData($(this));});
             $(word_span).bind("mouseover", function() {this.style.cursor = 'pointer';});
 
-        already_placed_targets.push(word_span[0])
+            already_placed_targets.push(word_span[0]);
+
+            target2 = target_array[1];
+            var font_size = target2["weight"];
+                var word_span = $('<span>').attr(target2.html).addClass("target2");
+                word_span.append(target2.text);
+                $("#JQWC").append(word_span);
+                var width = word_span.width();
+                var height = word_span.height();
+                var left;
+                var top;
+                // var radius = distance_between / 2.0
+                // var x = Math.random()*(radius*2)-radius;
+                // var y = Math.sqrt(Math.pow(distance_between,2) - Math.pow(x,2));
+                console.log("x: "+x+" y: " + y);
+
+                left = cloud_center_x - width / 2.0 + x;
+                top = cloud_center_y - height / 2.0 + y;
+                distance_to_center = Math.sqrt(Math.pow((left + width/2.0 - cloud_center_x),2) + Math.pow((top + height/2.0 - cloud_center_y),2));
+                console.log("target2: " + distance_to_center);
+            word_span[0].style.position = "absolute";
+            word_span[0].style.left = left + "px";
+            word_span[0].style.top = top + "px";
+            word_span[0].style.fontSize = font_size + "px";
+            word_span[0].style.color = "black";
+            // console.log(target1_left);
+            $(word_span).bind("click", function(){postData($(this));});
+            $(word_span).bind("mouseover", function() {this.style.cursor = 'pointer';});
+
+            already_placed_targets.push(word_span[0])
+
+            var targets_left = []
+            var targets_top = []
+            $('.target').each(function(){targets_left.push(parseInt($(this).css('left'),10));});
+            $('.target').each(function(){targets_top.push(parseInt($(this).css('top'),10));});
+            var targets_x_distiance = Math.abs(targets_left[0] - targets_left[1]);
+            var targets_y_distance = Math.abs(targets_top[0] - targets_top[1]);
+            var targets_distance = Math.sqrt(Math.pow(targets_x_distiance,2)+Math.pow(targets_y_distance,2))
+            console.log("distance between the two target is: " + targets_distance);
+            break;
+        default:
+            alert("Cannot read rule");
+    }
+
+    // if (fixed_distance === true) { 
+    // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //     // we have two target words, and we want to fix the distance between these two words
+    //     // both target words are in the ring.
+    //     // This function should be redundant.
+    //     var cloud_center_x = $("#JQWC").width() / 2.0;
+    //     var cloud_center_y = $("#JQWC").height() / 2.0;
+
+    //     target1 = target_array[0];
+    //     var font_size = target1["weight"];
+    //         var word_span = $('<span>').attr(target1.html).addClass("target");
+    //         word_span.append(target1.text);
+    //         $("#JQWC").append(word_span);
+    //         var width = word_span.width();
+    //         var height = word_span.height();
+    //         var left;
+    //         var top;
+    //         do {
+    //             left = cloud_center_x - width / 2.0 + Math.floor(Math.random() * (500)) + (-250);
+    //             top = cloud_center_y - height / 2.0 + Math.floor(Math.random() * (500)) + (-250);
+    //             distance_to_center = Math.sqrt(Math.pow((left-cloud_center_x),2) + Math.pow((top-cloud_center_y),2));
+    //         } while (distance_to_center > outer_radius || distance_to_center < inner_radius)
+
+    //         word_span[0].style.position = "absolute";
+    //         word_span[0].style.left = left + "px";
+    //         word_span[0].style.top = top + "px";
+    //         word_span[0].style.fontSize = font_size + "px";
+    //         word_span[0].style.color = "black";
+    //         // console.log(target1_left);
+    //         $(word_span).bind("click", function(){postData($(this));});
+    //         $(word_span).bind("mouseover", function() {this.style.cursor = 'pointer';});
+
+    //     already_placed_targets.push(word_span[0])
         
-        target1_left = left;
-        target1_top = top;            
-        target2 = target_array[1];
-        var font_size = target2["weight"];
-            var word_span = $('<span>').attr(target2.html).addClass("target");
-            word_span.append(target2.text);
-            $("#JQWC").append(word_span);
-            var width = word_span.width();
-            var height = word_span.height();
-            var left;
-            var top;
+    //     target1_left = left;
+    //     target1_top = top;            
+    //     target2 = target_array[1];
+    //     var font_size = target2["weight"];
+    //         var word_span = $('<span>').attr(target2.html).addClass("target");
+    //         word_span.append(target2.text);
+    //         $("#JQWC").append(word_span);
+    //         var width = word_span.width();
+    //         var height = word_span.height();
+    //         var left;
+    //         var top;
 
-            // console.log("target1_left: " + target1_left);
-            // console.log("target_1_top: " + target1_top);
-            do {
-                var x = Math.random() * (fixed_betw_dist + fixed_betw_dist) - fixed_betw_dist;
-                left = target1_left + x;
-                top = target1_top + Math.sqrt(Math.pow(fixed_betw_dist,2)-Math.pow(x,2));
-            } while (left > 1000 || top > 1000)
-            // do {
-            //     var x = Math.random() * (fixed_betw_dist + fixed_betw_dist) - fixed_betw_dist;
-            //     // var x = Math.floor(Math.random() * Math.floor(fixed_betw_dist));
-            //     left = target1_left + x;
-            //     top = target1_top + Math.sqrt(Math.pow(fixed_betw_dist,2)-Math.pow(x,2));
-            //     distance_to_center = Math.sqrt(Math.pow((left-cloud_center_x),2) + Math.pow((top-cloud_center_y),2));
-            // } while (distance_to_center > outer_radius || distance_to_center < inner_radius)
+    //         // console.log("target1_left: " + target1_left);
+    //         // console.log("target_1_top: " + target1_top);
+    //         do {
+    //             var x = Math.random() * (fixed_betw_dist + fixed_betw_dist) - fixed_betw_dist;
+    //             left = target1_left + x;
+    //             top = target1_top + Math.sqrt(Math.pow(fixed_betw_dist,2)-Math.pow(x,2));
+    //         } while (left > 1000 || top > 1000)
+    //         // do {
+    //         //     var x = Math.random() * (fixed_betw_dist + fixed_betw_dist) - fixed_betw_dist;
+    //         //     // var x = Math.floor(Math.random() * Math.floor(fixed_betw_dist));
+    //         //     left = target1_left + x;
+    //         //     top = target1_top + Math.sqrt(Math.pow(fixed_betw_dist,2)-Math.pow(x,2));
+    //         //     distance_to_center = Math.sqrt(Math.pow((left-cloud_center_x),2) + Math.pow((top-cloud_center_y),2));
+    //         // } while (distance_to_center > outer_radius || distance_to_center < inner_radius)
 
-            word_span[0].style.position = "absolute";
-            word_span[0].style.left = left + "px";
-            word_span[0].style.top = top + "px";
-            word_span[0].style.fontSize = font_size + "px";
-            word_span[0].style.color = "black";
+    //         word_span[0].style.position = "absolute";
+    //         word_span[0].style.left = left + "px";
+    //         word_span[0].style.top = top + "px";
+    //         word_span[0].style.fontSize = font_size + "px";
+    //         word_span[0].style.color = "black";
 
-            $(word_span).bind("click", function(){postData($(this));});
-            $(word_span).bind("mouseover", function() {this.style.cursor = 'pointer';});
+    //         $(word_span).bind("click", function(){postData($(this));});
+    //         $(word_span).bind("mouseover", function() {this.style.cursor = 'pointer';});
 
-            already_placed_targets.push(word_span[0])
-    }
-    else {
-        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        // we dont care that much about the exact distance between the two target words,
-        // as long as they are all within the same ring, also on the opposite side of the ring.
-        target_array.forEach((target,index)=>{
-            // console.log(target);
-            // console.log(index);
-            var font_size = target["weight"];
-            var word_span = $('<span>').attr(target.html).addClass("target");
-            word_span.append(target.text);
-            $("#JQWC").append(word_span);
-            var width = word_span.width();
-            var height = word_span.height();
-            var cloud_center_x = $("#JQWC").width() / 2.0;
-            var cloud_center_y = $("#JQWC").height() / 2.0;
-            var left;
-            var top;
-            do {
-                left = cloud_center_x - width / 2.0 + Math.floor(Math.random() * (500)) + (-250);
-                top = cloud_center_y - height / 2.0 + Math.floor(Math.random() * (500)) + (-250);
-                distance_to_center = Math.sqrt(Math.pow((left-cloud_center_x),2) + Math.pow((top-cloud_center_y),2));
-                // console.log("left: " + left);
-                // console.log("top: " + top);
-                // console.log("outer_radius: " + outer_radius);
-                // console.log("inner_radius: " + inner_radius);
-                // console.log("distance_to_center: " + distance_to_center);
-                // console.log(distance_to_center > outer_radius);
-                // console.log(distance_to_center < inner_radius);
-            } while (distance_to_center > outer_radius || distance_to_center < inner_radius)
+    //         already_placed_targets.push(word_span[0])
+    // }
+    // else {
+    //     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //     // we dont care that much about the exact distance between the two target words,
+    //     // as long as they are all within the same ring, also on the opposite side of the ring.
+    //     target_array.forEach((target,index)=>{
+    //         // console.log(target);
+    //         // console.log(index);
+    //         var font_size = target["weight"];
+    //         var word_span = $('<span>').attr(target.html).addClass("target");
+    //         word_span.append(target.text);
+    //         $("#JQWC").append(word_span);
+    //         var width = word_span.width();
+    //         var height = word_span.height();
+    //         var cloud_center_x = $("#JQWC").width() / 2.0;
+    //         var cloud_center_y = $("#JQWC").height() / 2.0;
+    //         var left;
+    //         var top;
+    //         do {
+    //             left = cloud_center_x - width / 2.0 + Math.floor(Math.random() * (500)) + (-250);
+    //             top = cloud_center_y - height / 2.0 + Math.floor(Math.random() * (500)) + (-250);
+    //             distance_to_center = Math.sqrt(Math.pow((left-cloud_center_x),2) + Math.pow((top-cloud_center_y),2));
+    //             // console.log("left: " + left);
+    //             // console.log("top: " + top);
+    //             // console.log("outer_radius: " + outer_radius);
+    //             // console.log("inner_radius: " + inner_radius);
+    //             // console.log("distance_to_center: " + distance_to_center);
+    //             // console.log(distance_to_center > outer_radius);
+    //             // console.log(distance_to_center < inner_radius);
+    //         } while (distance_to_center > outer_radius || distance_to_center < inner_radius)
 
-            console.log(word_span[0].innerHTML + Math.sqrt(Math.pow(left-cloud_center_x,2) + Math.pow(top - cloud_center_y,2)));
+    //         console.log(word_span[0].innerHTML + Math.sqrt(Math.pow(left-cloud_center_x,2) + Math.pow(top - cloud_center_y,2)));
 
-            word_span[0].style.position = "absolute";
-            word_span[0].style.left = left + "px";
-            word_span[0].style.top = top + "px";
-            word_span[0].style.fontSize = font_size + "px";
-            word_span[0].style.color = "black";
+    //         word_span[0].style.position = "absolute";
+    //         word_span[0].style.left = left + "px";
+    //         word_span[0].style.top = top + "px";
+    //         word_span[0].style.fontSize = font_size + "px";
+    //         word_span[0].style.color = "black";
 
-            $(word_span).bind("click", function(){postData($(this));});
-            $(word_span).bind("mouseover", function() {this.style.cursor = 'pointer';});
+    //         $(word_span).bind("click", function(){postData($(this));});
+    //         $(word_span).bind("mouseover", function() {this.style.cursor = 'pointer';});
 
-            already_placed_targets.push(word_span[0])
-        });
+    //         already_placed_targets.push(word_span[0])
+    //     });
 
-        var targets_left = []
-        var targets_top = []
-        $('.target').each(function(){targets_left.push(parseInt($(this).css('left'),10));});
-        $('.target').each(function(){targets_top.push(parseInt($(this).css('top'),10));});
-        var targets_x_distiance = Math.abs(targets_left[0] - targets_left[1]);
-        var targets_y_distance = Math.abs(targets_top[0] - targets_top[1]);
-        var targets_distance = Math.sqrt(Math.pow(targets_x_distiance,2)+Math.pow(targets_y_distance,2))
-        console.log("distance between the two target is: " + targets_distance);
+    //     var targets_left = []
+    //     var targets_top = []
+    //     $('.target').each(function(){targets_left.push(parseInt($(this).css('left'),10));});
+    //     $('.target').each(function(){targets_top.push(parseInt($(this).css('top'),10));});
+    //     var targets_x_distiance = Math.abs(targets_left[0] - targets_left[1]);
+    //     var targets_y_distance = Math.abs(targets_top[0] - targets_top[1]);
+    //     var targets_distance = Math.sqrt(Math.pow(targets_x_distiance,2)+Math.pow(targets_y_distance,2))
+    //     console.log("distance between the two target is: " + targets_distance);
 
-        // This is based on randomization,
-        // making sure the distance between the two target words
-        // is at least 2 times the inner radius
-        while (distance_satisfied === false){
-            if (targets_distance < inner_radius*2) {
-                document.getElementById('JQWC').innerHTML = "";
-                already_placed_targets = [];
-                // console.log(targetslist);
-                // console.log('dist_to_center: '+dist_to_center);
-                drawTargets(targetslist,outer_radius,inner_radius,fixed_betw_dist);
-            }
-            else{
-                distance_satisfied = true;
-            }
-        }
-    }
+    //     // This is based on randomization,
+    //     // making sure the distance between the two target words
+    //     // is at least 2 times the inner radius
+    //     while (distance_satisfied === false){
+    //         if (targets_distance < inner_radius*2) {
+    //             document.getElementById('JQWC').innerHTML = "";
+    //             already_placed_targets = [];
+    //             // console.log(targetslist);
+    //             // console.log('dist_to_center: '+dist_to_center);
+    //             drawTargets(targetslist,outer_radius,inner_radius,fixed_betw_dist);
+    //         }
+    //         else{
+    //             distance_satisfied = true;
+    //         }
+    //     }
+    // }
 }
 
-function drawDistractors(){
+function drawDistractorsCallback(){
     $("#JQWC").jQCloud(words,already_placed_targets,"distractor",
         {   delayedMode: false,
-            afterCloudRender: () => {
+            // afterCloudRender: () => {
 
-                // Creating a red dot at the center of the WordCloud
-                var dot_span = $('<span>').addClass("dot");
-                $("#JQWC").append(dot_span);
-                $(".dot")[0].style.position = "relative";
-                $(".dot")[0].style.top = "50%";
-                // $(".dot")[0].style.left = "50%";
-                $(".dot")[0].style.height = "5px";
-                $(".dot")[0].style.width = "5px";
-                $(".dot")[0].style.backgroundColor = "red";
-                $(".dot")[0].style.borderRadius = "35%";
-                $(".dot")[0].style.display = "inline-block";
-            }
+            //     // Creating a red dot at the center of the WordCloud
+            //     var dot_span = $('<span>').addClass("dot");
+            //     $("#JQWC").append(dot_span);
+            //     $(".dot")[0].style.position = "relative";
+            //     $(".dot")[0].style.top = "50%";
+            //     // $(".dot")[0].style.left = "50%";
+            //     $(".dot")[0].style.height = "5px";
+            //     $(".dot")[0].style.width = "5px";
+            //     $(".dot")[0].style.backgroundColor = "red";
+            //     $(".dot")[0].style.borderRadius = "35%";
+            //     $(".dot")[0].style.display = "inline-block";
+            // }
         }
     );
 }
 
 function nextTask(){
-    document.getElementById('JQWC').innerHTML = "";
+    document.getElementById('JQWC').innerHTML = '<span class="dot" style="position: absolute;top: 500px;left: 500px;height: 5px;width: 5px;background-color: red;border-radius: 35%;display: inline-block;"></span>';
     tasklist.shift();
     if (tasklist.length == 0){
         console.log('All tasks completed')
