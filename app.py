@@ -110,7 +110,7 @@ def receive_id():
     data = flask.request.form
     turker_id = data["turker_id"]
     # print('receive turker id: ' + turker_id)
-    with open('client_id.csv','a', newline='') as csvfile:
+    with open('pilot_client_id.csv','a', newline='') as csvfile:
         writer = csv.writer(csvfile, delimiter = ',', quotechar='"')
         hashcode = hash(turker_id+'Carleton')
         writer.writerow([turker_id,hashcode])
@@ -236,33 +236,43 @@ def get_english_stimuli(numberOfWords, target1, target2):
 @app.route('/randomStim/post_data', methods = ['POST'])
 def post_data():
     data = flask.request.form
-    turker_id = data["turker_id"]
-    clickedword = data["clickedword"]
-    word_left = data["clicked position[left]"]
-    word_top = data["clicked position[top]"]
-    target_distance = data['betw targets distance']
-    correct_word = data['correct word']
-    correct_word_left = data["correct word position[left]"]
-    correct_word_top = data["correct word position[top]"]
-    wrong_word = data['wrong word']
-    wrong_word_left = data["wrong word position[left]"]
-    wrong_word_top = data["wrong word position[top]"]
-    cloud_width = data["container size[width]"]
-    cloud_height = data["container size[height]"]
-    num_of_Stim = data["number of Stim"]
-    span_tags = data["cloud"]
 
-    # print('clicked word: ' + clickedword, word_left, word_top)
-    # print('cloud information: ' + span_tags)
-    with open('client_data.csv','a', newline='') as csvfile:
+    turker_id = data["turker_id"]
+
+    cloud_width = data["cloud_width"]
+    cloud_height = data["cloud_height"]
+    cloud_center_x = data["cloud_center_x"]
+    cloud_center_y = data["cloud_center_y"]
+
+    clicked_word = data["clicked_word"]
+    correct_word = data["correct_word"]
+    wrong_word = data["wrong_word"]
+    distance_between_targets = data["distance_between_targets"]
+
+    correct_word_x = data["correct_word_x"]
+    correct_word_y = data["correct_word_y"]
+    correct_word_width = data["correct_word_width"]
+    correct_word_height = data["correct_word_height"]
+    correct_word_center_distance = data["correct_word_center_distance"]
+
+    wrong_word_x = data["wrong_word_x"]
+    wrong_word_y = data["wrong_word_y"]
+    wrong_word_width = data["wrong_word_width"]
+    wrong_word_height = data["wrong_word_height"]
+    wrong_word_center_distance = data["wrong_word_center_distance"]
+
+    number_of_words = data["number_of_words"]
+    span_content = data["span_content"]
+
+    with open('pilot_client_data.csv','a', newline='') as csvfile:
         writer = csv.writer(csvfile, delimiter = ',', quotechar='"')
-        # writer.writerow(['turker_id','clickedword','word_left','word_top','target_distance','correct_word','correct_word_left','correct_word_top','wrong_word','wrong_word_left','wrong_word_top','cloud_width','cloud_height','num_of_Stim','span_tags'])
-        writer.writerow([turker_id,clickedword, word_left, word_top, target_distance, correct_word, correct_word_left, correct_word_top, wrong_word,wrong_word_left,wrong_word_top,cloud_width, cloud_height, num_of_Stim, span_tags])
-    return json.dumps("Success")
+        writer.writerow(['turker_id','cloud_width','cloud_height','cloud_center_x','cloud_center_y','clicked_word','correct_word','wrong_word','distance_between_targets','correct_word_x','correct_word_y','correct_word_width','correct_word_height','correct_word_center_distance','wrong_word_x','wrong_word_y','wrong_word_width','wrong_word_height','wrong_word_center_distance','number_of_words','span_content'])
+        writer.writerow([turker_id,cloud_width,cloud_height,cloud_center_x,cloud_center_y,clicked_word,correct_word,wrong_word,distance_between_targets,correct_word_x,correct_word_y,correct_word_width,correct_word_height,correct_word_center_distance,wrong_word_x,wrong_word_y,wrong_word_width,wrong_word_height,wrong_word_center_distance,number_of_words,span_content])
+    return json.dumps("data")
 
 
 def check_hashcode(hashcode):
-    with open('client_id.csv','r',newline='') as csvfile:
+    with open('pilot_client_id.csv','r',newline='') as csvfile:
         reader = csv.reader(csvfile, delimiter = ',', quotechar='"')
         for row in reader:
             if str(hashcode) == row[1]:
