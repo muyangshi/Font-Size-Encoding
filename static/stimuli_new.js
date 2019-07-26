@@ -278,7 +278,7 @@ function postData(clickedWord){
     var distance_between_targets = Math.sqrt(Math.pow(targets_x_distance,2) + Math.pow(targets_y_distance,2));
 
     var correct_word = target_0.css('font-size') > target_1.css('font-size') ? target_0:target_1;
-    var wrong_word = target_0.css('font-size') < target_1.css('font-size') ? target_1:target_0;
+    var wrong_word = target_0.css('font-size') < target_1.css('font-size') ? target_0:target_1;
 
     var correct_word_width = correct_word.width();
     var correct_word_height = correct_word.height();
