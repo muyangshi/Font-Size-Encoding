@@ -145,8 +145,8 @@ function drawTargets(rule,target_array,outer_radius,inner_radius,distance_betwee
             // Calculate the distance between the two target words' center
             var target_0 = $(".target0");
             var target_1 = $(".target1");
-            var targets_x_distance = Math.abs((target_0.width() / 2.0 + parseInt(target_0[0].style.left)) - (target_1.width() / 2.0 + parseInt(target_1[0].style.left)));
-            var targets_y_distance = Math.abs((target_0.height() / 2.0 + parseInt(target_0[0].style.top)) - (target_1.height() / 2.0 + parseInt(target_1[0].style.top)));
+            var targets_x_distance = Math.abs((target_0.width() / 2.0 + parseFloat(target_0[0].style.left)) - (target_1.width() / 2.0 + parseFloat(target_1[0].style.left)));
+            var targets_y_distance = Math.abs((target_0.height() / 2.0 + parseFloat(target_0[0].style.top)) - (target_1.height() / 2.0 + parseFloat(target_1[0].style.top)));
             var targets_distance = Math.sqrt(Math.pow(targets_x_distance,2) + Math.pow(targets_y_distance,2));
             console.log("distance between the two target is: " + targets_distance);
 
@@ -234,8 +234,8 @@ function drawTargets(rule,target_array,outer_radius,inner_radius,distance_betwee
 
             var target_0 = $(".target0");
             var target_1 = $(".target1");
-            var targets_x_distance = Math.abs((target_0.width() / 2.0 + parseInt(target_0[0].style.left)) - (target_1.width() / 2.0 + parseInt(target_1[0].style.left)));
-            var targets_y_distance = Math.abs((target_0.height() / 2.0 + parseInt(target_0[0].style.top)) - (target_1.height() / 2.0 + parseInt(target_1[0].style.top)));
+            var targets_x_distance = Math.abs((target_0.width() / 2.0 + parseFloat(target_0[0].style.left)) - (target_1.width() / 2.0 + parseFloat(target_1[0].style.left)));
+            var targets_y_distance = Math.abs((target_0.height() / 2.0 + parseFloat(target_0[0].style.top)) - (target_1.height() / 2.0 + parseFloat(target_1[0].style.top)));
             var targets_distance = Math.sqrt(Math.pow(targets_x_distance,2) + Math.pow(targets_y_distance,2));
             console.log("distance between the two target is: " + targets_distance);
             break;
@@ -275,8 +275,8 @@ function postData(clickedWord){
 
     var target_0 = $(".target0");
     var target_1 = $(".target1");
-    var targets_x_distance = Math.abs((target_0.width() / 2.0 + parseInt(target_0[0].style.left)) - (target_1.width() / 2.0 + parseInt(target_1[0].style.left)));
-    var targets_y_distance = Math.abs((target_0.height() / 2.0 + parseInt(target_0[0].style.top)) - (target_1.height() / 2.0 + parseInt(target_1[0].style.top)));
+    var targets_x_distance = Math.abs((target_0.width() / 2.0 + parseFloat(target_0[0].style.left)) - (target_1.width() / 2.0 + parseFloat(target_1[0].style.left)));
+    var targets_y_distance = Math.abs((target_0.height() / 2.0 + parseFloat(target_0[0].style.top)) - (target_1.height() / 2.0 + parseFloat(target_1[0].style.top)));
     var distance_between_targets = Math.sqrt(Math.pow(targets_x_distance,2) + Math.pow(targets_y_distance,2));
 
     var correct_word = target_0.css('font-size') > target_1.css('font-size') ? target_0:target_1;
@@ -294,10 +294,10 @@ function postData(clickedWord){
     // take the center of the cloud to be the origin
     // e.g. if the container is of size (1000,1000), then the origin is (500,500)
     // all the subsequent x and y coordinates are with respect to that origin
-    var correct_word_x = parseInt(correct_word.css("left")) + correct_word_width/2.0 - cloud_center_x;
-    var correct_word_y = cloud_center_y - parseInt(correct_word.css("top")) + correct_word_height/2.0;
-    var wrong_word_x = parseInt(wrong_word.css("left")) + wrong_word_width/2.0 - cloud_center_x;
-    var wrong_word_y = cloud_center_y - parseInt(wrong_word.css("top")) + wrong_word_height/2.0;
+    var correct_word_x = parseFloat(correct_word.css("left")) + correct_word_width/2.0 - cloud_center_x;
+    var correct_word_y = cloud_center_y - parseFloat(correct_word.css("top")) + correct_word_height/2.0;
+    var wrong_word_x = parseFloat(wrong_word.css("left")) + wrong_word_width/2.0 - cloud_center_x;
+    var wrong_word_y = cloud_center_y - parseFloat(wrong_word.css("top")) + wrong_word_height/2.0;
 
     var correct_word_center_distance = Math.sqrt(Math.pow(correct_word_x,2) + Math.pow(correct_word_y,2));
     var wrong_word_center_distance = Math.sqrt(Math.pow(wrong_word_x,2) + Math.pow(wrong_word_y,2));
