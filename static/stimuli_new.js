@@ -283,7 +283,7 @@ function postData(clickedWord){
     var wrong_word = target_0.css('font-size') < target_1.css('font-size') ? target_0:target_1;
 
     var correct_word_fontsize = parseInt(correct_word.css("font-size"));
-    var wrong_word_fontsize = parseInt(wrong_wordcss("font-size"));
+    var wrong_word_fontsize = parseInt(wrong_word.css("font-size"));
 
     var correct_word_width = correct_word.width();
     var correct_word_height = correct_word.height();
