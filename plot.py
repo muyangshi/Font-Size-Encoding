@@ -200,7 +200,7 @@ def distance_between_targets_accuracy():
     correct_dist = [data_pair[0] for data_pair in result[0]]
     wrong_dist = [data_pair[0] for data_pair in result[1]]
 
-    num_bins = 50
+    num_bins = 20
 
     # Create plot 
     figure = pyplot.figure()
@@ -237,7 +237,7 @@ def distance_to_center_accuracy():
     correct_dist = [data_pair[0] for data_pair in result[0]]
     wrong_dist = [data_pair[0] for data_pair in result[1]]
 
-    num_bins = 50
+    num_bins = 20
 
     # Create plot 
     figure = pyplot.figure()
