@@ -98,6 +98,7 @@ function drawTargetCloud(rule,target_array,outer_radius,inner_radius,distance_be
 }
 
 function drawTargets(rule,target_array,outer_radius,inner_radius,distance_between){
+    // $("#JQWC")[0].style.visibility = "hidden";
     var cloud_center_x = $("#JQWC").width() / 2.0;
     var cloud_center_y = $("#JQWC").height() / 2.0;
 
@@ -114,6 +115,7 @@ function drawTargets(rule,target_array,outer_radius,inner_radius,distance_betwee
                 var font_size = target["weight"];
                 var word_span = $('<span>').attr(target.html).addClass("target"+index);
                 word_span.append(target.text);
+                word_span[0].style.visibility = "hidden";
                 $("#JQWC").append(word_span);
                 var width = word_span.width();
                 var height = word_span.height();
@@ -174,6 +176,7 @@ function drawTargets(rule,target_array,outer_radius,inner_radius,distance_betwee
                 var word_span = $('<span>').attr(target0.html).addClass("target0");
                 word_span.append(target0.text);
                 $("#JQWC").append(word_span);
+                word_span[0].style.visibility = "hidden";
                 word_span[0].style.fontSize = font_size + "px";
                 word_span[0].style.color = "black";
                 var width = word_span.width();
@@ -204,6 +207,7 @@ function drawTargets(rule,target_array,outer_radius,inner_radius,distance_betwee
                 var word_span = $('<span>').attr(target1.html).addClass("target1");
                 word_span.append(target1.text);
                 $("#JQWC").append(word_span);
+                word_span[0].style.visibility = "hidden";
                 word_span[0].style.fontSize = font_size + "px";
                 word_span[0].style.color = "black";
                 var width = word_span.width();
@@ -241,6 +245,7 @@ function drawTargets(rule,target_array,outer_radius,inner_radius,distance_betwee
 function drawDistractorsCallback(){
     $("#JQWC").jQCloud(words,already_placed_targets,"distractor",
         {   delayedMode: false,
+            afterCloudRender: () => {$.each($(".target"),(index,value)=>{value.style.visibility = "visible";});}
         }
     );
 }
