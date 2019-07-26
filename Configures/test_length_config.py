@@ -4,8 +4,8 @@ import os
 # word = 'pseudoword'
 word = 'english'
 numberOfWords = 200
-minSize = 10
-maxSize = 23
+minSize = 15
+maxSize = 25
 minLen = 3
 maxLen = 10
 
