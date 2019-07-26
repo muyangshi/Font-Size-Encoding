@@ -29,13 +29,11 @@ def position_correct_data():
         reader = csv.reader(csvdata,delimiter = ',')
         heading = next(reader)
         for row in reader:
-            # x_pos = float(re.search(r'\d+',row[2]).group())
-            # y_pos = float(re.search(r'\d+',row[3]).group())
-            if row[5] != row[6]:
-                x_pos = float(row[14])
-                y_pos = float(row[15])
+            if row[5] != row[6]: # The click doesn't match the correct_word, so it's a wrong choice
+                x_pos = float(row[15])
+                y_pos = float(row[16])
                 wrong_ans.append((x_pos,y_pos,False))
-            else:
+            else: # The click matches the correct_word, so it's a correct choice
                 x_pos = float(row[9])
                 y_pos = float(row[10])
                 correct_ans.append((x_pos,y_pos,True))
@@ -49,10 +47,10 @@ def dist_from_center():
         reader = csv.reader(csvdata,delimiter = ',')
         heading = next(reader)
         for row in reader:
-            if row[5] != row[6]:
-                wrong_ans.append((float(row[18]),False))
-            else:
-                correct_ans.append((float(row[13]),True))
+            if row[5] != row[6]: # The click doesn't match the correct_word, so it's a wrong choice
+                wrong_ans.append((float(row[20]),False))
+            else: # The click matches the correct_word, so it's a correct choice
+                correct_ans.append((float(row[14]),True))
     return correct_ans,wrong_ans
 
 # # Load target distance between, middle to center distance, and correctness
@@ -202,14 +200,14 @@ def distance_between_targets_accuracy():
     correct_dist = [data_pair[0] for data_pair in result[0]]
     wrong_dist = [data_pair[0] for data_pair in result[1]]
 
-    num_bins = 100
+    num_bins = 50
 
     # Create plot 
     figure = pyplot.figure()
     acc_histogram = figure.add_subplot(2,1,1)
 
-    correct_plot = acc_histogram.hist(correct_dist,num_bins,facecolor='blue',range=(0,1000),alpha=0.5,label = 'correct')
-    wrong_plot = acc_histogram.hist(wrong_dist,num_bins,facecolor='red',range=(0,1000),alpha=0.5,label = 'wrong')
+    correct_plot = acc_histogram.hist(correct_dist,num_bins,facecolor='blue',range=(0,500),alpha=0.5,label = 'correct')
+    wrong_plot = acc_histogram.hist(wrong_dist,num_bins,facecolor='red',range=(0,500),alpha=0.5,label = 'wrong')
     
     pyplot.legend(loc='upper right')
     pyplot.title('Histogram of number correct and wrong')
@@ -239,15 +237,15 @@ def distance_to_center_accuracy():
     correct_dist = [data_pair[0] for data_pair in result[0]]
     wrong_dist = [data_pair[0] for data_pair in result[1]]
 
-    num_bins = 100
+    num_bins = 50
 
     # Create plot 
     figure = pyplot.figure()
     # The first plot is a histogram that overlay the correct and the wrong together
     acc_histogram = figure.add_subplot(2,1,1)
 
-    correct_plot = acc_histogram.hist(correct_dist,num_bins,facecolor='blue',range=(0,1000),alpha=0.5,label = 'correct')
-    wrong_plot = acc_histogram.hist(wrong_dist,num_bins,facecolor='red',range=(0,1000),alpha=0.5,label = 'wrong')
+    correct_plot = acc_histogram.hist(correct_dist,num_bins,facecolor='blue',range=(0,400),alpha=0.5,label = 'correct')
+    wrong_plot = acc_histogram.hist(wrong_dist,num_bins,facecolor='red',range=(0,400),alpha=0.5,label = 'wrong')
     
     pyplot.legend(loc='upper right')
     pyplot.title('Histogram of number correct and wrong')
