@@ -180,7 +180,9 @@ function drawTargets(rule,target_array,outer_radius,inner_radius,distance_betwee
                 var top;
                 var radius = distance_between / 2.0
                 var x = Math.random()*(radius*2)-radius;
-                var y = Math.sqrt(Math.pow(radius,2) - Math.pow(x,2));
+                var y = Math.sqrt(Math.pow(radius,2) - Math.pow(x,2)); // and here y will always be positive
+                var coefficient = [-1,1];
+                    y = y*Math.coefficient[Math.floor(Math.random()*coefficient.length)];
                 
                 // console.log("x: "+x+" y: " + y);
                 
