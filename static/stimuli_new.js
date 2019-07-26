@@ -174,6 +174,8 @@ function drawTargets(rule,target_array,outer_radius,inner_radius,distance_betwee
                 var word_span = $('<span>').attr(target0.html).addClass("target0");
                 word_span.append(target0.text);
                 $("#JQWC").append(word_span);
+                word_span[0].style.fontSize = font_size + "px";
+                word_span[0].style.color = "black";
                 var width = word_span.width();
                 var height = word_span.height();
                 var left;
@@ -183,19 +185,14 @@ function drawTargets(rule,target_array,outer_radius,inner_radius,distance_betwee
                 var y = Math.sqrt(Math.pow(radius,2) - Math.pow(x,2)); // and here y will always be positive
                 var coefficient = [-1,1];
                     y = y*coefficient[Math.floor(Math.random()*coefficient.length)];
-                
-                // console.log("x: "+x+" y: " + y);
-                
+                                
                 left = cloud_center_x - width / 2.0 - x;
                 top = cloud_center_y - height / 2.0 - y;
-                distance_to_center = Math.sqrt(Math.pow((left + width/2.0 - cloud_center_x),2) + Math.pow((top + height/2.0 - cloud_center_y),2));
-                console.log("target0: " + distance_to_center);
 
                 word_span[0].style.position = "absolute";
                 word_span[0].style.left = left + "px";
                 word_span[0].style.top = top + "px";
-                word_span[0].style.fontSize = font_size + "px";
-                word_span[0].style.color = "black";
+               
 
                 $(word_span).bind("click", function(){postData($(this));});
                 $(word_span).bind("mouseover", function() {this.style.cursor = 'pointer';});
@@ -207,25 +204,22 @@ function drawTargets(rule,target_array,outer_radius,inner_radius,distance_betwee
                 var word_span = $('<span>').attr(target1.html).addClass("target1");
                 word_span.append(target1.text);
                 $("#JQWC").append(word_span);
+                word_span[0].style.fontSize = font_size + "px";
+                word_span[0].style.color = "black";
                 var width = word_span.width();
                 var height = word_span.height();
                 var left;
                 var top;
 
-                // console.log("x: "+x+" y: " + y);
-
                 // target1 is place along the diameter of the cirle
                 // the circle that target0 relies on
                 left = cloud_center_x - width / 2.0 + x; // x is the x distance randomized for target0
                 top = cloud_center_y - height / 2.0 + y; // y is the y distance randomized for target0
-                distance_to_center = Math.sqrt(Math.pow((left + width/2.0 - cloud_center_x),2) + Math.pow((top + height/2.0 - cloud_center_y),2));
-                console.log("target1: " + distance_to_center);
 
                 word_span[0].style.position = "absolute";
                 word_span[0].style.left = left + "px";
                 word_span[0].style.top = top + "px";
-                word_span[0].style.fontSize = font_size + "px";
-                word_span[0].style.color = "black";
+
 
                 $(word_span).bind("click", function(){postData($(this));});
                 $(word_span).bind("mouseover", function() {this.style.cursor = 'pointer';});
@@ -295,9 +289,9 @@ function postData(clickedWord){
     // e.g. if the container is of size (1000,1000), then the origin is (500,500)
     // all the subsequent x and y coordinates are with respect to that origin
     var correct_word_x = parseFloat(correct_word.css("left")) + correct_word_width/2.0 - cloud_center_x;
-    var correct_word_y = cloud_center_y - parseFloat(correct_word.css("top")) + correct_word_height/2.0;
+    var correct_word_y = cloud_center_y - parseFloat(correct_word.css("top")) - correct_word_height/2.0;
     var wrong_word_x = parseFloat(wrong_word.css("left")) + wrong_word_width/2.0 - cloud_center_x;
-    var wrong_word_y = cloud_center_y - parseFloat(wrong_word.css("top")) + wrong_word_height/2.0;
+    var wrong_word_y = cloud_center_y - parseFloat(wrong_word.css("top")) - wrong_word_height/2.0;
 
     var correct_word_center_distance = Math.sqrt(Math.pow(correct_word_x,2) + Math.pow(correct_word_y,2));
     var wrong_word_center_distance = Math.sqrt(Math.pow(wrong_word_x,2) + Math.pow(wrong_word_y,2));
