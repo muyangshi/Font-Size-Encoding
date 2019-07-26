@@ -237,40 +237,48 @@ def get_english_stimuli(numberOfWords, target1, target2):
 def post_data():
     data = flask.request.form
 
-    turker_id = data["turker_id"]
+    turker_id = data["turker_id"] #0
 
-    cloud_width = data["cloud_width"]
-    cloud_height = data["cloud_height"]
-    cloud_center_x = data["cloud_center_x"]
-    cloud_center_y = data["cloud_center_y"]
+    cloud_width = data["cloud_width"] #1
+    cloud_height = data["cloud_height"] #2
+    cloud_center_x = data["cloud_center_x"] #3
+    cloud_center_y = data["cloud_center_y"] #4
 
-    clicked_word = data["clicked_word"]
-    correct_word = data["correct_word"]
-    wrong_word = data["wrong_word"]
-    distance_between_targets = data["distance_between_targets"]
+    clicked_word = data["clicked_word"] #5
+    correct_word = data["correct_word"] #6
+    wrong_word = data["wrong_word"] #7
+    distance_between_targets = data["distance_between_targets"] #8
 
-    correct_word_x = data["correct_word_x"]
-    correct_word_y = data["correct_word_y"]
-    correct_word_width = data["correct_word_width"]
-    correct_word_height = data["correct_word_height"]
-    correct_word_center_distance = data["correct_word_center_distance"]
+    correct_word_x = data["correct_word_x"] #9
+    correct_word_y = data["correct_word_y"] #10
+    correct_word_fontsize = data["correct_word_fontsize"] #11
+    correct_word_width = data["correct_word_width"] #12
+    correct_word_height = data["correct_word_height"] #13
+    correct_word_center_distance = data["correct_word_center_distance"] #14
 
-    wrong_word_x = data["wrong_word_x"]
-    wrong_word_y = data["wrong_word_y"]
-    wrong_word_width = data["wrong_word_width"]
-    wrong_word_height = data["wrong_word_height"]
-    wrong_word_center_distance = data["wrong_word_center_distance"]
+    wrong_word_x = data["wrong_word_x"] #15
+    wrong_word_y = data["wrong_word_y"] #16
+    wrong_word_fontsize = data["wrong_word_fontsize"] #17
+    wrong_word_width = data["wrong_word_width"] #18
+    wrong_word_height = data["wrong_word_height"] #19
+    wrong_word_center_distance = data["wrong_word_center_distance"] #20
 
-    number_of_words = data["number_of_words"]
-    span_content = data["span_content"]
+    number_of_words = data["number_of_words"] #21
+    span_content = data["span_content"] #22
 
     with open('pilot_client_data.csv','a', newline='') as csvfile:
         writer = csv.writer(csvfile, delimiter = ',', quotechar='"')
-        # writer.writerow(['turker_id','cloud_width','cloud_height','cloud_center_x','cloud_center_y','clicked_word','correct_word','wrong_word','distance_between_targets','correct_word_x','correct_word_y','correct_word_width','correct_word_height','correct_word_center_distance','wrong_word_x','wrong_word_y','wrong_word_width','wrong_word_height','wrong_word_center_distance','number_of_words','span_content'])
-        writer.writerow([turker_id,cloud_width,cloud_height,cloud_center_x,cloud_center_y,
+        # writer.writerow(['turker_id',
+        # 'cloud_width','cloud_height','cloud_center_x','cloud_center_y',
+        # 'clicked_word','correct_word','wrong_word','distance_between_targets',
+        # 'correct_word_x','correct_word_y','correct_word_fontsize','correct_word_width','correct_word_height','correct_word_center_distance',
+        # 'wrong_word_x','wrong_word_y','wrong_word_fontsize','wrong_word_width','wrong_word_height','wrong_word_center_distance',
+        # 'number_of_words','span_content'])
+        writer.writerow([turker_id,
+        cloud_width,cloud_height,cloud_center_x,cloud_center_y,
         clicked_word,correct_word,wrong_word,distance_between_targets,
-        correct_word_x,correct_word_y,correct_word_width,correct_word_height,correct_word_center_distance,
-        wrong_word_x,wrong_word_y,wrong_word_width,wrong_word_height,wrong_word_center_distance,
+        correct_word_x,correct_word_y,correct_word_fontsize,correct_word_width,correct_word_height,correct_word_center_distance,
+        wrong_word_x,wrong_word_y,wrong_word_fontsize,wrong_word_width,wrong_word_height,wrong_word_center_distance,
         number_of_words,span_content])
     return json.dumps("data")
 

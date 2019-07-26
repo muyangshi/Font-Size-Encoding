@@ -282,6 +282,9 @@ function postData(clickedWord){
     var correct_word = target_0.css('font-size') > target_1.css('font-size') ? target_0:target_1;
     var wrong_word = target_0.css('font-size') < target_1.css('font-size') ? target_0:target_1;
 
+    var correct_word_fontsize = parseInt(correct_word.css("font-size"));
+    var wrong_word_fontsize = parseInt(wrong_wordcss("font-size"));
+
     var correct_word_width = correct_word.width();
     var correct_word_height = correct_word.height();
     var wrong_word_width = wrong_word.width();
@@ -292,9 +295,9 @@ function postData(clickedWord){
     // e.g. if the container is of size (1000,1000), then the origin is (500,500)
     // all the subsequent x and y coordinates are with respect to that origin
     var correct_word_x = parseInt(correct_word.css("left")) + correct_word_width/2.0 - cloud_center_x;
-    var correct_word_y = parseInt(correct_word.css("top")) + correct_word_height/2.0 - cloud_center_y;
-    var wrong_word_x = parseInt(wrong_word.css("left")) + wrong_word_width/2.0 - cloud_center_x;;
-    var wrong_word_y = parseInt(wrong_word.css("top")) + wrong_word_height/2.0 - cloud_center_y;;
+    var correct_word_y = cloud_center_y - parseInt(correct_word.css("top")) + correct_word_height/2.0;
+    var wrong_word_x = parseInt(wrong_word.css("left")) + wrong_word_width/2.0 - cloud_center_x;
+    var wrong_word_y = cloud_center_y - parseInt(wrong_word.css("top")) + wrong_word_height/2.0;
 
     var correct_word_center_distance = Math.sqrt(Math.pow(correct_word_x,2) + Math.pow(correct_word_y,2));
     var wrong_word_center_distance = Math.sqrt(Math.pow(wrong_word_x,2) + Math.pow(wrong_word_y,2));
@@ -314,12 +317,14 @@ function postData(clickedWord){
 
         "correct_word_x": correct_word_x,
         "correct_word_y": correct_word_y,
+        "correct_word_fontsize": correct_word_fontsize,
         "correct_word_width": correct_word_width,
         "correct_word_height": correct_word_height,
         "correct_word_center_distance": correct_word_center_distance,
 
         "wrong_word_x": wrong_word_x,
         "wrong_word_y": wrong_word_y,
+        "wrong_word_fontsize": wrong_word_fontsize,
         "wrong_word_width": wrong_word_width,
         "wrong_word_height": wrong_word_height,
         "wrong_word_center_distance": wrong_word_center_distance,
