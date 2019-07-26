@@ -15,7 +15,7 @@ receive_data = """<!DOCTYPE html>
 
 	<body>
         <div id="WordCloudContainer" style="text-align: center;">
-            <div id="JQWC" style="width: 650px; height: 450px; display: inline-block;" class="jqcloud"> 
+            <div id="JQWC" style="width: 1000px; height: 1000px; display: inline-block;" class="jqcloud"> 
             </div>
         </div>        
 
@@ -32,7 +32,7 @@ receive_data = """<!DOCTYPE html>
 def find_by_id(id):
     spanContents = ''
     id = id-1
-    with open('client_data.csv',newline='') as csvfile:
+    with open('pilot_client_data.csv',newline='') as csvfile:
         reader = csv.reader(csvfile,delimiter = ',', quotechar='"')
         for i in range(id):
             next(reader)
