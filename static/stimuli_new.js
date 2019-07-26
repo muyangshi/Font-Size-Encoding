@@ -12,9 +12,9 @@ function initialize() {
 }
 console.log("device pixel ratio is: " + window.devicePixelRatio);
 
-while (window.devicePixelRatio != 1) {
-    alert('Please adjust zoom to 100%. ' + 'Current: ',window.devicePixelRatio);
-}
+// while (window.devicePixelRatio != 1) {
+//     alert('Please adjust zoom to 100%. ' + 'Current: ' + window.devicePixelRatio);
+// }
 
 var words;
 var already_placed_targets;
