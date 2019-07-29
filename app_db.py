@@ -162,7 +162,7 @@ def receive_id():
     hashcode = hash(turker_id+'Carleton')
 
     connection = get_connection()
-    cursor = connection.curor()
+    cursor = connection.cursor()
     cursor.execute("INSERT INTO turker (turker_id,hashcode) VALUES (%s, %s)",
         (turker_id,hashcode))
 
