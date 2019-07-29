@@ -240,6 +240,9 @@ def distance_between_targets_accuracy():
     # print(x_coordinate)
     percent_bar = figure.add_subplot(2,1,2)
     percent_bar.bar(x_coordinate,percentage,width=8)
+    for a,b in zip(x_coordinate,percentage):
+        if b != 0:
+            pyplot.text(a,b,str(b)[:5])
     pyplot.ylabel('Percentage Correct')
     pyplot.xlabel('Distance between the two target words (px)')
 
@@ -277,6 +280,9 @@ def distance_to_center_accuracy():
 
     percent_bar = figure.add_subplot(2,1,2)
     percent_bar.bar(x_coordinate,percentage,width=6,alpha = 0.8)
+    for a,b in zip(x_coordinate,percentage):
+        if b != 0:
+            pyplot.text(a,b,str(b)[:5])
     pyplot.ylabel('Percentage Correct')
     pyplot.xlabel('Distance of the click from center (px)')
 
