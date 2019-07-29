@@ -28,7 +28,7 @@ def get_connection():
 		connection = psycopg2.connect(host='localhost',
                                       database='fontsize',
 									  user='fontsize',
-									  password='wordclousbad?')
+									  password='wordcloudsbad?')
 	except Exception as e:
 		print(e, file=sys.stderr)
 	return connection
