@@ -169,10 +169,10 @@ def receive_id():
     cursor.close()
     connection.close()
 
-    with open('pilot_client_id.csv','a', newline='') as csvfile:
-        writer = csv.writer(csvfile, delimiter = ',', quotechar='"')
-        # hashcode = hash(turker_id+'Carleton')
-        writer.writerow([turker_id,hashcode])
+    # with open('pilot_client_id.csv','a', newline='') as csvfile:
+    #     writer = csv.writer(csvfile, delimiter = ',', quotechar='"')
+    #     # hashcode = hash(turker_id+'Carleton')
+    #     writer.writerow([turker_id,hashcode])
     return json.dumps({'id':turker_id,'hashcode':hashcode})
 
 # Post stimuli data
@@ -220,6 +220,9 @@ def post_data():
     cursor.close()
     connection.close()
 
+    check_type = [turker_id,cloud_width,cloud_height,cloud_center_x,cloud_center_y,clicked_word,correct_word,wrong_word,distance_between_targets,correct_word_x,correct_word_y,correct_word_fontsize,correct_word_width,correct_word_height,correct_word_center_distance,wrong_word_x,wrong_word_y,wrong_word_fontsize,wrong_word_width,wrong_word_height,wrong_word_center_distance,number_of_words,span_content]
+    for element in check_type:
+        print(element,type(element))
     with open('pilot_client_data.csv','a', newline='') as csvfile:
         writer = csv.writer(csvfile, delimiter = ',', quotechar='"')
         # writer.writerow(['turker_id',
