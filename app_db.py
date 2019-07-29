@@ -165,6 +165,9 @@ def receive_id():
     cursor = connection.cursor()
     cursor.execute("INSERT INTO turker (turker_id,hashcode) VALUES (%s, %s)",
         (turker_id,hashcode))
+    connection.commit()
+    cursor.close()
+    connection.close()
 
     with open('pilot_client_id.csv','a', newline='') as csvfile:
         writer = csv.writer(csvfile, delimiter = ',', quotechar='"')
