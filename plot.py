@@ -15,15 +15,7 @@ def distance_correct_data():
         reader = csv.reader(csvdata,delimiter = ',')
         heading = next(reader)
         for row in reader:
-            value = float(row[8])
-            if (90 < value < 110):
-                value = 100
-            elif (190 < value < 210):
-                value = 200
-            elif (290 < value < 310):
-                value = 300
-            elif (390 < value < 410):
-                value = 400
+            value = _round_distance_between_targets(row)
             if row[5] != row[6]:
                 wrong_ans.append((value, False))
             else:
@@ -39,12 +31,12 @@ def position_correct_data():
         heading = next(reader)
         for row in reader:
             if row[5] != row[6]: # The click doesn't match the correct_word, so it's a wrong choice
-                x_pos = float(row[15])
-                y_pos = float(row[16])
+                x_pos = float(row[16])
+                y_pos = float(row[17])
                 wrong_ans.append((x_pos,y_pos,False))
             else: # The click matches the correct_word, so it's a correct choice
-                x_pos = float(row[9])
-                y_pos = float(row[10])
+                x_pos = float(row[10])
+                y_pos = float(row[11])
                 correct_ans.append((x_pos,y_pos,True))
     return correct_ans,wrong_ans
 
@@ -56,7 +48,7 @@ def dist_from_center():
         reader = csv.reader(csvdata,delimiter = ',')
         heading = next(reader)
         for row in reader:
-            value = float(row[20])
+            value = float(row[21])
             if (40 < value < 60):
                 value = 50
             elif (90 < value < 110):
@@ -70,6 +62,46 @@ def dist_from_center():
             else: # The click matches the correct_word, so it's a correct choice
                 correct_ans.append((value,True))
     return correct_ans,wrong_ans
+
+# Load the time taken to make a comparison,
+# and the distance between the two targets
+def load_time_and_distance_between_targets():
+    d100 = []
+    d200 = []
+    d300 = []
+    d400 = []
+    derror = []
+    with open('pilot_client_data.csv','r') as csvdata:
+        reader = csv.reader(csvdata,delimiter=',')
+        heading = next(reader)
+        for row in reader:
+            time = float(row[9])
+            distance_between_targets = _round_distance_between_targets(row)
+            if distance_between_targets == 100:
+                d100.append(time)
+            elif distance_between_targets == 200:
+                d200.append(time)
+            elif distance_between_targets == 300:
+                d300.append(time)
+            elif distance_between_targets == 400:
+                d400.append(time)
+            else:
+                derror.append(time)
+    return d100,d200,d300,d400,derror
+
+
+def _round_distance_between_targets(row):
+    value = float(row[8])
+    if (90 < value < 110):
+        value = 100
+    elif (190 < value < 210):
+        value = 200
+    elif (290 < value < 310):
+        value = 300
+    elif (390 < value < 410):
+        value = 400
+    return value
+
 
 # # Load target distance between, middle to center distance, and correctness
 # def dist_dist_accuracy():
@@ -285,5 +317,25 @@ def distance_to_center_accuracy():
             pyplot.text(a,b,str(b)[:5])
     pyplot.ylabel('Percentage Correct')
     pyplot.xlabel('Distance of the click from center (px)')
+
+    pyplot.show()
+
+##############################################################################
+def time_distance_between_targets():
+    result = load_time_and_distance_between_targets()
+    d100 = sum(result[0])/len(result[0])
+    d200 = sum(result[1])/len(result[1])
+    d300 = sum(result[2])/len(result[2])
+    d400 = sum(result[3])/len(result[3])
+    list_mean_time = [d100,d200,d300,d400]
+    index = [1,2,3,4]
+    label = ['100px','200px','300px','400px']
+    pyplot.bar(index,list_mean_time,width=0.5)
+    for a,b in zip(index,list_mean_time):
+        pyplot.text(a,b,str(b)[:6])
+    pyplot.xticks(index,label,fontsize=10)
+    pyplot.xlabel('Distance between target words (px)',fontsize = 12)
+    pyplot.ylabel('Time taken to make decision (s)', fontsize = 12)
+    pyplot.title('Time v.s. Distance between targets')
 
     pyplot.show()
