@@ -191,34 +191,32 @@ def post_data():
     correct_word = data["correct_word"] #6
     wrong_word = data["wrong_word"] #7
     distance_between_targets = data["distance_between_targets"] #8
+    time = data["time"] #9
 
-    correct_word_x = data["correct_word_x"] #9
-    correct_word_y = data["correct_word_y"] #10
-    correct_word_fontsize = data["correct_word_fontsize"] #11
-    correct_word_width = data["correct_word_width"] #12
-    correct_word_height = data["correct_word_height"] #13
-    correct_word_center_distance = data["correct_word_center_distance"] #14
+    correct_word_x = data["correct_word_x"] #10
+    correct_word_y = data["correct_word_y"] #11
+    correct_word_fontsize = data["correct_word_fontsize"] #12
+    correct_word_width = data["correct_word_width"] #13
+    correct_word_height = data["correct_word_height"] #14
+    correct_word_center_distance = data["correct_word_center_distance"] #15
 
-    wrong_word_x = data["wrong_word_x"] #15
-    wrong_word_y = data["wrong_word_y"] #16
-    wrong_word_fontsize = data["wrong_word_fontsize"] #17
-    wrong_word_width = data["wrong_word_width"] #18
-    wrong_word_height = data["wrong_word_height"] #19
-    wrong_word_center_distance = data["wrong_word_center_distance"] #20
+    wrong_word_x = data["wrong_word_x"] #16
+    wrong_word_y = data["wrong_word_y"] #17
+    wrong_word_fontsize = data["wrong_word_fontsize"] #18
+    wrong_word_width = data["wrong_word_width"] #19
+    wrong_word_height = data["wrong_word_height"] #20
+    wrong_word_center_distance = data["wrong_word_center_distance"] #21
 
-    number_of_words = data["number_of_words"] #21 
-    span_content = data["span_content"] #22
+    number_of_words = data["number_of_words"] #22
+    span_content = data["span_content"] #23
 
-    check_type = [turker_id,cloud_width,cloud_height,cloud_center_x,cloud_center_y,clicked_word,correct_word,wrong_word,distance_between_targets,correct_word_x,correct_word_y,correct_word_fontsize,correct_word_width,correct_word_height,correct_word_center_distance,wrong_word_x,wrong_word_y,wrong_word_fontsize,wrong_word_width,wrong_word_height,wrong_word_center_distance,number_of_words,span_content]
-    for element in check_type:
-        print(element,type(element))
     connection = get_connection()
     cursor = connection.cursor()
     cursor.execute("""
-            INSERT INTO pilot_data_on_circle (turker_id,cloud_width,cloud_height,cloud_center_x,cloud_center_y,clicked_word,correct_word,wrong_word,distance_between_targets,correct_word_x,correct_word_y,correct_word_fontsize,correct_word_width,correct_word_height,correct_word_center_distance,wrong_word_x,wrong_word_y,wrong_word_fontsize,wrong_word_width,wrong_word_height,wrong_word_center_distance,number_of_words,span_content)
-            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);
+            INSERT INTO pilot_data_on_circle (turker_id,cloud_width,cloud_height,cloud_center_x,cloud_center_y,clicked_word,correct_word,wrong_word,distance_between_targets,time,correct_word_x,correct_word_y,correct_word_fontsize,correct_word_width,correct_word_height,correct_word_center_distance,wrong_word_x,wrong_word_y,wrong_word_fontsize,wrong_word_width,wrong_word_height,wrong_word_center_distance,number_of_words,span_content)
+            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);
             """,
-            (turker_id,cloud_width,cloud_height,cloud_center_x,cloud_center_y,clicked_word,correct_word,wrong_word,distance_between_targets,correct_word_x,correct_word_y,correct_word_fontsize,correct_word_width,correct_word_height,correct_word_center_distance,wrong_word_x,wrong_word_y,wrong_word_fontsize,wrong_word_width,wrong_word_height,wrong_word_center_distance,number_of_words,span_content))
+            (turker_id,cloud_width,cloud_height,cloud_center_x,cloud_center_y,clicked_word,correct_word,wrong_word,distance_between_targets,time,correct_word_x,correct_word_y,correct_word_fontsize,correct_word_width,correct_word_height,correct_word_center_distance,wrong_word_x,wrong_word_y,wrong_word_fontsize,wrong_word_width,wrong_word_height,wrong_word_center_distance,number_of_words,span_content))
     connection.commit()
     cursor.close()
     connection.close()
@@ -232,7 +230,7 @@ def post_data():
         # 'correct_word_x','correct_word_y','correct_word_fontsize','correct_word_width','correct_word_height','correct_word_center_distance',
         # 'wrong_word_x','wrong_word_y','wrong_word_fontsize','wrong_word_width','wrong_word_height','wrong_word_center_distance',
         # 'number_of_words','span_content'])
-        writer.writerow([turker_id,cloud_width,cloud_height,cloud_center_x,cloud_center_y,clicked_word,correct_word,wrong_word,distance_between_targets,correct_word_x,correct_word_y,correct_word_fontsize,correct_word_width,correct_word_height,correct_word_center_distance,wrong_word_x,wrong_word_y,wrong_word_fontsize,wrong_word_width,wrong_word_height,wrong_word_center_distance,number_of_words,span_content])
+        writer.writerow([turker_id,cloud_width,cloud_height,cloud_center_x,cloud_center_y,clicked_word,correct_word,wrong_word,distance_between_targets,time,correct_word_x,correct_word_y,correct_word_fontsize,correct_word_width,correct_word_height,correct_word_center_distance,wrong_word_x,wrong_word_y,wrong_word_fontsize,wrong_word_width,wrong_word_height,wrong_word_center_distance,number_of_words,span_content])
     return json.dumps("data")
 ##########################################################################################################################################################################################################################
 
