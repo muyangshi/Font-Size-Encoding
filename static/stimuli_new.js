@@ -245,7 +245,10 @@ function drawTargets(rule,target_array,outer_radius,inner_radius,distance_betwee
 function drawDistractorsCallback(){
     $("#JQWC").jQCloud(words,already_placed_targets,"distractor",
         {   delayedMode: false,
-            afterCloudRender: () => {$.each($(".target"),(index,value)=>{value.style.visibility = "visible";});}
+            afterCloudRender: () => {
+                startTime = new Date();
+                $.each($(".target"),(index,value)=>{value.style.visibility = "visible";});
+            }
         }
     );
 }
@@ -263,6 +266,12 @@ function nextTask(){
 }
 
 function postData(clickedWord){
+    endTime = new Date();
+    var timeDiff = endTime - startTime; // in ms
+    timeDiff /= 1000; // strip the ms
+    // alert(typeof(timeDiff));
+    // alert('time taken: ' + timeDiff);
+    
     var number_of_words = document.getElementById("JQWC").childElementCount - 1; // minus the dot span
     var span_content = document.getElementById("JQWC").innerHTML; //the span content
     
@@ -313,6 +322,7 @@ function postData(clickedWord){
         "correct_word": correct_word[0].innerHTML,
         "wrong_word": wrong_word[0].innerHTML,
         "distance_between_targets": distance_between_targets,
+        "time": timeDiff,
 
         "correct_word_x": correct_word_x,
         "correct_word_y": correct_word_y,
