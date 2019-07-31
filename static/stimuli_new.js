@@ -1,7 +1,8 @@
 /*
  * WordCloud.js
  * Muyang Shi, 25 June 2019
- *
+ * Currently being used for the pilot study of comparing the fontsize
+ * of TWO target words
  * 
  */
 
@@ -103,6 +104,8 @@ function drawTargets(rule,target_array,outer_radius,inner_radius,distance_betwee
     var cloud_center_y = $("#JQWC").height() / 2.0;
 
     switch (rule){
+        case "multiple":
+            break;
         case "in_ring":///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // Currectly, this is accountable for two target words
         // The two target words will be placed inside a ring of inner_radius to outer_radius
