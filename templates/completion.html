@@ -8,16 +8,111 @@
 
 	<body>
         <h1 style="text-align: center;">Completion page</h1>
+
+        <div id="instruction" style="margin: auto; width: 60%; ">
+            <fieldset>
+            <legend>Instructions:</legend>
+            <p>
+                Thank you! You have completed the experiment. <br>
+                Would you fill out the inofrmation down below? They will be kept confidence. <br>
+                After you finish, please click the "Next" button. <br>
+                Then the webpage will prepare for you a completion code, which you can use on Amazon to redeem you reward.
+            </p>
+            </fieldset>
+        </div>
+        <br>
+        <br>
+        <div id="demographic" style="margin: auto; width: 60%; ">
+            <fieldset>
+                <legend>Demographics:</legend>
+                
+                <b>Age:</b><br>
+                <input type="text" name="age"><br>
+                
+                <br>
+                <b>Gender:</b><br>
+                <form id="gender_form">
+                    <input type="radio" name="gender" value="male" />Male
+                    <input type="radio" name="gender" value="female" />Female
+                    <input type="radio" name="gender" value="other" />Other
+                </form>
+                
+                <br>
+                <b>Difficulty:<br>
+                i) How difficult do you think it is to distinguish the larger word from the smaller word?<br></b>
+                Value: <span id="difficulty_value"></span> &nbsp; &nbsp; &nbsp;
+                <input type="range" min="1" max="10" value="5" class="slider" id="difficulty_range"><br>
+                (on a scale from 1 - 10) <br>
+
+                <br>
+                <b>ii) How well do you think you perform? (what percentage of tasks do you think you did correctlly?)<br></b>
+                Value: <span id="confidence_value"></span> &nbsp; &nbsp; &nbsp;
+                <input type="range" min="1" max="10" value="5" class="slider" id="confidence_range"><br>
+                (on a scale from 1 - 10) <br>
+
+                <br>
+                <b>Do you find your eyes fixated at the red dot at the center of page? 
+                Or do you find your sight moving around cloud words, between the two target words? <br></b>
+                <form id="eyetrace_form">
+                    <input type="radio" name="eyetrace" value="fixed"> I fixed my eyes at the center no matter the distance between the two target words<br>
+                    <input type="radio" name="eyetrace" value="distance"> I fixed my eyes at the center when the two target words are close together<br>
+                    <input type="radio" name="eyetrace" value="notfixed"> I did not fixed my eyes at the center no matter the distance between the two target words<br>
+                </form>
+            </fieldset>
+            <br>
+            <div style="text-align: center;">
+                <button id="nextButton" style="text-align: center;">Next</button>
+            </div>
+        </div>
         
-        <h2 style="text-align: center;">Completion Page {{ Hash_Code }}</h2>
-        <div style="text-align: center;">
-            <p>{{ Hash_Code }}
-            </p></div>
+        <div style="margin: auto; width: 60%; ">
+            <p id="hashcode" style="visibility: hidden;">Your completion code is: {{ Hash_Code }}</p>
+        </div>
         
         
         <!-- <script type="text/javascript" src="{{url_for('static',filename='description.js')}}"></script> -->
         <script>
-            var code = {{ Hash_Code }};
+            // var code = {{ Hash_Code }};
+            // var turker_id = {{ ID }};
+            // var post_demographic_url = '{{url_for("post_demographic_data")}}'
+            var difficulty_slider = document.getElementById("difficulty_range");
+            var difficulty_value = document.getElementById("difficulty_value");
+            difficulty_value.innerHTML = difficulty_slider.value;
+            difficulty_slider.oninput = ()=>{difficulty_value.innerHTML = difficulty_slider.value;};
+
+            var confidence_slider = document.getElementById("confidence_range");
+            var confidence_value = document.getElementById("confidence_value");
+            confidence_value.innerHTML = confidence_slider.value;
+            confidence_slider.oninput = ()=>{confidence_value.innerHTML = confidence_slider.value;};
+
+            nextButton = document.getElementById("nextButton");
+            nextButton.onclick = ()=>{
+                document.getElementById("hashcode").style.visibility="visible";
+
+                document.getElementById("nextButton").style.visibility="hidden";
+            };
+
+            function post_demographic_data(){
+                var age = document.getElementByName("age")[0].value;
+                var gender = getRadioVal(document.getElementById("gender_form"),"gender");
+                var difficulty = document.getElementById("difficulty_range").value;
+                var confidence = document.getElementById("confidence_range").value;
+
+            }
+            function getRadioVal(form, name) {
+                var val;
+                // get list of radio buttons with specified name
+                var radios = form.elements[name];
+                
+                // loop through list of radio buttons
+                for (var i=0, len=radios.length; i<len; i++) {
+                    if ( radios[i].checked ) { // radio checked?
+                        val = radios[i].value; // if so, hold its value in val
+                        break; // and break out of for loop
+                    }
+                }
+                return val; // return value of checked radio or undefined if none checked
+            }
         </script>
     </body>
     
