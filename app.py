@@ -66,9 +66,10 @@ def get_stimuli_page():
 @app.route('/word_cognition_study/completion', methods=['POST'])
 def get_completion():
     data = flask.request.form
+    turker_id = data['turker_id']
     hash_code = hash(data['turker_id'] + 'Carleton')
     # print(hash_code,type(hash_code))
-    return flask.render_template('completion.html', Hash_Code = hash_code)
+    return flask.render_template('completion.html', ID = turker_id, Hash_Code = hash_code)
 ##########################################################################################################################################################################################################################
 
 
@@ -226,12 +227,31 @@ def post_data():
         writer = csv.writer(csvfile, delimiter = ',', quotechar='"')
         # writer.writerow(['turker_id',
         # 'cloud_width','cloud_height','cloud_center_x','cloud_center_y',
-        # 'clicked_word','correct_word','wrong_word','distance_between_targets','time',
+        # 'clicked_word','correct_word','wrong_word','distance_between_targets',
         # 'correct_word_x','correct_word_y','correct_word_fontsize','correct_word_width','correct_word_height','correct_word_center_distance',
         # 'wrong_word_x','wrong_word_y','wrong_word_fontsize','wrong_word_width','wrong_word_height','wrong_word_center_distance',
         # 'number_of_words','span_content'])
         writer.writerow([turker_id,cloud_width,cloud_height,cloud_center_x,cloud_center_y,clicked_word,correct_word,wrong_word,distance_between_targets,time,correct_word_x,correct_word_y,correct_word_fontsize,correct_word_width,correct_word_height,correct_word_center_distance,wrong_word_x,wrong_word_y,wrong_word_fontsize,wrong_word_width,wrong_word_height,wrong_word_center_distance,number_of_words,span_content])
     return json.dumps("data")
+
+# Post demographic data
+@app.route('/word_cognition_study/completion/post_demographic_data', methods=['POST'])
+def post_demographic_data():
+    data = flask.request.form
+    turker_id = data["turker_id"]
+    age = data["age"]
+    gender = data["gender"]
+    difficulty = data["difficulty"]
+    confidence = data["confidence"]
+    eyetrace = data["eyetrace"]
+
+    with open('pilot_demographic_data.csv','a',newline='') as csvfile:
+        writer = csv.writer(csvfile,delimiter = ',',quotechar='"')
+        # writer.writerow(['tuerker_id','age','gender','difficulty','confidence','eyetrace'])
+        writer.writerow([turker_id,age,gender,difficulty,confidence,eyetrace])
+    return json.dumps("success saving data")
+
+
 ##########################################################################################################################################################################################################################
 
 whole_word_list = []

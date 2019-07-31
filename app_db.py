@@ -238,8 +238,18 @@ def post_data():
 @app.route('/word_cognition_study/completion/post_demographic_data', methods=['POST'])
 def post_demographic_data():
     data = flask.request.form
-    
-    pass
+    turker_id = data["turker_id"]
+    age = data["age"]
+    gender = data["gender"]
+    difficulty = data["difficulty"]
+    confidence = data["confidence"]
+    eyetrace = data["eyetrace"]
+
+    with open('pilot_demographic_data.csv','a',newline='') as csvfile:
+        writer = csv.writer(csvfile,delimiter = ',',quotechar='"')
+        # writer.writerow(['tuerker_id','age','gender','difficulty','confidence','eyetrace'])
+        writer.writerow([turker_id,age,gender,difficulty,confidence,eyetrace])
+    return json.dumps("success saving data")
 
 
 ##########################################################################################################################################################################################################################
