@@ -245,6 +245,17 @@ def post_demographic_data():
     confidence = data["confidence"]
     eyetrace = data["eyetrace"]
 
+    connection = get_connection()
+    cursor = connection.cursor()
+    cursor.execute("""
+            INSERT INTO pilot_demographic_data (turker_id,age,gender,difficulty,confidence,eyetrace)
+            VALUES (%s,%s,%s,%s,%s,%s)
+                """,
+            (turker_id,age,gender,difficulty,confidence,eyetrace))
+    connection.commit()
+    cursor.close()
+    connection.close()
+
     with open('pilot_demographic_data.csv','a',newline='') as csvfile:
         writer = csv.writer(csvfile,delimiter = ',',quotechar='"')
         # writer.writerow(['tuerker_id','age','gender','difficulty','confidence','eyetrace'])
