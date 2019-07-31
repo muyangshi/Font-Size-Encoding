@@ -70,11 +70,11 @@
         </div>
         
         
-        <!-- <script type="text/javascript" src="{{url_for('static',filename='description.js')}}"></script> -->
+        <script type="text/javascript" src="{{url_for('static', filename='jquery-3.4.1.min.js')}}"></script>
         <script>
-            // var code = {{ Hash_Code }};
-            // var turker_id = {{ ID }};
-            // var post_demographic_url = '{{url_for("post_demographic_data")}}'
+            var code = {{ Hash_Code }};
+            var turker_id = '{{ ID }}';
+            var post_demographic_url = '{{url_for("post_demographic_data")}}';
             var difficulty_slider = document.getElementById("difficulty_range");
             var difficulty_value = document.getElementById("difficulty_value");
             difficulty_value.innerHTML = difficulty_slider.value;
@@ -88,16 +88,36 @@
             nextButton = document.getElementById("nextButton");
             nextButton.onclick = ()=>{
                 document.getElementById("hashcode").style.visibility="visible";
-
+                post_demographic_data();
                 document.getElementById("nextButton").style.visibility="hidden";
             };
 
             function post_demographic_data(){
-                var age = document.getElementByName("age")[0].value;
+                var age = document.getElementsByName("age")[0].value;
                 var gender = getRadioVal(document.getElementById("gender_form"),"gender");
                 var difficulty = document.getElementById("difficulty_range").value;
                 var confidence = document.getElementById("confidence_range").value;
-
+                var eyetrace = getRadioVal(document.getElementById("eyetrace_form"),"eyetrace");
+                var demographic_data = {
+                    "turker_id": turker_id,
+                    "age": age,
+                    "gender": gender,
+                    "difficulty": difficulty,
+                    "confidence": confidence,
+                    "eyetrace": eyetrace,
+                };
+                $.ajax({
+                    type: 'POST',
+                    url: post_demographic_url,
+                    data: demographic_data,
+                    success: function(response){
+                        alert("redirect to Amazon");
+                    },
+                    error: function(error){
+                        alert("error saving data");
+                        console.log(error);
+                    }
+                });
             }
             function getRadioVal(form, name) {
                 var val;

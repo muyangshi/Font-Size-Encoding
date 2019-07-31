@@ -250,8 +250,6 @@ def post_demographic_data():
         # writer.writerow(['tuerker_id','age','gender','difficulty','confidence','eyetrace'])
         writer.writerow([turker_id,age,gender,difficulty,confidence,eyetrace])
     return json.dumps("success saving data")
-
-
 ##########################################################################################################################################################################################################################
 
 whole_word_list = []
