@@ -4,6 +4,7 @@
  * Currently being used for the pilot study of comparing the fontsize
  * of TWO target words
  * 
+ * as of 31 July, starting to implement for hypo2
  */
 
 initialize();
@@ -22,6 +23,9 @@ var already_placed_targets;
 var targetslist;
 var in_same_ring;
 
+var distractors_hypo2; //used for hypo2
+var targets_hypo2; // 2D array used for hypo2
+
 function onStartButtonClicked() {
     document.getElementById("Greeting").innerHTML = "";
 
@@ -33,144 +37,259 @@ function onStartButtonClicked() {
     
 
     // Specifications about the targets, coming from the tasklist.
+    // Specifications about the target words are loaded
+    // from the csv to the tasklist
+    // then from the tasklist to the getStim() method as params
     var task = tasklist[0];
 
     var outer_radius = task["outer_radius"];
     var inner_radius = task["inner_radius"];
     var distance_between = task["distance_between"];
     var rule = task["rule"];
-    // var fixed_betw_dist = task["fixed_betw_dist"];
+    var numberOfRings = 3;
 
+    // Here I need a switch, according to the rule variable,
+    // if the rule is "multiple", then it is used for hypo2, and
+    // I need to have a different way to fetch the needed words data from the server
+    switch (rule){
+        case "multiple": // fetch the words in the hypo2 style
+            // the 1st ajax call to gain the distractors data
+            // after which another ajax call to gain the targets data
+            $.ajax({
+                url: flask_util.url_for('getDistractors'),
+                success:
+                    function(data){
+                        formed_distractors = data.map(function(dictionary){ // So in order for your code to work change data.map() to data.products.map() since products is an array which you can iterate upon.
+                            return {
+                                text: dictionary['text'],
+                                weight: dictionary['fontsize'],
+                                html: {class: dictionary['html']},
+                                handlers: {
+                                    mouseover: function() {this.style.cursor = "default";}
+                                }
+                            }
+                        });
+                        // alert(typeof(formed_distractors));
+                        distractors_hypo2 = formed_distractors;
+                    
+                        // the 2nd ajax call to gain the targets data
+                        // Create 2D array for targets_hypo2
+                        targets_hypo2 = [];
+                        var simpleCB = ()=>{alert("This is a simpleCB")}
+                            for (var i=0; i<numberOfRings; i++){
+                                (function (i) {
+                                        $.ajax({
+                                            url: flask_util.url_for('getMultiTargets', {
+                                                numberOfTargets: 4,
+                                                correct_fontsize: task["target_1_fontsize"],
+                                                wrong_fontsize: task["target_2_fontsize"],
+                                                word_length: task["target_1_length"]}),
+                                            success:
+                                                function(data){
+                                                    formed_targets = data.map(function(dictionary){
+                                                        return {
+                                                            text: dictionary['text'],
+                                                            weight: dictionary['fontsize'],
+                                                            html: {class: dictionary['html']},
+                                                            handlers: {
+                                                                click: function() {postDataMulti($(this));},
+                                                                mouseover: function() {this.style.cursor = "pointer";}
+                                                            }
+                                                        }
+                                                    });
+                                                    // alert(formed_targets);
+                                                    targets_hypo2[i] = formed_targets;
+                                                    if (i === numberOfRings-1){ // This is at the end of the for loop
+                                                                                // Don't quite understand why success happens after all the url have been done
+                                                                                // Tried complete:, but it assume the ajax is complete after the url request, 
+                                                                                // but not after the three success callback
+                                                        console.log(targets_hypo2);
+                                                        $("#JQWC").addClass("jqcloud");
+                                                        var targets_then_distracts = function(callback) {$.each(targets_hypo2,(index,target_array)=>{
+                                                            drawTargets("on_circle",target_array,index*200+100);
+                                                            // drawTargetsMulti(value,outer_radius,inner_radius);
+                                                        });
+                                                        callback();
+                                                        drawDistractorsCallback(distractors_hypo2);};
+                                                        targets_then_distracts(simpleCB);
+                                                        // drawDistractorsCallback(distractors_hypo2);
+                                                    }
+                                                },
+                                            dataType: "json"
+                                        });
+                                    })(i);  // i.e. wrap the whole contents of your loop in an self-executing function.
+                                            // Here, the value of outer i gets passed into the wrapping self-executing anonymous function; this 
+                                            // unique value's location gets captured by the async callback. In this way, each async gets its own 
+                                            // value, determined at the moment the self-executing function is invoked.
+                            }   
+                    },
+                // complete: ()=>{console.log(targets_hypo2)},
+                dataType: "json"
+            });
+            break;
+        case "on_circle": // fetch the words in the hypo1 style
+            $.ajax({
+                    url: flask_util.url_for('getStim', {
+                        target_1_fontsize: task["target_1_fontsize"],
+                        target_1_length: task["target_1_length"],
+                        target_2_fontsize: task["target_2_fontsize"],
+                        target_2_length: task["target_2_length"]}),
+                    success:
+                        function(data){
+                            formed_data = data.map(function(dictionary) {
+                                if (dictionary["html"] === "target"){
+                                    return { 
+                                        text: dictionary['text'], 
+                                        weight: dictionary['fontsize'],
+                                        html: {class: dictionary['html']},
+                                        handlers: { 
+                                            click: function() {postData($(this));},
+                                            mouseover: function() {this.style.cursor = 'pointer';} 
+                                        }
+                                    }
+                                }
+                                else {
+                                    return { 
+                                        text: dictionary['text'], 
+                                        weight: dictionary['fontsize'],
+                                        html: {class: dictionary['html']},
+                                        handlers: {
+                                            mouseover: function() {this.style.cursor = "default";}
+                                        }
+                                    }
+                                }
+                            });
 
-    // Specifications about the target words are loaded
-    // from the csv to the tasklist
-    // then from the tasklist to the getStim() method as params
-    $.ajax({
-        url: flask_util.url_for('getStim', {
-            target_1_fontsize: task["target_1_fontsize"],
-            target_1_length: task["target_1_length"],
-            target_2_fontsize: task["target_2_fontsize"],
-            target_2_length: task["target_2_length"]}),
-        success:
-            function(data){
-                formed_data = data.map(function(dictionary) {
-                    if (dictionary["html"] === "target"){
-                        return { 
-                            text: dictionary['text'], 
-                            weight: dictionary['fontsize'],
-                            html: {class: dictionary['html']},
-                            handlers: { 
-                                click: function() {postData($(this));},
-                                mouseover: function() {this.style.cursor = 'pointer';} 
+                            // push the target words into an array for later use
+                            words = formed_data;
+                            for (var i = 0; i < 2; i++){
+                                targetslist.push(words.shift());
                             }
-                        }
-                    }
-                    else {
-                        return { 
-                            text: dictionary['text'], 
-                            weight: dictionary['fontsize'],
-                            html: {class: dictionary['html']},
-                            handlers: {
-                                mouseover: function() {this.style.cursor = "default";}
-                            }
-                        }
-                    }
+
+                            // draw the targets first, then draw the distractors in the callback function
+                            drawTargetCloud(rule,targetslist,distance_between,drawDistractorsCallback);
+
+                        },
+                    dataType: "json"
                 });
+            break;
+        default:
+            alert("rule not understand");
+    }
+}
 
-                // push the target words into an array for later use
-                words = formed_data;
-                for (var i = 0; i < 2; i++){
-                    targetslist.push(words.shift());
-                }
+function drawTargetsMulti(target_array,outer_radius,inner_radius){
+    var cloud_center_x = $("#JQWC").width() / 2.0;
+    var cloud_center_y = $("#JQWC").height() / 2.0;
+    target_array.forEach((target,index)=>{
+        var font_size = target["weight"];
+        var word_span = $('<span>').attr(target.html).addClass("target"+index);
+        word_span.append(target.text);
+        // word_span[0].style.visibility = "hidden";
+        word_span[0].style.fontSize = font_size + "px";
+        word_span[0].style.color = "black";
+        $("#JQWC").append(word_span);
+        var width = word_span.width();
+        var height = word_span.height();
+        var left;
+        var top;
+        do {
+            left = cloud_center_x - width / 2.0 + Math.floor(Math.random() * (2*outer_radius)) - outer_radius;
+            top = cloud_center_y - height / 2.0 + Math.floor(Math.random() * (2*outer_radius)) - outer_radius;
+            distance_to_center = Math.sqrt(Math.pow((left + width/2.0 - cloud_center_x),2) + Math.pow((top + height/2.0 - cloud_center_y),2));
+        } while (distance_to_center > outer_radius || distance_to_center < inner_radius)
 
-                // draw the targets first, then draw the distractors in the callback function
-                drawTargetCloud(rule,targetslist,outer_radius,inner_radius,distance_between,drawDistractorsCallback);
-
-            },
-        dataType: "json"
+        word_span[0].style.position = "absolute";
+        word_span[0].style.left = left + "px";
+        word_span[0].style.top = top + "px";
+        $(word_span).bind("click", function(){postDataMulti($(this));});
+        $(word_span).bind("mouseover", function() {this.style.cursor = 'pointer';});
+        
+        already_placed_targets.push(word_span[0]);
     });
 }
 
-function drawTargetCloud(rule,target_array,outer_radius,inner_radius,distance_between,callback_drawDistractors) {
-    $("#JQWC").addClass("jqcloud");
-    drawTargets(rule,target_array,outer_radius,inner_radius,distance_between);
 
-    callback_drawDistractors();
+function drawTargetCloud(rule,target_array,distance_between,callback_drawDistractors) {
+    $("#JQWC").addClass("jqcloud");
+    drawTargets(rule,target_array,distance_between);
+
+    callback_drawDistractors(words);
 }
 
-function drawTargets(rule,target_array,outer_radius,inner_radius,distance_between){
+function drawTargets(rule,target_array,distance_between){
     // $("#JQWC")[0].style.visibility = "hidden";
     var cloud_center_x = $("#JQWC").width() / 2.0;
     var cloud_center_y = $("#JQWC").height() / 2.0;
 
     switch (rule){
-        case "multiple":
-            break;
-        case "in_ring":///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        // Currectly, this is accountable for two target words
-        // The two target words will be placed inside a ring of inner_radius to outer_radius
-        // The distance between the two target words will be at least 2*inner_radius
+        // case "multiple":
+        //     break;
+        // case "in_ring":///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        // // Currectly, this is accountable for two target words
+        // // The two target words will be placed inside a ring of inner_radius to outer_radius
+        // // The distance between the two target words will be at least 2*inner_radius
             
-            // forEach target in the targetslist
-            // randomize its position within the ring
-            // and set the css styles and click function
-            target_array.forEach((target,index)=>{
-                var font_size = target["weight"];
-                var word_span = $('<span>').attr(target.html).addClass("target"+index);
-                word_span.append(target.text);
-                word_span[0].style.visibility = "hidden";
-                $("#JQWC").append(word_span);
-                var width = word_span.width();
-                var height = word_span.height();
-                var left;
-                var top;
+        //     // forEach target in the targetslist
+        //     // randomize its position within the ring
+        //     // and set the css styles and click function
+        //     target_array.forEach((target,index)=>{
+        //         var font_size = target["weight"];
+        //         var word_span = $('<span>').attr(target.html).addClass("target"+index);
+        //         word_span.append(target.text);
+        //         word_span[0].style.visibility = "hidden";
+        //         $("#JQWC").append(word_span);
+        //         var width = word_span.width();
+        //         var height = word_span.height();
+        //         var left;
+        //         var top;
 
-                // Making the position of this target
-                // to be in the ring
-                // ineer_radius < dist_to_center < outer_radius
-                do {
-                    left = cloud_center_x - width / 2.0 + Math.floor(Math.random() * (500)) + (-250);
-                    top = cloud_center_y - height / 2.0 + Math.floor(Math.random() * (500)) + (-250);
-                    distance_to_center = Math.sqrt(Math.pow((left + width/2.0 - cloud_center_x),2) + Math.pow((top + height/2.0 - cloud_center_y),2));
-                } while (distance_to_center > outer_radius || distance_to_center < inner_radius)
+        //         // Making the position of this target
+        //         // to be in the ring
+        //         // ineer_radius < dist_to_center < outer_radius
+        //         do {
+        //             left = cloud_center_x - width / 2.0 + Math.floor(Math.random() * (500)) + (-250);
+        //             top = cloud_center_y - height / 2.0 + Math.floor(Math.random() * (500)) + (-250);
+        //             distance_to_center = Math.sqrt(Math.pow((left + width/2.0 - cloud_center_x),2) + Math.pow((top + height/2.0 - cloud_center_y),2));
+        //         } while (distance_to_center > outer_radius || distance_to_center < inner_radius)
     
-                console.log(word_span[0].innerHTML + distance_to_center);
+        //         console.log(word_span[0].innerHTML + distance_to_center);
     
-                word_span[0].style.position = "absolute";
-                word_span[0].style.left = left + "px";
-                word_span[0].style.top = top + "px";
-                word_span[0].style.fontSize = font_size + "px";
-                word_span[0].style.color = "black";    
-                $(word_span).bind("click", function(){postData($(this));});
-                $(word_span).bind("mouseover", function() {this.style.cursor = 'pointer';});
+        //         word_span[0].style.position = "absolute";
+        //         word_span[0].style.left = left + "px";
+        //         word_span[0].style.top = top + "px";
+        //         word_span[0].style.fontSize = font_size + "px";
+        //         word_span[0].style.color = "black";    
+        //         $(word_span).bind("click", function(){postDataMulti($(this));});
+        //         $(word_span).bind("mouseover", function() {this.style.cursor = 'pointer';});
     
-                already_placed_targets.push(word_span[0])
-            });
+        //         already_placed_targets.push(word_span[0])
+        //     });
 
-            // Calculate the distance between the two target words' center
-            var target_0 = $(".target0");
-            var target_1 = $(".target1");
-            var targets_x_distance = Math.abs((target_0.width() / 2.0 + parseFloat(target_0[0].style.left)) - (target_1.width() / 2.0 + parseFloat(target_1[0].style.left)));
-            var targets_y_distance = Math.abs((target_0.height() / 2.0 + parseFloat(target_0[0].style.top)) - (target_1.height() / 2.0 + parseFloat(target_1[0].style.top)));
-            var targets_distance = Math.sqrt(Math.pow(targets_x_distance,2) + Math.pow(targets_y_distance,2));
-            console.log("distance between the two target is: " + targets_distance);
+        //     // Calculate the distance between the two target words' center
+        //     var target_0 = $(".target0");
+        //     var target_1 = $(".target1");
+        //     var targets_x_distance = Math.abs((target_0.width() / 2.0 + parseFloat(target_0[0].style.left)) - (target_1.width() / 2.0 + parseFloat(target_1[0].style.left)));
+        //     var targets_y_distance = Math.abs((target_0.height() / 2.0 + parseFloat(target_0[0].style.top)) - (target_1.height() / 2.0 + parseFloat(target_1[0].style.top)));
+        //     var targets_distance = Math.sqrt(Math.pow(targets_x_distance,2) + Math.pow(targets_y_distance,2));
+        //     console.log("distance between the two target is: " + targets_distance);
 
-            // This is based on randomization,
-            // making sure the distance between the two target words
-            // is at least 2 times the inner radius
-            while (in_same_ring === false){
-                if (targets_distance < inner_radius*2) {
-                    document.getElementById('JQWC').innerHTML = '<span class="dot" style="position: absolute;top: 500px;left: 500px;height: 5px;width: 5px;background-color: red;border-radius: 35%;display: inline-block;"></span>';
-                    already_placed_targets = [];
-                    // console.log(targetslist);
-                    // console.log('dist_to_center: '+dist_to_center);
-                    drawTargets(rule,targetslist,outer_radius,inner_radius,distance_between);
-                }
-                else{
-                    in_same_ring = true;
-                }
-            }
-            break;
+        //     // This is based on randomization,
+        //     // making sure the distance between the two target words
+        //     // is at least 2 times the inner radius
+        //     // while (in_same_ring === false){
+        //     //     if (targets_distance < inner_radius*2) {
+        //     //         document.getElementById('JQWC').innerHTML = '<span class="dot" style="position: absolute;top: 500px;left: 500px;height: 5px;width: 5px;background-color: red;border-radius: 35%;display: inline-block;"></span>';
+        //     //         already_placed_targets = [];
+        //     //         // console.log(targetslist);
+        //     //         // console.log('dist_to_center: '+dist_to_center);
+        //     //         drawTargets(rule,targetslist,outer_radius,inner_radius,distance_between);
+        //     //     }
+        //     //     else{
+        //     //         in_same_ring = true;
+        //     //     }
+        //     // }
+        //     break;
         case "on_circle":///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             // we have two target wrods, and we want to fix them onto a circle
             // that has the diameter of distance_between
@@ -179,7 +298,7 @@ function drawTargets(rule,target_array,outer_radius,inner_radius,distance_betwee
                 var word_span = $('<span>').attr(target0.html).addClass("target0");
                 word_span.append(target0.text);
                 $("#JQWC").append(word_span);
-                word_span[0].style.visibility = "hidden";
+                // word_span[0].style.visibility = "hidden";
                 word_span[0].style.fontSize = font_size + "px";
                 word_span[0].style.color = "black";
                 var width = word_span.width();
@@ -210,7 +329,7 @@ function drawTargets(rule,target_array,outer_radius,inner_radius,distance_betwee
                 var word_span = $('<span>').attr(target1.html).addClass("target1");
                 word_span.append(target1.text);
                 $("#JQWC").append(word_span);
-                word_span[0].style.visibility = "hidden";
+                // word_span[0].style.visibility = "hidden";
                 word_span[0].style.fontSize = font_size + "px";
                 word_span[0].style.color = "black";
                 var width = word_span.width();
@@ -245,8 +364,8 @@ function drawTargets(rule,target_array,outer_radius,inner_radius,distance_betwee
     }
 }
 
-function drawDistractorsCallback(){
-    $("#JQWC").jQCloud(words,already_placed_targets,"distractor",
+function drawDistractorsCallback(word_array){
+    $("#JQWC").jQCloud(word_array,already_placed_targets,"distractor",
         {   delayedMode: false,
             afterCloudRender: () => {
                 startTime = new Date();
@@ -361,4 +480,8 @@ function postData(clickedWord){
             console.log(error);
         }
     });
+}
+
+function postDataMulti(clickedword){
+    alert(clickedword[0].innerHTML + "I am clicked!");
 }

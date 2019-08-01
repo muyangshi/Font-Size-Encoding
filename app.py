@@ -148,6 +148,42 @@ def get_english_stimuli(numberOfWords, target1, target2):
         distractor_words.append(distractor)
 
     return json.dumps(target_words + distractor_words)
+
+# Used for hypo2
+# Specifications about the length of targets, fontsize of the correct and wrong, and the number of words
+# are passed from the frontend to the server
+# the specifications from the frontend are from tasklist.csv (test_length.csv)
+@app.route('/getMultiTargets/<numberOfTargets>/<correct_fontsize>/<wrong_fontsize>/<word_length>')
+def getMultiTargets(numberOfTargets,correct_fontsize,wrong_fontsize,word_length):
+    legit_words = get_legit_word(decent_word_list,int(word_length),int(word_length))
+    target_words = []
+    for i in range(int(numberOfTargets)):
+        correct_target = random.choice(legit_words)
+        legit_words.remove(correct_target)
+        target_words.append(correct_target)
+    print(target_words)
+    
+    for i in range(int(numberOfTargets)):
+        if i == 0:
+            target_words[i] = {'text': target_words[i], 'fontsize': correct_fontsize, 'html': 'correct'}
+        else:
+            target_words[i] = {'text': target_words[i], 'fontsize': wrong_fontsize, 'html': 'wrong'}
+    print(target_words)
+    return json.dumps(target_words)
+
+# Used for hypo2
+# Specifications about word length, fontsize, and number of distractors
+# are found in the config file
+# no parameters are needed from the frontend
+# return a list of words in dictionary to the front end
+@app.route('/getDistractors')
+def getDistractors():
+    legit_words = get_legit_word(decent_word_list,config.minLen,config.maxLen)
+    distractor_words = []
+    for i in range(int(config.numberOfWords)):
+        distractor = {'text': random.choice(legit_words), 'fontsize': random.randint(config.minSize,config.maxSize), 'html': 'distractor'}
+        distractor_words.append(distractor)
+    return json.dumps(distractor_words)
 ##########################################################################################################################################################################################################################
 
 
@@ -223,15 +259,15 @@ def post_data():
     # connection.close()
 
 
-    with open('pilot_client_data.csv','a', newline='') as csvfile:
-        writer = csv.writer(csvfile, delimiter = ',', quotechar='"')
-        # writer.writerow(['turker_id',
-        # 'cloud_width','cloud_height','cloud_center_x','cloud_center_y',
-        # 'clicked_word','correct_word','wrong_word','distance_between_targets',
-        # 'correct_word_x','correct_word_y','correct_word_fontsize','correct_word_width','correct_word_height','correct_word_center_distance',
-        # 'wrong_word_x','wrong_word_y','wrong_word_fontsize','wrong_word_width','wrong_word_height','wrong_word_center_distance',
-        # 'number_of_words','span_content'])
-        writer.writerow([turker_id,cloud_width,cloud_height,cloud_center_x,cloud_center_y,clicked_word,correct_word,wrong_word,distance_between_targets,time,correct_word_x,correct_word_y,correct_word_fontsize,correct_word_width,correct_word_height,correct_word_center_distance,wrong_word_x,wrong_word_y,wrong_word_fontsize,wrong_word_width,wrong_word_height,wrong_word_center_distance,number_of_words,span_content])
+    # with open('pilot_client_data.csv','a', newline='') as csvfile:
+    #     writer = csv.writer(csvfile, delimiter = ',', quotechar='"')
+    #     # writer.writerow(['turker_id',
+    #     # 'cloud_width','cloud_height','cloud_center_x','cloud_center_y',
+    #     # 'clicked_word','correct_word','wrong_word','distance_between_targets',
+    #     # 'correct_word_x','correct_word_y','correct_word_fontsize','correct_word_width','correct_word_height','correct_word_center_distance',
+    #     # 'wrong_word_x','wrong_word_y','wrong_word_fontsize','wrong_word_width','wrong_word_height','wrong_word_center_distance',
+    #     # 'number_of_words','span_content'])
+    #     writer.writerow([turker_id,cloud_width,cloud_height,cloud_center_x,cloud_center_y,clicked_word,correct_word,wrong_word,distance_between_targets,time,correct_word_x,correct_word_y,correct_word_fontsize,correct_word_width,correct_word_height,correct_word_center_distance,wrong_word_x,wrong_word_y,wrong_word_fontsize,wrong_word_width,wrong_word_height,wrong_word_center_distance,number_of_words,span_content])
     return json.dumps("data")
 
 # Post demographic data
@@ -241,17 +277,27 @@ def post_demographic_data():
     turker_id = data["turker_id"]
     age = data["age"]
     gender = data["gender"]
+    education = data["education"]
     difficulty = data["difficulty"]
     confidence = data["confidence"]
     eyetrace = data["eyetrace"]
 
-    with open('pilot_demographic_data.csv','a',newline='') as csvfile:
-        writer = csv.writer(csvfile,delimiter = ',',quotechar='"')
-        # writer.writerow(['tuerker_id','age','gender','difficulty','confidence','eyetrace'])
-        writer.writerow([turker_id,age,gender,difficulty,confidence,eyetrace])
+    # connection = get_connection()
+    # cursor = connection.cursor()
+    # cursor.execute("""
+    #         INSERT INTO pilot_demographic_data (turker_id,age,gender,education,difficulty,confidence,eyetrace)
+    #         VALUES (%s,%s,%s,%s,%s,%s,%s)
+    #             """,
+    #         (turker_id,age,gender,education,difficulty,confidence,eyetrace))
+    # connection.commit()
+    # cursor.close()
+    # connection.close()
+
+    # with open('pilot_demographic_data.csv','a',newline='') as csvfile:
+    #     writer = csv.writer(csvfile,delimiter = ',',quotechar='"')
+    #     # writer.writerow(['tuerker_id','age','gender','difficulty','confidence','eyetrace'])
+    #     writer.writerow([turker_id,age,gender,difficulty,confidence,eyetrace])
     return json.dumps("success saving data")
-
-
 ##########################################################################################################################################################################################################################
 
 whole_word_list = []
