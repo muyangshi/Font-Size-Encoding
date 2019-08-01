@@ -26,37 +26,49 @@
             <fieldset>
                 <legend>Demographics:</legend>
                 
-                <b>Age:</b><br>
+                <b>Age (in years):</b><br>
                 <input type="text" name="age"><br>
                 
                 <br>
                 <b>Gender:</b><br>
                 <form id="gender_form">
-                    <input type="radio" name="gender" value="male" />Male
-                    <input type="radio" name="gender" value="female" />Female
-                    <input type="radio" name="gender" value="other" />Other
+                    <input type="radio" name="gender" value="male" />Male<br>
+                    <input type="radio" name="gender" value="female" />Female<br>
+                    <input type="radio" name="gender" value="no" />Prefer Not to Specify<br>
+                    <input type="radio" name="gender" value="other" id="radio_gender_other"/>Other: 
+                    <input id="gender_other" type="text" name="gender" style="visibility: hidden;"/>
+                </form>
+
+                <br>
+                <b>Education Level:</b><br>
+                <form id="edu_form">
+                    <input type="radio" name="edu" value="1" />Some High School
+                    <input type="radio" name="edu" value="2" />High School Graduate
+                    <input type="radio" name="edu" value="3" />Some College
+                    <input type="radio" name="edu" value="4" />College Graduate
+                    <input type="radio" name="edu" value="5" />Graduate Degree
                 </form>
                 
                 <br>
                 <b>Difficulty:<br>
-                i) How difficult do you think it is to distinguish the larger word from the smaller word?<br></b>
-                Value: <span id="difficulty_value"></span> &nbsp; &nbsp; &nbsp;
-                <input type="range" min="1" max="10" value="5" class="slider" id="difficulty_range"><br>
-                (on a scale from 1 - 10) <br>
+                i) How difficult was it to distinguish between the smaller word and the larger word? On a scale from 1 (very easy) - 5 (very difficult)<br></b>
+                1 (very easy) <input type="range" min="1" max="5" value="3" class="slider" id="difficulty_range" style="width: 30%"> 5 (very difficult) <br>
+                Value: <span id="difficulty_value"></span><br>
 
                 <br>
-                <b>ii) How well do you think you perform? (what percentage of tasks do you think you did correctlly?)<br></b>
-                Value: <span id="confidence_value"></span> &nbsp; &nbsp; &nbsp;
-                <input type="range" min="1" max="10" value="5" class="slider" id="confidence_range"><br>
-                (on a scale from 1 - 10) <br>
+                <b>ii) What percentage of the questions do you think you got correct? (From 0% to 100%)<br></b>
+                0% <input type="range" min="1" max="100" value="50" class="slider" id="confidence_range" style="width: 50%"> 100%<br>
+                Value: <span id="confidence_value"></span>%<br>
 
                 <br>
-                <b>Do you find your eyes fixated at the red dot at the center of page? 
-                Or do you find your sight moving around cloud words, between the two target words? <br></b>
+                <b>Were you able to keep your eyes fixated on the red dot at the center of the page for all questions? <br></b>
                 <form id="eyetrace_form">
-                    <input type="radio" name="eyetrace" value="fixed"> I fixed my eyes at the center no matter the distance between the two target words<br>
-                    <input type="radio" name="eyetrace" value="distance"> I fixed my eyes at the center when the two target words are close together<br>
-                    <input type="radio" name="eyetrace" value="notfixed"> I did not fixed my eyes at the center no matter the distance between the two target words<br>
+                    <input type="radio" name="eyetrace" value="fixed">Yes, my eyes were consistently fixed.<br>
+                    <input type="radio" name="eyetrace" value="mostly">Mostly, my eyes occasioinally shifted away.<br>
+                    <input type="radio" name="eyetrace" value="somewhat">Somewhat, I tried to keep my eyes fixed, but they quickly strayed away from the dot.<br>
+                    <input type="radio" name="eyetrace" value="no">No, my eyes consistently strayed away from the red dot<br>
+                    <input type="radio" name="eyetrace" value="other" id="radio_eyetrace_other">Other: 
+                    <input type="text" name="eyetrace" id="eyetrace_other" style="visibility: hidden;"><br>
                 </form>
             </fieldset>
             <br>
@@ -70,7 +82,8 @@
         </div>
         
         
-        <script type="text/javascript" src="{{url_for('static', filename='jquery-3.4.1.min.js')}}"></script>
+        <!-- <script type="text/javascript" src="{{url_for('static', filename='jquery-3.4.1.min.js')}}"></script> -->
+        <script type="text/javascript" src="../static/jquery-3.4.1.min.js"></script>
         <script>
             var code = {{ Hash_Code }};
             var turker_id = '{{ ID }}';
@@ -92,16 +105,28 @@
                 document.getElementById("nextButton").style.visibility="hidden";
             };
 
+            $("#radio_gender_other").click(()=>{$("#gender_other")[0].style.visibility="visible";});
+            $("#radio_eyetrace_other").click(()=>{$("#eyetrace_other")[0].style.visibility="visible";});
+
+
             function post_demographic_data(){
                 var age = document.getElementsByName("age")[0].value;
-                var gender = getRadioVal(document.getElementById("gender_form"),"gender");
                 var difficulty = document.getElementById("difficulty_range").value;
                 var confidence = document.getElementById("confidence_range").value;
+                var edu = getRadioVal(document.getElementById("edu_form"),"edu");                
+                var gender = getRadioVal(document.getElementById("gender_form"),"gender");
+                if (gender === "other"){
+                    gender = $("#gender_other").value;
+                }
                 var eyetrace = getRadioVal(document.getElementById("eyetrace_form"),"eyetrace");
+                if (eyetrace === "other"){
+                    eyetrace = $("#eyetrace_other").value;
+                }
                 var demographic_data = {
                     "turker_id": turker_id,
                     "age": age,
                     "gender": gender,
+                    "education": edu,
                     "difficulty": difficulty,
                     "confidence": confidence,
                     "eyetrace": eyetrace,
