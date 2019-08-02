@@ -165,9 +165,9 @@ def getMultiTargets(numberOfTargets,correct_fontsize,wrong_fontsize,word_length)
     
     for i in range(int(numberOfTargets)):
         if i == 0:
-            target_words[i] = {'text': target_words[i], 'fontsize': correct_fontsize, 'html': 'correct'}
+            target_words[i] = {'text': target_words[i], 'fontsize': correct_fontsize, 'html': 'target'}
         else:
-            target_words[i] = {'text': target_words[i], 'fontsize': wrong_fontsize, 'html': 'wrong'}
+            target_words[i] = {'text': target_words[i], 'fontsize': wrong_fontsize, 'html': 'target'}
     print(target_words)
     return json.dumps(target_words)
 
