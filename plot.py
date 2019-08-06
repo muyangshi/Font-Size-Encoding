@@ -1,4 +1,6 @@
+import matplotlib
 import matplotlib.pyplot as pyplot
+import numpy as np
 import csv
 from collections import OrderedDict
 import re
@@ -339,3 +341,114 @@ def time_distance_between_targets():
     pyplot.title('Time v.s. Distance between targets')
 
     pyplot.show()
+
+
+
+#hypo2
+#############################################################################
+def hypo2_load_click_pos():
+    correct_clicks = []
+    wrong_clicks = []
+    with open('hypo2_client_data.csv','r')as csvdata:
+        reader = csv.reader(csvdata,delimiter=',')
+        heading = next(reader)
+        for row in reader:
+            clicked_word_x = float(row[7])
+            clicked_word_y = float(row[8])
+            clicked_word_center_distance = float(row[9])
+            sizeDiff = int(row[11]) - int(row[12])
+            if row[10] != row[11]:
+                wrong_clicks.append((clicked_word_x,clicked_word_y,clicked_word_center_distance,sizeDiff,False))
+            else:
+                correct_clicks.append((clicked_word_x,clicked_word_y,clicked_word_center_distance,sizeDiff,True))
+    return correct_clicks,wrong_clicks
+
+def hypo2_scatterplot():
+    result = hypo2_load_click_pos()
+    datas = (result[0],result[1])
+    colors = ("blue","red")
+    groups = ("correct","wrong")
+
+    figure = pyplot.figure()
+    scatterplot = figure.add_subplot(1,1,1)
+    for data, color, group in zip(datas, colors, groups):
+        for data_set in data:
+            x,y = data_set[0],data_set[1]
+            scatterplot.scatter(x,y,c=color,label=group,alpha=0.3)
+    pyplot.title('Scatterplot of word\'s Position versus correctness')
+    pyplot.xlabel('x position (px)')
+    pyplot.ylabel('y position (px)')
+
+    handles, labels = pyplot.gca().get_legend_handles_labels()
+    by_label = OrderedDict(zip(labels, handles))
+    pyplot.legend(by_label.values(), by_label.keys(),loc=2)
+
+    pyplot.show()
+
+def hypo2_stacked_bar():
+    pass
+def hypo2_percentages():
+    result = hypo2_load_click_pos()
+    correct_clicks = result[0]
+    wrong_clicks = result[1]
+    total_clicks = len(correct_clicks) + len(wrong_clicks)
+    ring0_clicks_correct,ring0_clicks_wrong = [],[]
+    ring1_clicks_correct,ring1_clicks_wrong = [],[]
+    ring2_clicks_correct,ring2_clicks_wrong = [],[]
+    for data in correct_clicks:
+        distance_from_center = data[2]
+        if distance_from_center < 100:
+            # ring0
+            ring0_clicks_correct.append(data)
+        elif 100< distance_from_center < 200:
+            # ring1
+            ring1_clicks_correct.append(data)
+        elif 300 < distance_from_center:
+            #ring2
+            ring2_clicks_correct.append(data)
+    for data in wrong_clicks:
+        if distance_from_center < 100:
+            ring0_clicks_wrong.append(data)
+        elif 100 < distance_from_center < 200:
+            ring1_clicks_wrong.append(data)
+        elif 300 < distance_from_center:
+            ring2_clicks_wrong.append(data)
+    ring0_percent_click = (len(ring0_clicks_correct) + len(ring0_clicks_wrong))/total_clicks
+    ring1_percent_click = (len(ring1_clicks_correct)+len(ring1_clicks_wrong))/total_clicks
+    ring2_percent_click = (len(ring2_clicks_correct)+len(ring2_clicks_wrong))/total_clicks
+    ring0_percent_accuracy = len(ring0_clicks_correct)/(len(ring0_clicks_correct)+len(ring0_clicks_wrong))
+    ring1_percent_accuracy = len(ring1_clicks_correct)/(len(ring1_clicks_correct)+len(ring1_clicks_wrong))
+    ring2_percent_accuracy = len(ring2_clicks_correct)/(len(ring2_clicks_correct)+len(ring2_clicks_wrong))
+
+    labels = ['ring1','ring2','ring3']
+    percent_clicks = [ring0_percent_click,ring1_percent_click,ring2_percent_click]
+    percent_accuracy = [ring0_percent_accuracy,ring1_percent_accuracy,ring2_percent_accuracy]
+    
+    index = np.arange(len(labels)) # the label locations
+    width = 0.2 # the width of the bars
+
+    fig, ax = pyplot.subplots()
+    rects1 = ax.bar(index - width/2,percent_clicks,label = "percent clicks",width=0.2)
+    rects2 = ax.bar(index + width/2, percent_accuracy,label = "accuracy",width=0.2)
+    ax.set_ylabel("Percentage")
+    ax.set_title("Percentage by each ring")
+    ax.set_xticks(index)
+    ax.set_xticklabels(labels)
+    ax.legend()
+
+    autolabel(rects1)
+    autolabel(rects2)
+    fig.tight_layout()
+    pyplot.show()
+
+def autolabel(rects):
+    """Attach a text label above each bar in *rects*, displaying its height."""
+    for rect in rects:
+        height = rect.get_height()
+        ax = pyplot.gca()
+        ax.annotate('{}'.format(height)[:4],
+                    xy=(rect.get_x() + rect.get_width() / 2, height),
+                    xytext=(0, 3),  # 3 points vertical offset
+                    textcoords="offset points",
+                    ha='center', va='bottom')
+
