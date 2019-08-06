@@ -3,33 +3,75 @@
 	<head>
 		<title>Welcome</title>
         <meta charset="UTF-8">
-		
+
+		<script type="text/javascript" src="{{url_for('static', filename='jquery-3.4.1.min.js')}}"></script>
 	</head>
 
 	<body>
-        <h1 style="text-align: center;">Word Recognition Study</h1>
-        
-        <h2 style="text-align: center;">Hello, Turkers</h2>
-        <div style="text-align: center;">
-            <p>Please provide you Amazon Turker ID</p>
-            <input id="turker_id">
-        </div>
-        <div style="text-align: center;">
-            <p>
-            Here we need to show them the agreements</br>
-            Talk about this project</br>
-            </p>
-            <button id="next">Next</button>
-        </div>
-        
+		<h2>Exploration of Word Size Data Encodings</h2>
 
-        <form action="{{url_for('get_description')}}" method = "POST" id="get_description_page"></form>
-        <script type="text/javascript">
-            var turker_id_url = '{{url_for("receive_id")}}';
-        </script>
-        <script type="text/javascript" src="{{url_for('static',filename = 'jquery-3.4.1.min.js')}}"></script>
-        <script type="text/javascript" src="{{url_for('static', filename = 'landing.js')}}"></script>
-        
-    </body>
-    
+		<h3>Description of Research</h3>
+
+		<p>You are invited to participate in a research study about how users perceive groups of related words. You have been asked to participate because we need to know what factors determine how easy it is to perceive relations between groups of words. De-identified data may be shared with collaborators at other universities.
+		</p>
+
+		<p>This study will include <b>native English speakers</b> from <b>18 to 65 years old</b> who feel comfortable using an online interface to read text and answer questions about data.</p>
+
+		<p>To reiterate, you are eligible for this study if and only if:
+			<ul>
+			<li>YOU HAVE NOT ALREADY COMPLETED THIS STUDY</li>
+			<li>You are a native English speaker.</li>
+			<li>You are between 18-65 years of age.</li>
+			<li>You are comfortable with reading text pulled from a variety of news sources.</li>
+			<li>You have JavaScript enabled in your browser.</li>
+			</ul>
+		</p>
+
+		<h3>What Will My Participation Involve?</h3>
+
+		<p>If you decide to participate in this research, you will be asked to answer questions about words either pulled from news articles or created from random characters. You will be presented with groups of words, and then asked about their comparative sizes. We expect this study to take roughly <span id="timeAmt">15</span> minutes.</p>
+
+		<h3>Are There Any Risks To Me?</h3>
+
+		<p>We don't anticipate any risks from participation in this study greater than normal activity.</p>
+
+		<h3>Are There Any Benefits To Me?</h3>
+
+		<p>There are no direct benefits to you other than compensation.</p>
+
+		<h3>Will I Be Compensated For My Participation?</h3>
+
+		<p>You will receive <span id="paymentAmt"></span> for participating in this study. If you do withdraw prior to the end of the study, you will receive no compensation.</p>
+
+		<h3>How Will My Confidentiality Be Protected?</h3>
+
+		<p>While there may be publications as a result of this study, your name will not be used. Only group characteristics will be published.</p>
+
+		<h3>Whom Should I Contact If I Have Questions?</h3>
+
+		<p>You may ask any questions about the research at any time. If you have questions about the research after you leave today you should contact the Principal Investigator Dr Eric Alexander at 507-222-4170. If you are not satisfied with response of research team, have more questions, or want to talk with someone about your rights as a research participant, you may contact Carleton College's IRB Chair, Justin London, at 507-222-4397.</p>
+
+		<p>Your participation is completely voluntary. If you begin participation and change your mind you may end your participation at any time without penalty.</p>
+
+		<h3>Consenting to participate</h3>
+
+		<p>Filling in your Amazon Mechanical Turk ID and hitting the "Ready" button  indicates that you have read this consent form, have an opportunity to ask any questions about your participation in this research and voluntarily consent to participate.</p>
+
+    <p>Please provide you Amazon Turker ID</p>
+    <input id="turker_id">
+    <button id="next" disabled="disabled">Ready</button>
+
+		<div id="jscheck"><p><strong>JavaScript error.</strong> It seems that JavaScript might not be enabled in your browser. It is required that Javascript be enabled to participate in this task. Please check browser settings before accepting HIT.</p></div>
+
+    <form action="{{url_for('get_description')}}" method = "POST" id="get_description_page"></form>
+    <script type="text/javascript">
+        var turker_id_url = '{{url_for("receive_id")}}';
+
+				// Enable the "Ready" button with JavaScript
+				$('#jscheck').html('');
+				//document.getElementById('jscheck').innerHTML="<p></p>";
+				document.getElementById('next').disabled="";
+    </script>
+    <script type="text/javascript" src="{{url_for('static', filename='landing.js')}}"></script>
+	</body>
 </html>
