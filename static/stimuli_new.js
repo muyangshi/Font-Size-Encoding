@@ -481,7 +481,7 @@ function postDataMulti(clickedword){
         "span_content": span_content,
 
     };
-    alert(clickedword[0].innerHTML + "I am clicked!");
+
     $.ajax({
         type: 'POST',
         url: post_data_multi_url,
