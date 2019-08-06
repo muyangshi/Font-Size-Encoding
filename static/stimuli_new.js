@@ -36,8 +36,8 @@ function onStartButtonClicked() {
     // then from the tasklist to the getStim() method as params
     var task = tasklist[0];
 
-    var outer_radius = task["outer_radius"];
-    var inner_radius = task["inner_radius"];
+    // var outer_radius = task["outer_radius"];
+    // var inner_radius = task["inner_radius"];
     var distance_between = task["distance_between"];
     var rule = task["rule"];
     var numberOfRings = 3;
@@ -69,14 +69,13 @@ function onStartButtonClicked() {
                         // the 2nd ajax call to gain the targets data
                         // Create 2D array for targets_hypo2
                         targets_hypo2 = [];
-                        var simpleCB = ()=>{alert("This is a simpleCB")}
                         for (var i=0; i<numberOfRings; i++){
                             (function (i) {
                                     $.ajax({
                                         url: flask_util.url_for('getMultiTargets', {
-                                            numberOfTargets: 4,
-                                            correct_fontsize: task["target_1_fontsize"],
-                                            wrong_fontsize: task["target_2_fontsize"],
+                                            numberOfTargets: 3,
+                                            correct_fontsize: task["target_2_fontsize"],
+                                            wrong_fontsize: task["target_1_fontsize"],
                                             word_length: task["target_1_length"]}),
                                         success:
                                             function(data){
@@ -99,29 +98,16 @@ function onStartButtonClicked() {
                                                                             // but not after the three success callback
                                                     console.log(targets_hypo2);
                                                     $("#JQWC").addClass("jqcloud");
-                                                    // var targets_then_distracts = function(simpleCB) {
-                                                    //     $.each(targets_hypo2,(index,target_array)=>{
-                                                    //         drawTargets(target_array,index*300+75);
-                                                    //     });
-                                                    //     simpleCB(); // This callback() will actually get called before the previous $.each(drawTargetsMulti) function finish.
-                                                    //             // Because drawTargetsMulti has forEach loop in it, and is considered finished
-                                                    //             // Even if the async function within each iteration has not completed yet
-                                                    //     drawDistractorsCallback(distractors_hypo2);
-                                                    // };
-                                                    // targets_then_distracts(simpleCB);
 
-                                                    function callback() {console.log('all targets drawn');}
                                                     var ringsProcessed = 0;
                                                     targets_hypo2.forEach((target_array,index,array) => {
-                                                        drawNTargets(target_array,index,() => {
+                                                        drawTargetsMulti(target_array,index,() => {
                                                             ringsProcessed++;
                                                             if(ringsProcessed === array.length){
-                                                                callback();
                                                                 drawDistractorsCallback(distractors_hypo2);
                                                             }
-                                                        })
-                                                    })
-                                                    // drawDistractorsCallback(distractors_hypo2);
+                                                        });
+                                                    });
                                                 }
                                             },
                                         dataType: "json"
@@ -186,73 +172,6 @@ function onStartButtonClicked() {
             alert("rule not understand");
     }
 }
-
-function drawNTargets(target_array,index,counter){
-    var cloud_center_x = $("#JQWC").width() / 2.0;
-    var cloud_center_y = $("#JQWC").height() / 2.0;
-    var distance_between = index*300+75;
-    target_array.forEach((target_word,index,array)=>{
-        var font_size = target_word["weight"];
-        var word_span = $('<span>').attr(target_word.html);
-        word_span.append(target_word.text);
-        $("#JQWC").append(word_span);
-        word_span[0].style.visibility = "hidden";
-        word_span[0].style.fontSize = font_size + "px";
-        word_span[0].style.color = "black";
-        var width = word_span.width();
-        var height = word_span.height();
-        var radius = distance_between / 2.0
-        var x = Math.random()*(radius*2)-radius;
-        var y = Math.sqrt(Math.pow(radius,2) - Math.pow(x,2)); // and here y will always be positive
-        var coefficient = [-1,1];
-            y = y*coefficient[Math.floor(Math.random()*coefficient.length)];
-        var left = cloud_center_x - width / 2.0 - x;
-        var top = cloud_center_y - height / 2.0 - y;
-        word_span[0].style.position = "absolute";
-        word_span[0].style.left = left + "px";
-        word_span[0].style.top = top + "px";
-        $(word_span).bind("click", function(){postData($(this));});
-        $(word_span).bind("mouseover", function() {this.style.cursor = 'pointer';});
-        
-        var hitTest = function(elem, other_elems) {
-            // Pairwise overlap detection
-            var overlapping = function(a, b) {
-                if (Math.abs(2.0*a.offsetLeft + a.offsetWidth - 2.0*b.offsetLeft - b.offsetWidth) < a.offsetWidth + b.offsetWidth) {
-                    if (Math.abs(2.0*a.offsetTop + a.offsetHeight - 2.0*b.offsetTop - b.offsetHeight) < a.offsetHeight + b.offsetHeight) {
-                        return true;
-                    }
-                }
-                return false;
-            };
-            var i = 0;
-            // Check elements for overlap one by one, stop and return false as soon as an overlap is found
-            for(i = 0; i < other_elems.length; i++) {
-                if (overlapping(elem, other_elems[i])) {
-                    return true;
-                }
-            }
-            return false;
-        };
-
-        do{
-            var overlap = hitTest(word_span[0],already_placed_targets);
-            if (overlap === true) {
-                var x = Math.random()*(radius*2)-radius;
-                var y = Math.sqrt(Math.pow(radius,2) - Math.pow(x,2)); // and here y will always be positive
-                var coefficient = [-1,1];
-                    y = y*coefficient[Math.floor(Math.random()*coefficient.length)];
-                var left = cloud_center_x - width / 2.0 - x;
-                var top = cloud_center_y - height / 2.0 - y;
-                word_span[0].style.left = left + "px";
-                word_span[0].style.top = top + "px";
-            }
-        } while (overlap === true)
-
-        already_placed_targets.push(word_span[0]);
-    });
-    counter();
-}
-
 
 function drawTargetCloud(target_array,distractor_array,distance_between,callback_drawDistractors) {
     $("#JQWC").addClass("jqcloud");
@@ -335,6 +254,74 @@ function drawTargets(target_array,distance_between){
     console.log("distance between the two target is: " + targets_distance);
 }
 
+// The draw targets method, used by hypo2
+function drawTargetsMulti(target_array,index,counter){
+    var cloud_center_x = $("#JQWC").width() / 2.0;
+    var cloud_center_y = $("#JQWC").height() / 2.0;
+    var distance_between = index*300+75;
+    var ring_num = index;
+    target_array.forEach((target_word,index,array)=>{
+        var font_size = target_word["weight"];
+        var word_span = $('<span>').attr(target_word.html).addClass("ring"+ring_num);
+        word_span.append(target_word.text);
+        $("#JQWC").append(word_span);
+        word_span[0].style.visibility = "hidden";
+        word_span[0].style.fontSize = font_size + "px";
+        word_span[0].style.color = "black";
+        var width = word_span.width();
+        var height = word_span.height();
+        var radius = distance_between / 2.0
+        var x = Math.random()*(radius*2)-radius;
+        var y = Math.sqrt(Math.pow(radius,2) - Math.pow(x,2)); // and here y will always be positive
+        var coefficient = [-1,1];
+            y = y*coefficient[Math.floor(Math.random()*coefficient.length)];
+        var left = cloud_center_x - width / 2.0 - x;
+        var top = cloud_center_y - height / 2.0 - y;
+        word_span[0].style.position = "absolute";
+        word_span[0].style.left = left + "px";
+        word_span[0].style.top = top + "px";
+        $(word_span).bind("click", function(){postDataMulti($(this));});
+        $(word_span).bind("mouseover", function() {this.style.cursor = 'pointer';});
+        
+        var hitTest = function(elem, other_elems) {
+            // Pairwise overlap detection
+            var overlapping = function(a, b) {
+                if (Math.abs(2.0*a.offsetLeft + a.offsetWidth - 2.0*b.offsetLeft - b.offsetWidth) < a.offsetWidth + b.offsetWidth) {
+                    if (Math.abs(2.0*a.offsetTop + a.offsetHeight - 2.0*b.offsetTop - b.offsetHeight) < a.offsetHeight + b.offsetHeight) {
+                        return true;
+                    }
+                }
+                return false;
+            };
+            var i = 0;
+            // Check elements for overlap one by one, stop and return false as soon as an overlap is found
+            for(i = 0; i < other_elems.length; i++) {
+                if (overlapping(elem, other_elems[i])) {
+                    return true;
+                }
+            }
+            return false;
+        };
+
+        do{
+            var overlap = hitTest(word_span[0],already_placed_targets);
+            if (overlap === true) {
+                var x = Math.random()*(radius*2)-radius;
+                var y = Math.sqrt(Math.pow(radius,2) - Math.pow(x,2)); // and here y will always be positive
+                var coefficient = [-1,1];
+                    y = y*coefficient[Math.floor(Math.random()*coefficient.length)];
+                var left = cloud_center_x - width / 2.0 - x;
+                var top = cloud_center_y - height / 2.0 - y;
+                word_span[0].style.left = left + "px";
+                word_span[0].style.top = top + "px";
+            }
+        } while (overlap === true)
+
+        already_placed_targets.push(word_span[0]);
+    });
+    counter();
+}
+
 function drawDistractorsCallback(word_array){
     $("#JQWC").jQCloud(word_array,already_placed_targets,"distractor",
         {   delayedMode: false,
@@ -346,19 +333,7 @@ function drawDistractorsCallback(word_array){
     );
 }
 
-function nextTask(){
-    document.getElementById('JQWC').innerHTML = '<span class="dot" style="position: absolute;top: 500px;left: 500px;height: 5px;width: 5px;background-color: red;border-radius: 35%;display: inline-block;"></span>';
-    tasklist.shift();
-    if (tasklist.length == 0){
-        console.log('All tasks completed')
-        var input = $("<input>").attr("type","hidden").attr("name","turker_id").val(turker_id);
-        $('#get_completion_page').append(input).submit();
-    } else {
-    onStartButtonClicked();
-    }
-}
-
-function postData(clickedWord){
+function postData(clickedword){
     endTime = new Date();
     var timeDiff = endTime - startTime; // in ms
     timeDiff /= 1000; // strip the ms
@@ -411,7 +386,7 @@ function postData(clickedWord){
         "cloud_center_x": cloud_center_x,
         "cloud_center_y": cloud_center_y,
 
-        "clicked_word": clickedWord[0].innerHTML,
+        "clicked_word": clickedword[0].innerHTML,
         "correct_word": correct_word[0].innerHTML,
         "wrong_word": wrong_word[0].innerHTML,
         "distance_between_targets": distance_between_targets,
@@ -454,35 +429,82 @@ function postData(clickedWord){
 }
 
 function postDataMulti(clickedword){
-    alert(clickedword[0].innerHTML + "I am clicked!");
-}
-// function drawTargetsMulti(target_array,outer_radius,inner_radius){
-//     var cloud_center_x = $("#JQWC").width() / 2.0;
-//     var cloud_center_y = $("#JQWC").height() / 2.0;
-//     target_array.forEach((target,index)=>{
-//         var font_size = target["weight"];
-//         var word_span = $('<span>').attr(target.html).addClass("target"+index);
-//         word_span.append(target.text);
-//         // word_span[0].style.visibility = "hidden";
-//         word_span[0].style.fontSize = font_size + "px";
-//         word_span[0].style.color = "black";
-//         $("#JQWC").append(word_span);
-//         var width = word_span.width();
-//         var height = word_span.height();
-//         var left;
-//         var top;
-//         do {
-//             left = cloud_center_x - width / 2.0 + Math.floor(Math.random() * (2*outer_radius)) - outer_radius;
-//             top = cloud_center_y - height / 2.0 + Math.floor(Math.random() * (2*outer_radius)) - outer_radius;
-//             distance_to_center = Math.sqrt(Math.pow((left + width/2.0 - cloud_center_x),2) + Math.pow((top + height/2.0 - cloud_center_y),2));
-//         } while (distance_to_center > outer_radius || distance_to_center < inner_radius)
+    endTime = new Date();
+    var timeDiff = endTime - startTime; // in ms
+    timeDiff /= 1000; // strip the ms
+    var number_of_words = document.getElementById("JQWC").childElementCount - 1; // minus the dot span
+    var span_content = document.getElementById("JQWC").innerHTML; //the span content
+    var cloud_width = $("#JQWC").width(); // width of the container in int
+    var cloud_height = $("#JQWC").height(); // height of the container in int
+    var cloud_center_x = cloud_width / 2.0; // the center x in int
+    var cloud_center_y = cloud_height / 2.0; // the center y in int
 
-//         word_span[0].style.position = "absolute";
-//         word_span[0].style.left = left + "px";
-//         word_span[0].style.top = top + "px";
-//         $(word_span).bind("click", function(){postDataMulti($(this));});
-//         $(word_span).bind("mouseover", function() {this.style.cursor = 'pointer';});
-        
-//         already_placed_targets.push(word_span[0]);
-//     });
-// }
+    var number_of_targets = $(".target").length;
+    var num_words_in_ring0 = $(".ring0").length;
+    var num_words_in_ring1 = $(".ring1").length;
+    var num_words_in_ring2 = $(".ring2").length;
+
+    var fontsizes = [];
+    $(".target").each((index,target)=>{fontsizes.push(parseInt(target.style.fontSize));});
+    var correct_fontsize = Math.max(...fontsizes);
+    var wrong_fontsize = Math.min(...fontsizes);
+
+    var clicked_word_text = clickedword[0].innerHTML;
+    var clicked_word_fontsize = parseInt(clickedword[0].style.fontSize);
+    var clickedword_width = clickedword.width();
+    var clickedword_height = clickedword.height();
+    var clicked_word_x = parseFloat(clickedword.css("left")) + clickedword_width/2.0 - cloud_center_x;
+    var clicked_word_y = cloud_center_y - parseFloat(clickedword.css("top")) - clickedword_height/2.0;
+    var clicked_word_center_distance = Math.sqrt(Math.pow(clicked_word_x,2) + Math.pow(clicked_word_y,2));
+
+    var word_data = {
+        "turker_id": turker_id,
+        "cloud_width": cloud_width,
+        "cloud_height": cloud_height,
+        "cloud_center_x": cloud_center_x,
+        "cloud_center_y": cloud_center_y,
+
+        "clicked_word": clicked_word_text,
+        "time": timeDiff,
+        "clicked_word_x": clicked_word_x,
+        "clicked_word_y": clicked_word_y,
+        "clicked_word_center_distance": clicked_word_center_distance,
+        "clicked_word_fontsize": clicked_word_fontsize,
+        "correct_fontsize": correct_fontsize,
+        "wrong_fontsize": wrong_fontsize,
+
+        "num_words_in_ring0": num_words_in_ring0,
+        "num_words_in_ring1": num_words_in_ring1,
+        "num_words_in_ring2": num_words_in_ring2,
+        "number_of_targets": number_of_targets,
+        "number_of_words": number_of_words,
+        "span_content": span_content,
+
+    };
+
+    $.ajax({
+        type: 'POST',
+        url: post_data_multi_url,
+        data: word_data,
+        success: function(response) {
+            nextTask();
+            console.log(response);
+        },
+        error: function(error) {
+            alert('error saving data');
+            console.log(error);
+        }
+    });
+}
+
+function nextTask(){
+    document.getElementById('JQWC').innerHTML = '<span class="dot" style="position: absolute;top: 500px;left: 500px;height: 5px;width: 5px;background-color: red;border-radius: 35%;display: inline-block;"></span>';
+    tasklist.shift();
+    if (tasklist.length == 0){
+        console.log('All tasks completed')
+        var input = $("<input>").attr("type","hidden").attr("name","turker_id").val(turker_id);
+        $('#get_completion_page').append(input).submit();
+    } else {
+    onStartButtonClicked();
+    }
+}

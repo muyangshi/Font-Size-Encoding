@@ -1,4 +1,6 @@
+import matplotlib
 import matplotlib.pyplot as pyplot
+import numpy as np
 import csv
 from collections import OrderedDict
 import re
@@ -339,3 +341,241 @@ def time_distance_between_targets():
     pyplot.title('Time v.s. Distance between targets')
 
     pyplot.show()
+
+
+
+#hypo2
+#############################################################################
+def hypo2_load_click_pos():
+    correct_clicks = []
+    wrong_clicks = []
+    with open('hypo2_client_data.csv','r')as csvdata:
+        reader = csv.reader(csvdata,delimiter=',')
+        heading = next(reader)
+        for row in reader:
+            clicked_word_x = float(row[7])
+            clicked_word_y = float(row[8])
+            clicked_word_center_distance = float(row[9])
+            sizeDiff = int(row[11]) - int(row[12])
+            # print(sizeDiff)
+            if row[10] != row[11]:
+                wrong_clicks.append((clicked_word_x,clicked_word_y,clicked_word_center_distance,sizeDiff,False))
+            else:
+                correct_clicks.append((clicked_word_x,clicked_word_y,clicked_word_center_distance,sizeDiff,True))
+    return correct_clicks,wrong_clicks
+
+def hypo2_scatterplot():
+    result = hypo2_load_click_pos()
+    datas = (result[0],result[1])
+    colors = ("blue","red")
+    groups = ("correct","wrong")
+
+    figure = pyplot.figure()
+    scatterplot = figure.add_subplot(1,1,1)
+    for data, color, group in zip(datas, colors, groups):
+        for data_set in data:
+            x,y = data_set[0],data_set[1]
+            scatterplot.scatter(x,y,c=color,label=group,alpha=0.3)
+    pyplot.title('Scatterplot of word\'s Position versus correctness')
+    pyplot.xlabel('x position (px)')
+    pyplot.ylabel('y position (px)')
+
+    handles, labels = pyplot.gca().get_legend_handles_labels()
+    by_label = OrderedDict(zip(labels, handles))
+    pyplot.legend(by_label.values(), by_label.keys(),loc=2)
+
+    pyplot.show()
+
+def hypo2_stacked_bar():
+    result = hypo2_load_click_pos()
+    correct_clicks = result[0]
+    wrong_clicks = result[1]
+    total_clicks = len(correct_clicks) + len(wrong_clicks)
+    ring0_clicks_correct,ring0_clicks_wrong = [],[]
+    ring1_clicks_correct,ring1_clicks_wrong = [],[]
+    ring2_clicks_correct,ring2_clicks_wrong = [],[]
+    for data in correct_clicks:
+        distance_from_center = data[2]
+        if distance_from_center < 100:
+            # ring0
+            ring0_clicks_correct.append(data)
+        elif 100< distance_from_center < 200:
+            # ring1
+            ring1_clicks_correct.append(data)
+        elif 300 < distance_from_center:
+            #ring2
+            ring2_clicks_correct.append(data)
+    for data in wrong_clicks:
+        if distance_from_center < 100:
+            ring0_clicks_wrong.append(data)
+        elif 100 < distance_from_center < 200:
+            ring1_clicks_wrong.append(data)
+        elif 300 < distance_from_center:
+            ring2_clicks_wrong.append(data)
+    # ring0_percent_click = (len(ring0_clicks_correct) + len(ring0_clicks_wrong))/total_clicks
+    # ring1_percent_click = (len(ring1_clicks_correct)+len(ring1_clicks_wrong))/total_clicks
+    # ring2_percent_click = (len(ring2_clicks_correct)+len(ring2_clicks_wrong))/total_clicks
+    # ring0_percent_accuracy = len(ring0_clicks_correct)/(len(ring0_clicks_correct)+len(ring0_clicks_wrong))
+    # ring1_percent_accuracy = len(ring1_clicks_correct)/(len(ring1_clicks_correct)+len(ring1_clicks_wrong))
+    # ring2_percent_accuracy = len(ring2_clicks_correct)/(len(ring2_clicks_correct)+len(ring2_clicks_wrong))
+    
+
+    size1_ring0_c,size1_ring1_c,size1_ring2_c = [],[],[]
+    size2_ring0_c,size2_ring1_c,size2_ring2_c = [],[],[]
+    size3_ring0_c,size3_ring1_c,size3_ring2_c = [],[],[]
+
+    for click in ring0_clicks_correct:
+        if click[3] == 1:
+            size1_ring0_c.append(click)
+        elif click[3] == 2:
+            size2_ring0_c.append(click)
+        elif click[3] == 3:
+            size3_ring0_c.append(click)
+
+    for click in ring1_clicks_correct:
+        if click[3] == 1:
+            size1_ring1_c.append(click)
+        elif click[3] == 2:
+            size2_ring1_c.append(click)
+        elif click[3] == 3:
+            size3_ring1_c.append(click)
+
+    for click in ring2_clicks_correct:
+        if click[3] == 1:
+            size1_ring2_c.append(click)
+        elif click[3] == 2:
+            size2_ring2_c.append(click)
+        elif click[3] == 3:
+            size3_ring2_c.append(click)
+    
+    size1_ring0_w,size1_ring1_w,size1_ring2_w = [],[],[]
+    size2_ring0_w,size2_ring1_w,size2_ring2_w = [],[],[]
+    size3_ring0_w,size3_ring1_w,size3_ring2_w = [],[],[]
+
+    for click in ring0_clicks_wrong:
+        if click[3] == 1:
+            size1_ring0_w.append(click)
+        elif click[3] == 2:
+            size2_ring0_w.append(click)
+        elif click[3] == 3:
+            size3_ring0_w.append(click)
+
+    for click in ring1_clicks_wrong:
+        if click[3] == 1:
+            size1_ring1_w.append(click)
+        elif click[3] == 2:
+            size2_ring1_w.append(click)
+        elif click[3] == 3:
+            size3_ring1_w.append(click)
+
+    for click in ring2_clicks_wrong:
+        if click[3] == 1:
+            size1_ring2_w.append(click)
+        elif click[3] == 2:
+            size2_ring2_w.append(click)
+        elif click[3] == 3:
+            size3_ring2_w.append(click)
+    # print(size1_ring0_c,size2_ring0_c,size3_ring0_c)
+    # size1_ring0_c.append((1,1,1,1,True))
+    # size1_ring0_c.append((2,2,2,2,True))
+    # print(size1_ring0_c,size2_ring0_c,size3_ring0_c)
+
+
+    ring0_correct_clicks = [len(size1_ring0_c),len(size2_ring0_c),len(size3_ring0_c)]
+    ring0_wrong_clicks = [len(size1_ring0_w),len(size2_ring0_w),len(size3_ring0_w)]
+    ring1_correct_clicks = [len(size1_ring1_c),len(size2_ring1_c),len(size3_ring1_c)]
+    ring1_wrong_clicks = [len(size1_ring1_w),len(size2_ring1_w),len(size3_ring1_w)]
+    ring2_correct_clicks = [len(size1_ring2_c),len(size2_ring2_c),len(size3_ring2_c)]
+    ring2_wrong_clicks = [len(size1_ring2_w),len(size2_ring2_w),len(size3_ring2_w)]
+
+
+    N = 3
+    index = np.arange(N)
+    width = 0.2
+    correct_ring0 = pyplot.bar(index-width, ring0_correct_clicks, width,color="blue",edgecolor="black",label="correct")
+    wrong_ring0 = pyplot.bar(index-width, ring0_wrong_clicks, width,bottom=ring0_correct_clicks,color="orange",edgecolor="black",label="wrong")
+    correct_ring1 = pyplot.bar(index,ring1_correct_clicks,width,color="blue",edgecolor="black",label="correct")
+    wrong_ring1 = pyplot.bar(index,ring1_wrong_clicks,width,bottom=ring1_correct_clicks,color="orange",edgecolor="black",label="wrong")
+    correct_ring2 = pyplot.bar(index+width,ring2_correct_clicks,width,color="blue",edgecolor="black",label="correct")
+    wrong_ring2 = pyplot.bar(index+width,ring2_wrong_clicks,width,bottom=ring2_correct_clicks,color="orange",edgecolor="black",label="wrong")
+
+
+    pyplot.xticks(index,('1px','2px','3px'))
+    # pyplot.legend()
+    handles, labels = pyplot.gca().get_legend_handles_labels()
+    by_label = OrderedDict(zip(labels, handles))
+    pyplot.legend(by_label.values(), by_label.keys(),loc=2)
+    # pyplot.legend((correct[0],wrong[0]),('Correct','Wrong'))
+    # print(correct[0],wrong[0])
+    # print(ring0_c[0],ring0_w[0])
+    # pyplot.legend((ring1_c[0],ring1_w[0]),('Correct','Wrong'))
+    # print(ring1_c[0],ring1_w[0])
+    pyplot.show()
+
+
+    # pass
+def hypo2_percentages():
+    result = hypo2_load_click_pos()
+    correct_clicks = result[0]
+    wrong_clicks = result[1]
+    total_clicks = len(correct_clicks) + len(wrong_clicks)
+    ring0_clicks_correct,ring0_clicks_wrong = [],[]
+    ring1_clicks_correct,ring1_clicks_wrong = [],[]
+    ring2_clicks_correct,ring2_clicks_wrong = [],[]
+    for data in correct_clicks:
+        distance_from_center = data[2]
+        if distance_from_center < 100:
+            # ring0
+            ring0_clicks_correct.append(data)
+        elif 100< distance_from_center < 200:
+            # ring1
+            ring1_clicks_correct.append(data)
+        elif 300 < distance_from_center:
+            #ring2
+            ring2_clicks_correct.append(data)
+    for data in wrong_clicks:
+        if distance_from_center < 100:
+            ring0_clicks_wrong.append(data)
+        elif 100 < distance_from_center < 200:
+            ring1_clicks_wrong.append(data)
+        elif 300 < distance_from_center:
+            ring2_clicks_wrong.append(data)
+    ring0_percent_click = (len(ring0_clicks_correct) + len(ring0_clicks_wrong))/total_clicks
+    ring1_percent_click = (len(ring1_clicks_correct)+len(ring1_clicks_wrong))/total_clicks
+    ring2_percent_click = (len(ring2_clicks_correct)+len(ring2_clicks_wrong))/total_clicks
+    ring0_percent_accuracy = len(ring0_clicks_correct)/(len(ring0_clicks_correct)+len(ring0_clicks_wrong))
+    ring1_percent_accuracy = len(ring1_clicks_correct)/(len(ring1_clicks_correct)+len(ring1_clicks_wrong))
+    ring2_percent_accuracy = len(ring2_clicks_correct)/(len(ring2_clicks_correct)+len(ring2_clicks_wrong))
+
+    labels = ['ring1','ring2','ring3']
+    percent_clicks = [ring0_percent_click,ring1_percent_click,ring2_percent_click]
+    percent_accuracy = [ring0_percent_accuracy,ring1_percent_accuracy,ring2_percent_accuracy]
+    
+    index = np.arange(len(labels)) # the label locations
+    width = 0.2 # the width of the bars
+
+    fig, ax = pyplot.subplots()
+    rects1 = ax.bar(index - width/2,percent_clicks,label = "percent clicks",width=0.2)
+    rects2 = ax.bar(index + width/2, percent_accuracy,label = "accuracy",width=0.2)
+    ax.set_ylabel("Percentage")
+    ax.set_title("Percentage by each ring")
+    ax.set_xticks(index)
+    ax.set_xticklabels(labels)
+    ax.legend()
+
+    autolabel(rects1)
+    autolabel(rects2)
+    fig.tight_layout()
+    pyplot.show()
+
+def autolabel(rects):
+    """Attach a text label above each bar in *rects*, displaying its height."""
+    for rect in rects:
+        height = rect.get_height()
+        ax = pyplot.gca()
+        ax.annotate('{}'.format(height)[:4],
+                    xy=(rect.get_x() + rect.get_width() / 2, height),
+                    xytext=(0, 3),  # 3 points vertical offset
+                    textcoords="offset points",
+                    ha='center', va='bottom')
+
