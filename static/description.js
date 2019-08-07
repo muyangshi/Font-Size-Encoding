@@ -15,6 +15,9 @@ function initialize() {
         next.onclick = onNextClicked;
     }
     console.log(turker_id);
+    if (participant === "tested"){
+        $("body").html("Hello "+turker_id+", you have already participated in this research. \n If this is your first time participating in this research, please contant us at xxx@carleton.edu. \n Thank you for your understanding.")
+    }
 }
 
 

@@ -40,6 +40,25 @@
 
         <script type="text/javascript">
             var turker_id = '{{ ID }}' ;
+            var participant = '{{ Participant }}'
+            // initialize();
+
+            // function initialize() {
+            //     var next = document.getElementById('start_stim');
+            //     if (next) {
+            //         next.onclick = onNextClicked;
+            //     }
+            //     console.log(turker_id);
+            //     if (participant === "tested"){
+            //         $("BODY").innerHTML = turker_id + "You have already participanted in the research. If you believe this is a mistake, please contact BLABLABLA."
+            //     }
+            // }
+
+
+            // function onNextClicked() {
+            //     var input = $("<input>").attr("type","hidden").attr("name","turker_id").val(turker_id);
+            //     $('#get_stimuli_page').append(input).submit();
+            // }
         </script>
         <script type="text/javascript" src="{{url_for('static',filename='description.js')}}"></script>
 
