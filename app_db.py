@@ -56,15 +56,15 @@ def get_description():
     turker_id = flask.request.form['turker_id']
     connection = get_connection()
     cursor = connection.cursor()
-    cursor.execute("SELECT EXISTS ( SELECT turker_id FROM turker WHERE turker_id = %s)",(turker_id,))
-    existance = cursor.fetchone()[0]
-    print(existance,type(existance))
+    cursor.execute("SELECT turker_id FROM turker WHERE turker_id = %s",(turker_id,))
+    existance = len(cursor)
+    print(cursor,type(cursor),existance,type(existance))
     connection.commit()
     cursor.close()
     connection.close()
     # id_list = ['1','2','3','4','5']
     participant = 'new'
-    if existance == True:
+    if existance > 1:
         participant = 'tested'
     return flask.render_template('description.html', ID = turker_id, Participant = participant)
 
