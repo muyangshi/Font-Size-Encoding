@@ -360,7 +360,7 @@ function drawDistractorsCallback(word_array,hypothesis){
                         // $(".block").css("cursor","pointer");
                         $("#block0").bind("click",function(){$(".target0").trigger("click");});
                         $("#block1").bind("click",function(){$(".target1").trigger("click");})
-                                    .ready(()=>{alert("Times Up. You cannot look at the target words anymore. Please click at the rectangle that covers the word you think is bigger.");});
+                                    // .ready(()=>{alert("Times Up. You cannot look at the target words anymore. Please click at the rectangle that covers the word you think is bigger.");});
                                     
                     }
                     timeout = setTimeout(block_target,2000);
