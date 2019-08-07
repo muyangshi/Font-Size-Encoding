@@ -57,7 +57,7 @@ def get_description():
     connection = get_connection()
     cursor = connection.cursor()
     cursor.execute("SELECT turker_id FROM turker WHERE turker_id = %s",(turker_id,))
-    existance = len(cursor)
+    existance = len(cursor.fetchall())
     print(cursor,type(cursor),existance,type(existance))
     connection.commit()
     cursor.close()
