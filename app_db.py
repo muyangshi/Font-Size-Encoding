@@ -54,9 +54,17 @@ def get_landing_page():
 @app.route('/word_cognition_study/description', methods = ['POST'])
 def get_description():
     turker_id = flask.request.form['turker_id']
-    id_list = ['1','2','3','4','5']
+    connection = get_connection()
+    cursor = connection.cursor()
+    cursor.execute("SELECT EXISTS ( SELECT turker_id FROM turker WHERE turker_id = %s)",(turker_id,))
+    existance = cursor.fetchone()[0]
+    print(existance,type(existance))
+    connection.commit()
+    cursor.close()
+    connection.close()
+    # id_list = ['1','2','3','4','5']
     participant = 'new'
-    if turker_id in id_list:
+    if existance == True:
         participant = 'tested'
     return flask.render_template('description.html', ID = turker_id, Participant = participant)
 
