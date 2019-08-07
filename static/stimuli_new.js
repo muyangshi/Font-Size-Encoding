@@ -14,6 +14,8 @@ function initialize() {
 }
 console.log("device pixel ratio is: " + window.devicePixelRatio);
 
+var timeout; // setTimeOut function for "flash"
+
 // var words; // distractors used for hypo1, should be able to put this inside onStartButtonClicked()
 var already_placed_targets;
 
@@ -104,7 +106,7 @@ function onStartButtonClicked() {
                                                         drawTargetsMulti(target_array,index,() => {
                                                             ringsProcessed++;
                                                             if(ringsProcessed === array.length){
-                                                                drawDistractorsCallback(distractors_hypo2);
+                                                                drawDistractorsCallback(distractors_hypo2,"hypo2");
                                                             }
                                                         });
                                                     });
@@ -176,7 +178,7 @@ function onStartButtonClicked() {
 function drawTargetCloud(target_array,distractor_array,distance_between,callback_drawDistractors) {
     $("#JQWC").addClass("jqcloud");
     drawTargets(target_array,distance_between); 
-    callback_drawDistractors(distractor_array); 
+    callback_drawDistractors(distractor_array,"hypo1"); 
     // Actually Here, 
     // Will the callback_drawDistractors(words) get called after the COMPLETION of the above drawTargets function?
     // When drawTargets invokes OTHER FUNCTION ?
@@ -189,7 +191,7 @@ function drawTargets(target_array,distance_between){
     // that has the diameter of distance_between
     target0 = target_array[0];
     var font_size = target0["weight"];
-        var word_span = $('<span>').attr(target0.html).addClass("target0");
+        var word_span = $('<span>').attr(target0.html).addClass("target0").attr("id","target0");
         word_span.append(target0.text);
         $("#JQWC").append(word_span);
         word_span[0].style.visibility = "hidden";
@@ -220,7 +222,7 @@ function drawTargets(target_array,distance_between){
 
     target1 = target_array[1];
     var font_size = target1["weight"];
-        var word_span = $('<span>').attr(target1.html).addClass("target1");
+        var word_span = $('<span>').attr(target1.html).addClass("target1").attr('id','target1');
         word_span.append(target1.text);
         $("#JQWC").append(word_span);
         word_span[0].style.visibility = "hidden";
@@ -322,18 +324,54 @@ function drawTargetsMulti(target_array,index,counter){
     counter();
 }
 
-function drawDistractorsCallback(word_array){
+function drawDistractorsCallback(word_array,hypothesis){
     $("#JQWC").jQCloud(word_array,already_placed_targets,"distractor",
         {   delayedMode: false,
             afterCloudRender: () => {
                 startTime = new Date();
                 $.each($(".target"),(index,value)=>{value.style.visibility = "visible";});
+                if (hypothesis === "hypo1"){ // setTimeOut on 2 seconds after the words are shown   
+                    var block_target = function(){
+                        target0_left = $("#target0").css("left");
+                        target0_top = $("#target0").css("top");
+                        target1_left = $("#target1").css("left");
+                        target1_top = $("#target1").css("top");
+                        var block0 = $('<span>').attr('id','block0')
+                                                .attr('class','block')
+                                                .css('font-size','30px')
+                                                .css('padding-left','30px')
+                                                .css('background','blue')
+                                                .css('position','absolute')
+                                                .css('left',target0_left)
+                                                .css('top',target0_top)
+                                                .css('cursor','pointer')
+                                                .html('&nbsp;&nbsp;&nbsp;');
+                        var block1 = $('<span>').attr('id','block1')
+                                                .attr('class','block')
+                                                .css('font-size','30px')
+                                                .css('padding-left','30px')
+                                                .css('background','blue')
+                                                .css('position','absolute')
+                                                .css('left',target1_left)
+                                                .css('top',target1_top)
+                                                .css('cursor','pointer')
+                                                .html('&nbsp;&nbsp;&nbsp;');
+                        $("#JQWC").append(block0,block1);
+                        // $(".block").css("cursor","pointer");
+                        $("#block0").bind("click",function(){$(".target0").trigger("click");});
+                        $("#block1").bind("click",function(){$(".target1").trigger("click");})
+                                    .ready(()=>{alert("Times Up. You cannot look at the target words anymore. Please click at the rectangle that covers the word you think is bigger.");});
+                                    
+                    }
+                    timeout = setTimeout(block_target,2000);
+                }
             }
         }
     );
 }
 
 function postData(clickedword){
+    clearTimeout(timeout);
     endTime = new Date();
     var timeDiff = endTime - startTime; // in ms
     timeDiff /= 1000; // strip the ms

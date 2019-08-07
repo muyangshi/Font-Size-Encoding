@@ -54,7 +54,19 @@ def get_landing_page():
 @app.route('/word_cognition_study/description', methods = ['POST'])
 def get_description():
     turker_id = flask.request.form['turker_id']
-    return flask.render_template('description.html', ID = turker_id)
+    # connection = get_connection()
+    # cursor = connection.cursor()
+    # cursor.execute("SELECT EXISTS ( SELECT turker_id FROM turker WHERE turker_id = %s)",(turker_id,))
+    # existance = cursor.fetchone()[0]
+    # print(existance,type(existance))
+    # connection.commit()
+    # cursor.close()
+    # connection.close()
+    # id_list = ['1','2','3','4','5']
+    # participant = 'new'
+    # if existance == True:
+        # participant = 'tested'
+    return flask.render_template('description.html', ID = turker_id, Participant = participant)
 
 # Get the description page; turker_id is passed from description page through HTML form
 @app.route('/word_cognition_study/stimuli', methods = ['POST'])
@@ -296,6 +308,17 @@ def post_data_multi():
     number_of_targets = data["number_of_targets"] #16
     number_of_words = data["number_of_words"] #17
     span_content = data["span_content"] #18
+
+    # connection = get_connection()
+    # cursor = connection.cursor()
+    # cursor.execute("""
+    #         INSERT INTO pilot_multi_target (turker_id,cloud_width,cloud_height,cloud_center_x,cloud_center_y,clicked_word,time,clicked_word_x,clicked_word_y,clicked_word_center_distance,clicked_word_fontsize,correct_fontsize,wrong_fontsize,num_words_in_ring0,num_words_in_ring1,num_words_in_ring2,number_of_targets,number_of_words,span_content)
+    #         VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);
+    #         """,
+    #         (turker_id,cloud_width,cloud_height,cloud_center_x,cloud_center_y,clicked_word,time,clicked_word_x,clicked_word_y,clicked_word_center_distance,clicked_word_fontsize,correct_fontsize,wrong_fontsize,num_words_in_ring0,num_words_in_ring1,num_words_in_ring2,number_of_targets,number_of_words,span_content))
+    # connection.commit()
+    # cursor.close()
+    # connection.close()
 
     with open('hypo2_client_data.csv','a',newline='') as csvfile:
         writer = csv.writer(csvfile,delimiter=',',quotechar='"')

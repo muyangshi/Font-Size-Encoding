@@ -54,7 +54,19 @@ def get_landing_page():
 @app.route('/word_cognition_study/description', methods = ['POST'])
 def get_description():
     turker_id = flask.request.form['turker_id']
-    return flask.render_template('description.html', ID = turker_id)
+    connection = get_connection()
+    cursor = connection.cursor()
+    cursor.execute("SELECT turker_id FROM turker WHERE turker_id = %s",(turker_id,))
+    existance = len(cursor)
+    print(cursor,type(cursor),existance,type(existance))
+    connection.commit()
+    cursor.close()
+    connection.close()
+    # id_list = ['1','2','3','4','5']
+    participant = 'new'
+    if existance > 1:
+        participant = 'tested'
+    return flask.render_template('description.html', ID = turker_id, Participant = participant)
 
 # Get the description page; turker_id is passed from description page through HTML form
 @app.route('/word_cognition_study/stimuli', methods = ['POST'])
@@ -269,6 +281,55 @@ def post_data():
     #     # 'number_of_words','span_content'])
     #     writer.writerow([turker_id,cloud_width,cloud_height,cloud_center_x,cloud_center_y,clicked_word,correct_word,wrong_word,distance_between_targets,time,correct_word_x,correct_word_y,correct_word_fontsize,correct_word_width,correct_word_height,correct_word_center_distance,wrong_word_x,wrong_word_y,wrong_word_fontsize,wrong_word_width,wrong_word_height,wrong_word_center_distance,number_of_words,span_content])
     return json.dumps("data")
+
+# Post hypo2 stimuli data
+@app.route('/word_cognition_study/post_data_multi',methods=['POST'])
+def post_data_multi():
+    data = flask.request.form
+
+    turker_id = data["turker_id"] #0
+    cloud_width = data["cloud_width"] #1
+    cloud_height = data["cloud_height"] #2
+    cloud_center_x = data["cloud_center_x"] #3
+    cloud_center_y = data["cloud_center_y"] #4
+
+    clicked_word = data["clicked_word"] #5
+    time = data["time"] #6
+    clicked_word_x = data["clicked_word_x"] #7
+    clicked_word_y = data["clicked_word_y"] #8
+    clicked_word_center_distance = data["clicked_word_center_distance"] #9
+    clicked_word_fontsize = data["clicked_word_fontsize"] #10
+    correct_fontsize = data["correct_fontsize"] #11
+    wrong_fontsize = data["wrong_fontsize"] #12
+
+    num_words_in_ring0 = data["num_words_in_ring0"] #13
+    num_words_in_ring1 = data["num_words_in_ring1"] #14
+    num_words_in_ring2 = data["num_words_in_ring2"] #15
+    number_of_targets = data["number_of_targets"] #16
+    number_of_words = data["number_of_words"] #17
+    span_content = data["span_content"] #18
+
+    connection = get_connection()
+    cursor = connection.cursor()
+    cursor.execute("""
+            INSERT INTO pilot_multi_target (turker_id,cloud_width,cloud_height,cloud_center_x,cloud_center_y,clicked_word,time,clicked_word_x,clicked_word_y,clicked_word_center_distance,clicked_word_fontsize,correct_fontsize,wrong_fontsize,num_words_in_ring0,num_words_in_ring1,num_words_in_ring2,number_of_targets,number_of_words,span_content)
+            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);
+            """,
+            (turker_id,cloud_width,cloud_height,cloud_center_x,cloud_center_y,clicked_word,time,clicked_word_x,clicked_word_y,clicked_word_center_distance,clicked_word_fontsize,correct_fontsize,wrong_fontsize,num_words_in_ring0,num_words_in_ring1,num_words_in_ring2,number_of_targets,number_of_words,span_content))
+    connection.commit()
+    cursor.close()
+    connection.close()
+
+
+    with open('hypo2_client_data.csv','a',newline='') as csvfile:
+        writer = csv.writer(csvfile,delimiter=',',quotechar='"')
+        writer.writerow([turker_id,cloud_width,cloud_height,cloud_center_x,cloud_center_y,
+        clicked_word,time,clicked_word_x,clicked_word_y,clicked_word_center_distance,clicked_word_fontsize,
+        correct_fontsize,wrong_fontsize,
+        num_words_in_ring0,num_words_in_ring1,num_words_in_ring2,number_of_targets,number_of_words,
+        span_content])
+    return json.dumps("success")
+
 
 # Post demographic data
 @app.route('/word_cognition_study/completion/post_demographic_data', methods=['POST'])
