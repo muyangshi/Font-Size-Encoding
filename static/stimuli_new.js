@@ -346,7 +346,6 @@ function drawDistractorsCallback(word_array,hypothesis){
                                                 .css('top',target0_top)
                                                 .css('cursor','pointer')
                                                 .html('&nbsp;&nbsp;&nbsp;');
-                                                // .bind("mouseover",()=>{$(this).css('cursor','pointer')});
                         var block1 = $('<span>').attr('id','block1')
                                                 .attr('class','block')
                                                 .css('font-size','30px')
