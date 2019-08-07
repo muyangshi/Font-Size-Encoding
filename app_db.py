@@ -212,8 +212,9 @@ def receive_id():
 
     connection = get_connection()
     cursor = connection.cursor()
-    cursor.execute("INSERT INTO turker (turker_id,hashcode) VALUES (%s, %s)",
-        (turker_id,hashcode))
+    cursor.execute("SELECT turker_id FROM turker WHERE turker_id = %s",(turker_id,))
+    if cursor.fetchall() == 0:
+        cursor.execute("INSERT INTO turker (turker_id,hashcode) VALUES (%s, %s)",(turker_id,hashcode))
     connection.commit()
     cursor.close()
     connection.close()
