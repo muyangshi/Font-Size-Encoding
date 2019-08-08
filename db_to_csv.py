@@ -32,7 +32,7 @@ def get_stimuli_data():
     data_list = cursor.fetchall()
     print(data_list[0])
     with open('temp.csv','a',newline='') as csvdata:
-        writer = csv.writer(csvdata,delimiet = ',',quotechar = '"')
+        writer = csv.writer(csvdata,delimiter = ',',quotechar = '"')
         for row in data_list:
             writer.writerow(row)
     # connection.commit()
