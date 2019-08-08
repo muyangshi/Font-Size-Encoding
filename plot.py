@@ -13,7 +13,7 @@ def distance_correct_data():
     # distance = []
     correct_ans = []
     wrong_ans = []
-    with open('pilot_client_data.csv','r') as csvdata:
+    with open('temp.csv','r') as csvdata:
         reader = csv.reader(csvdata,delimiter = ',')
         heading = next(reader)
         for row in reader:
@@ -28,7 +28,7 @@ def distance_correct_data():
 def position_correct_data():
     correct_ans = []
     wrong_ans = []
-    with open('pilot_client_data.csv','r') as csvdata:
+    with open('temp.csv','r') as csvdata:
         reader = csv.reader(csvdata,delimiter = ',')
         heading = next(reader)
         for row in reader:
@@ -46,7 +46,7 @@ def position_correct_data():
 def dist_from_center():
     correct_ans = []
     wrong_ans = []
-    with open('pilot_client_data.csv','r') as csvdata:
+    with open('temp.csv','r') as csvdata:
         reader = csv.reader(csvdata,delimiter = ',')
         heading = next(reader)
         for row in reader:
@@ -59,6 +59,10 @@ def dist_from_center():
                 value = 150
             elif (190 < value < 210):
                 value = 200
+            elif (240 < value < 260):
+                value = 250
+            elif (290 < value < 310):
+                value = 300
             if row[5] != row[6]: # The click doesn't match the correct_word, so it's a wrong choice
                 wrong_ans.append((value,False))
             else: # The click matches the correct_word, so it's a correct choice
@@ -72,8 +76,10 @@ def load_time_and_distance_between_targets():
     d200 = []
     d300 = []
     d400 = []
+    d500 = []
+    d600 = []
     derror = []
-    with open('pilot_client_data.csv','r') as csvdata:
+    with open('temp.csv','r') as csvdata:
         reader = csv.reader(csvdata,delimiter=',')
         heading = next(reader)
         for row in reader:
@@ -87,9 +93,13 @@ def load_time_and_distance_between_targets():
                 d300.append(time)
             elif distance_between_targets == 400:
                 d400.append(time)
+            elif distance_between_targets == 500:
+                d500.append(time)
+            elif distance_between_targets == 600:
+                d600.append(time)
             else:
                 derror.append(time)
-    return d100,d200,d300,d400,derror
+    return d100,d200,d300,d400,d500,d600,derror
 
 
 def _round_distance_between_targets(row):
@@ -102,6 +112,10 @@ def _round_distance_between_targets(row):
         value = 300
     elif (390 < value < 410):
         value = 400
+    elif (490 < value < 500):
+        value = 500
+    elif (590 < value < 610):
+        value = 600
     return value
 
 
@@ -252,14 +266,14 @@ def distance_between_targets_accuracy():
     correct_dist = [data_pair[0] for data_pair in result[0]]
     wrong_dist = [data_pair[0] for data_pair in result[1]]
 
-    num_bins = 50
+    num_bins = 65
 
     # Create plot 
     figure = pyplot.figure()
     acc_histogram = figure.add_subplot(2,1,1)
 
-    correct_plot = acc_histogram.hist(correct_dist,num_bins,edgecolor='black',facecolor='blue',range=(0,500),alpha=0.5,label = 'correct')
-    wrong_plot = acc_histogram.hist(wrong_dist,num_bins,edgecolor='black',facecolor='red',range=(0,500),alpha=0.5,label = 'wrong')
+    correct_plot = acc_histogram.hist(correct_dist,num_bins,edgecolor='black',facecolor='blue',range=(0,650),alpha=0.5,label = 'correct')
+    wrong_plot = acc_histogram.hist(wrong_dist,num_bins,edgecolor='black',facecolor='red',range=(0,650),alpha=0.5,label = 'wrong',bottom=correct_plot[0])
     
     pyplot.legend(loc='upper right')
     pyplot.title('Histogram of number correct and wrong')
@@ -300,7 +314,7 @@ def distance_to_center_accuracy():
     acc_histogram = figure.add_subplot(2,1,1)
 
     correct_plot = acc_histogram.hist(correct_dist,num_bins,edgecolor='black',facecolor='blue',range=(0,400),alpha=0.5,label = 'correct')
-    wrong_plot = acc_histogram.hist(wrong_dist,num_bins,edgecolor='black',facecolor='red',range=(0,400),alpha=0.5,label = 'wrong')
+    wrong_plot = acc_histogram.hist(wrong_dist,num_bins,edgecolor='black',facecolor='red',range=(0,400),alpha=0.5,label = 'wrong',bottom=correct_plot[0])
     
     pyplot.legend(loc='upper right')
     pyplot.title('Histogram of number correct and wrong')
@@ -322,16 +336,18 @@ def distance_to_center_accuracy():
 
     pyplot.show()
 
-##############################################################################
+#####################################################################
 def time_distance_between_targets():
     result = load_time_and_distance_between_targets()
     d100 = sum(result[0])/len(result[0])
     d200 = sum(result[1])/len(result[1])
     d300 = sum(result[2])/len(result[2])
     d400 = sum(result[3])/len(result[3])
-    list_mean_time = [d100,d200,d300,d400]
-    index = [1,2,3,4]
-    label = ['100px','200px','300px','400px']
+    d500 = sum(result[4])/len(result[4])
+    d600 = sum(result[5])/len(result[5])
+    list_mean_time = [d100,d200,d300,d400,d500,d600]
+    index = [1,2,3,4,5,6]
+    label = ['100px','200px','300px','400px','500px','600px']
     pyplot.bar(index,list_mean_time,width=0.5)
     for a,b in zip(index,list_mean_time):
         pyplot.text(a,b,str(b)[:6])
@@ -345,9 +361,7 @@ def time_distance_between_targets():
 
 
 #hypo2
-##########################################################################################################################################################
-##########################################################################################################################################################
-##########################################################################################################################################################
+################################################################################################################################################################################################################################################
 def hypo2_load_click_pos():
     correct_clicks = []
     wrong_clicks = []
@@ -414,12 +428,6 @@ def hypo2_stacked_bar():
             ring1_clicks_wrong.append(data)
         elif 300 < distance_from_center:
             ring2_clicks_wrong.append(data)
-    # ring0_percent_click = (len(ring0_clicks_correct) + len(ring0_clicks_wrong))/total_clicks
-    # ring1_percent_click = (len(ring1_clicks_correct)+len(ring1_clicks_wrong))/total_clicks
-    # ring2_percent_click = (len(ring2_clicks_correct)+len(ring2_clicks_wrong))/total_clicks
-    # ring0_percent_accuracy = len(ring0_clicks_correct)/(len(ring0_clicks_correct)+len(ring0_clicks_wrong))
-    # ring1_percent_accuracy = len(ring1_clicks_correct)/(len(ring1_clicks_correct)+len(ring1_clicks_wrong))
-    # ring2_percent_accuracy = len(ring2_clicks_correct)/(len(ring2_clicks_correct)+len(ring2_clicks_wrong))
     
 
     size1_ring0_c,size1_ring1_c,size1_ring2_c = [],[],[]
@@ -477,10 +485,6 @@ def hypo2_stacked_bar():
             size2_ring2_w.append(click)
         elif click[3] == 3:
             size3_ring2_w.append(click)
-    # print(size1_ring0_c,size2_ring0_c,size3_ring0_c)
-    # size1_ring0_c.append((1,1,1,1,True))
-    # size1_ring0_c.append((2,2,2,2,True))
-    # print(size1_ring0_c,size2_ring0_c,size3_ring0_c)
 
 
     ring0_correct_clicks = [len(size1_ring0_c),len(size2_ring0_c),len(size3_ring0_c)]
@@ -501,21 +505,22 @@ def hypo2_stacked_bar():
     correct_ring2 = pyplot.bar(index+width,ring2_correct_clicks,width,color="blue",edgecolor="black",label="correct")
     wrong_ring2 = pyplot.bar(index+width,ring2_wrong_clicks,width,bottom=ring2_correct_clicks,color="orange",edgecolor="black",label="wrong")
 
+    autolabel(correct_ring0)
+    autolabel(wrong_ring0)
+    autolabel(correct_ring1)
+    autolabel(wrong_ring1)
+    autolabel(correct_ring2)
+    autolabel(wrong_ring2)
 
     pyplot.xticks(index,('1px','2px','3px'))
-    # pyplot.legend()
+    pyplot.xlabel('sizeDiff between the bigger word and the smaller word')
+    pyplot.ylabel('Number of Clicks')
     handles, labels = pyplot.gca().get_legend_handles_labels()
     by_label = OrderedDict(zip(labels, handles))
     pyplot.legend(by_label.values(), by_label.keys(),loc=2)
-    # pyplot.legend((correct[0],wrong[0]),('Correct','Wrong'))
-    # print(correct[0],wrong[0])
-    # print(ring0_c[0],ring0_w[0])
-    # pyplot.legend((ring1_c[0],ring1_w[0]),('Correct','Wrong'))
-    # print(ring1_c[0],ring1_w[0])
     pyplot.show()
 
 
-    # pass
 def hypo2_percentages():
     result = hypo2_load_click_pos()
     correct_clicks = result[0]
