@@ -5,6 +5,7 @@ OR, can I actually have psql on my computer?
 '''
 import sys
 import psycopg2
+import csv
 def get_connection():
 	'''
 	Returns a connection to the database described
@@ -30,6 +31,10 @@ def get_stimuli_data():
                 ('ericalexander','alper','alpersmells','skylar','muyang','muyang2','mular'))
     data_list = cursor.fetchall()
     print(data_list[0])
+    with open('temp.csv','a',newline='') as csvdata:
+        writer = csv.writer(csvdata,delimiet = ',',quotechar = '"')
+        for row in data_list:
+            writer.writerow(row)
     # connection.commit()
     cursor.close()
     connection.close()
