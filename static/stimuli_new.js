@@ -319,7 +319,7 @@ function drawTargetsOpposite(target_array,distractor_array,distance_between,flas
 
     target1 = target_array[1];
     var font_size = target1["weight"];
-        var word_span = $('<span>').attr(target1.html).addClass("ring1").attr('id','target1');
+        var word_span = $('<span>').attr(target1.html).addClass("ring0").attr('id','target1');
         word_span.append(target1.text);
         $("#JQWC").append(word_span);
         word_span[0].style.visibility = "hidden";
@@ -434,26 +434,37 @@ function drawTargetsMultiRings(target_2Darray,distractor_array,flash_time){
     });
 }
 
-
 function drawDistractorsCallback(word_array,block,flash_time){
     $("#JQWC").jQCloud(word_array,already_placed_targets,"distractor",
         {   delayedMode: false,
             afterCloudRender: () => {
                 startTime = new Date();
-                $.each($(".target"),(index,value)=>{value.style.visibility = "visible";});
-                if (block === true){ // setTimeOut on 2 seconds after the words are shown   
-                    var block_target = function(){
-                        var target0_left = $("#target0").css("left");
-                        var target0_top = $("#target0").css("top");
-                        var target1_left = $("#target1").css("left");
-                        var target1_top = $("#target1").css("top");
-                        var block0 = makeBlock('block0',target0_left,target0_top);
-                        var block1 = makeBlock('block1',target1_left,target1_top);
-                        $("#JQWC").append(block0,block1);
-                        $("#block0").bind("click",function(){$("#target0").trigger("click");});
-                        $("#block1").bind("click",function(){$("#target1").trigger("click");});
-                                    // .ready(()=>{alert("Times Up. You cannot look at the target words anymore. Please click at the rectangle that covers the word you think is bigger.");});     
-                    }
+                $.each($(".target"),(index,target)=>{target.style.visibility = "visible";});
+                // if (block === true){ // setTimeOut on 2 seconds after the words are shown   
+                //     var block_target = function(){
+                //         var target0_left = $("#target0").css("left");
+                //         var target0_top = $("#target0").css("top");
+                //         var target1_left = $("#target1").css("left");
+                //         var target1_top = $("#target1").css("top");
+                //         var block0 = makeBlock('block0',target0_left,target0_top);
+                //         var block1 = makeBlock('block1',target1_left,target1_top);
+                //         $("#JQWC").append(block0,block1);
+                //         $("#block0").bind("click",function(){$("#target0").trigger("click");});
+                //         $("#block1").bind("click",function(){$("#target1").trigger("click");});
+                //                     // .ready(()=>{alert("Times Up. You cannot look at the target words anymore. Please click at the rectangle that covers the word you think is bigger.");});     
+                //     }
+                //     timeout_block = setTimeout(block_target,flash_time);
+                // }
+
+                if (block === true){
+                    var block_target = () => {
+                        $.each($(".target"),(index,target)=>{
+                        var target_left = parseFloat(target.style.left);
+                        var target_top = parseFloat(target.style.top);
+                        var block = makeBlock("block"+index,target_left,target_top);
+                        $("#JQWC").append(block);
+                        $("#block"+index).bind("click",function(){$("#target"+index).trigger("click");});
+                    });}
                     timeout_block = setTimeout(block_target,flash_time);
                 }
             }
@@ -493,8 +504,8 @@ function postData(clickedword){
     var cloud_center_x = cloud_width / 2.0; // the center x in int
     var cloud_center_y = cloud_height / 2.0; // the center y in int
 
-    var target_0 = $(".target0");
-    var target_1 = $(".target1");
+    var target_0 = $("#target0");
+    var target_1 = $("#target1");
     var targets_x_distance = Math.abs((target_0.width() / 2.0 + parseFloat(target_0[0].style.left)) - (target_1.width() / 2.0 + parseFloat(target_1[0].style.left)));
     var targets_y_distance = Math.abs((target_0.height() / 2.0 + parseFloat(target_0[0].style.top)) - (target_1.height() / 2.0 + parseFloat(target_1[0].style.top)));
     var distance_between_targets = Math.sqrt(Math.pow(targets_x_distance,2) + Math.pow(targets_y_distance,2));
