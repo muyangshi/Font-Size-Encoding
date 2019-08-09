@@ -167,7 +167,7 @@
                     }
                 }
 
-                $this.append(word_span);
+                $this.prepend(word_span);
 
                 var width = word_span.width(),
                     height = word_span.height();
