@@ -91,17 +91,17 @@ def get_completion():
 ##########################################################################################################################################################################################################################
 # Get the tasklist from test_length_config.py, the tasklist is from test_length.csv
 # The format of the tasklist is 
-# [{'target_1_fontsize':int,'target_1_length':int,'target_2_fontsize':int,'target_2_length':int},{},{},...]
+# [{'small_fontsize':int,'smallword_length':int,'big_fontsize':int,'bigword_length':int},{},{},...]
 def get_tasklist():
     tasklist = config.tasklist
     return json.dumps(tasklist)
 
-@app.route('/getStim/<target_1_fontsize>/<target_1_length>/<target_2_fontsize>/<target_2_length>')
-def getStim(target_1_fontsize,target_1_length,target_2_fontsize,target_2_length, word = config.word): # word = config.experiment
+@app.route('/getStim/<small_fontsize>/<smallword_length>/<big_fontsize>/<bigword_length>')
+def getStim(small_fontsize,smallword_length,big_fontsize,bigword_length, word = config.word): # word = config.experiment
     if word == 'pseudoword':
-        return get_pseudo_stimuli(int(config.numberOfWords),{'length':int(target_1_length), 'fontsize':int(target_1_fontsize)}, {'length':int(target_2_length),'fontsize':int(target_2_fontsize)})
+        return get_pseudo_stimuli(int(config.numberOfWords),{'length':int(smallword_length), 'fontsize':int(small_fontsize)}, {'length':int(bigword_length),'fontsize':int(big_fontsize)})
     if word == 'english':
-        return get_english_stimuli(int(config.numberOfWords),{'length':int(target_1_length), 'fontsize':int(target_1_fontsize)}, {'length':int(target_2_length),'fontsize':int(target_2_fontsize)})
+        return get_english_stimuli(int(config.numberOfWords),{'length':int(smallword_length), 'fontsize':int(small_fontsize)}, {'length':int(bigword_length),'fontsize':int(big_fontsize)})
 
 # No adescenders, pseudoword
 def pseudoword(size = 5, charset = "weruosazxcvnm"):
