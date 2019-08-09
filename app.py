@@ -165,17 +165,17 @@ def get_english_stimuli(numberOfWords, target1, target2):
 # Specifications about the length of targets, fontsize of the correct and wrong, and the number of words
 # are passed from the frontend to the server
 # the specifications from the frontend are from tasklist.csv (test_length.csv)
-@app.route('/getMultiTargets/<numberOfTargets>/<correct_fontsize>/<wrong_fontsize>/<word_length>')
-def getMultiTargets(numberOfTargets,correct_fontsize,wrong_fontsize,word_length):
+@app.route('/getMultiTargets/<number_of_targets>/<correct_fontsize>/<wrong_fontsize>/<word_length>')
+def getMultiTargets(number_of_targets,correct_fontsize,wrong_fontsize,word_length):
     legit_words = get_legit_word(decent_word_list,int(word_length),int(word_length))
     target_words = []
-    for i in range(int(numberOfTargets)):
+    for i in range(int(number_of_targets)):
         correct_target = random.choice(legit_words)
         legit_words.remove(correct_target)
         target_words.append(correct_target)
     print(target_words)
     
-    for i in range(int(numberOfTargets)):
+    for i in range(int(number_of_targets)):
         if i == 0:
             target_words[i] = {'text': target_words[i], 'fontsize': correct_fontsize, 'html': 'target'}
         else:
@@ -321,7 +321,7 @@ def post_data_multi():
     # cursor.close()
     # connection.close()
 
-    with open('hypo2_client_data.csv','a',newline='') as csvfile:
+    with open('hypo2_client_data.csv','a',newline='',encoding="utf-8") as csvfile:
         writer = csv.writer(csvfile,delimiter=',',quotechar='"')
         writer.writerow([turker_id,cloud_width,cloud_height,cloud_center_x,cloud_center_y,
         clicked_word,time,clicked_word_x,clicked_word_y,clicked_word_center_distance,clicked_word_fontsize,
