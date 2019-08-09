@@ -5,6 +5,8 @@
  * of TWO target words
  * 
  * as of 31 July, starting to implement for hypo2
+ * 
+ * as of Aug 8, we want N target words for hypo1
  */
 
 initialize();
@@ -14,35 +16,31 @@ function initialize() {
 }
 console.log("device pixel ratio is: " + window.devicePixelRatio);
 
-var timeout; // setTimeOut function for "flash"
-
-// var words; // distractors used for hypo1, should be able to put this inside onStartButtonClicked()
+var timeout_block; // setTimeOut function for "flash"
+var flash_time;
 var already_placed_targets;
 
 var distractors_hypo2; //used for hypo2
 var targets_hypo2; // 2D array used for hypo2
 
 function onStartButtonClicked() {
-    document.getElementById("Greeting").innerHTML = ""; //Clear the page content
-
+    //Clear the page content
     // Reset the flag
     // empty the word arrays
-    var targetslist = [];// targets used for hypo1
+    // targets used for hypo1
+    document.getElementById("Greeting").innerHTML = '<div style="position: absolute; top: 0; right: 0; text-align:right;">You have '+tasklist.length+' tasks left</div>'; 
+    var targetslist = [];
     already_placed_targets = [];
-    // in_same_ring = false;
     
-
     // Specifications about the targets, coming from the tasklist.
     // Specifications about the target words are loaded
     // from the csv to the tasklist
     // then from the tasklist to the getStim() method as params
     var task = tasklist[0];
-
-    // var outer_radius = task["outer_radius"];
-    // var inner_radius = task["inner_radius"];
     var distance_between = task["distance_between"];
     var rule = task["rule"];
     var numberOfRings = 3;
+    flash_time = task["flash_time"];
 
     // Here I need a switch, according to the rule variable,
     // if the rule is "multiple", then it is used for hypo2, and
@@ -76,9 +74,9 @@ function onStartButtonClicked() {
                                     $.ajax({
                                         url: flask_util.url_for('getMultiTargets', {
                                             numberOfTargets: 3,
-                                            correct_fontsize: task["target_2_fontsize"],
-                                            wrong_fontsize: task["target_1_fontsize"],
-                                            word_length: task["target_1_length"]}),
+                                            correct_fontsize: task["big_fontsize"],
+                                            wrong_fontsize: task["small_fontsize"],
+                                            word_length: task["smallword_length"]}),
                                         success:
                                             function(data){
                                                 formed_targets = data.map(function(dictionary){
@@ -126,10 +124,10 @@ function onStartButtonClicked() {
         case "on_circle": // fetch the words for hypo1
             $.ajax({
                     url: flask_util.url_for('getStim', {
-                        target_1_fontsize: task["target_1_fontsize"],
-                        target_1_length: task["target_1_length"],
-                        target_2_fontsize: task["target_2_fontsize"],
-                        target_2_length: task["target_2_length"]}),
+                        small_fontsize: task["small_fontsize"],
+                        smallword_length: task["smallword_length"],
+                        big_fontsize: task["big_fontsize"],
+                        bigword_length: task["bigword_length"]}),
                     success:
                         function(data){
                             formed_words = data.map(function(dictionary) {
@@ -332,46 +330,61 @@ function drawDistractorsCallback(word_array,hypothesis){
                 $.each($(".target"),(index,value)=>{value.style.visibility = "visible";});
                 if (hypothesis === "hypo1"){ // setTimeOut on 2 seconds after the words are shown   
                     var block_target = function(){
-                        target0_left = $("#target0").css("left");
-                        target0_top = $("#target0").css("top");
-                        target1_left = $("#target1").css("left");
-                        target1_top = $("#target1").css("top");
-                        var block0 = $('<span>').attr('id','block0')
-                                                .attr('class','block')
-                                                .css('font-size','30px')
-                                                .css('padding-left','30px')
-                                                .css('background','blue')
-                                                .css('position','absolute')
-                                                .css('left',target0_left)
-                                                .css('top',target0_top)
-                                                .css('cursor','pointer')
-                                                .html('&nbsp;&nbsp;&nbsp;');
-                        var block1 = $('<span>').attr('id','block1')
-                                                .attr('class','block')
-                                                .css('font-size','30px')
-                                                .css('padding-left','30px')
-                                                .css('background','blue')
-                                                .css('position','absolute')
-                                                .css('left',target1_left)
-                                                .css('top',target1_top)
-                                                .css('cursor','pointer')
-                                                .html('&nbsp;&nbsp;&nbsp;');
+                        var target0_left = $("#target0").css("left");
+                        var target0_top = $("#target0").css("top");
+                        var target1_left = $("#target1").css("left");
+                        var target1_top = $("#target1").css("top");
+                        // var block0 = $('<span>').attr('id','block0')
+                        //                         .attr('class','block')
+                        //                         .css('font-size','30px')
+                        //                         .css('padding-left','30px')
+                        //                         .css('background','blue')
+                        //                         .css('position','absolute')
+                        //                         .css('left',target0_left)
+                        //                         .css('top',target0_top)
+                        //                         .css('cursor','pointer')
+                        //                         .html('&nbsp;&nbsp;&nbsp;');
+                        // var block1 = $('<span>').attr('id','block1')
+                        //                         .attr('class','block')
+                        //                         .css('font-size','30px')
+                        //                         .css('padding-left','30px')
+                        //                         .css('background','blue')
+                        //                         .css('position','absolute')
+                        //                         .css('left',target1_left)
+                        //                         .css('top',target1_top)
+                        //                         .css('cursor','pointer')
+                        //                         .html('&nbsp;&nbsp;&nbsp;');
+                        var block0 = makeBlock('block0',target0_left,target0_top);
+                        var block1 = makeBlock('block1',target1_left,target1_top);
                         $("#JQWC").append(block0,block1);
-                        // $(".block").css("cursor","pointer");
                         $("#block0").bind("click",function(){$(".target0").trigger("click");});
-                        $("#block1").bind("click",function(){$(".target1").trigger("click");})
-                                    // .ready(()=>{alert("Times Up. You cannot look at the target words anymore. Please click at the rectangle that covers the word you think is bigger.");});
-                                    
+                        $("#block1").bind("click",function(){$(".target1").trigger("click");});
+                                    // .ready(()=>{alert("Times Up. You cannot look at the target words anymore. Please click at the rectangle that covers the word you think is bigger.");});     
                     }
-                    timeout = setTimeout(block_target,2000);
+                    timeout_block = setTimeout(block_target,flash_time);
                 }
             }
         }
     );
 }
 
+function makeBlock(id,left,top){
+    var block = $('<span>').attr('id',id)
+                            .attr('class','block')
+                            .css('font-size','25px')
+                            .css('padding-left','30px')
+                            .css('background','#2C3539')
+                            .css('position','absolute')
+                            .css('left',left)
+                            .css('top',top)
+                            .css('cursor','pointer')
+                            .html('&nbsp;&nbsp;&nbsp;&nbsp;');
+    return block;
+}
+
+
 function postData(clickedword){
-    clearTimeout(timeout);
+    clearTimeout(timeout_block);
     endTime = new Date();
     var timeDiff = endTime - startTime; // in ms
     timeDiff /= 1000; // strip the ms
@@ -536,13 +549,14 @@ function postDataMulti(clickedword){
 }
 
 function nextTask(){
-    document.getElementById('JQWC').innerHTML = '<span class="dot" style="position: absolute;top: 500px;left: 500px;height: 5px;width: 5px;background-color: red;border-radius: 35%;display: inline-block;"></span>';
+    document.getElementById('JQWC').innerHTML = '<span id="center_cross" style="position: absolute;top: 489.5px;left: 493.078px;color: red;">&#10011;</span>';
     tasklist.shift();
     if (tasklist.length == 0){
         console.log('All tasks completed')
         var input = $("<input>").attr("type","hidden").attr("name","turker_id").val(turker_id);
         $('#get_completion_page').append(input).submit();
     } else {
-    onStartButtonClicked();
+        setTimeout(onStartButtonClicked,10);
+    // onStartButtonClicked();
     }
 }
