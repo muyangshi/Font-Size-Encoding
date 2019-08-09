@@ -642,7 +642,7 @@ function postDataMulti(clickedword){
 }
 
 function nextTask(){
-    document.getElementById('JQWC').innerHTML = '<span id="center_cross" style="position: absolute;top: 489.5px;left: 493.078px;color: red;">&#10011;</span>';
+    document.getElementById('JQWC').innerHTML = '<span id="center_cross" style="position: absolute;top: 480px;left: 487.0156px;font-size: 30px;color: red;">&#10011;</span>';
     tasklist.shift();
     if (tasklist.length == 0){
         console.log('All tasks completed')
