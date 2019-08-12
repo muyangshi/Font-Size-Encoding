@@ -93,17 +93,17 @@ def get_completion():
 ##########################################################################################################################################################################################################################
 # Get the tasklist from test_length_config.py, the tasklist is from test_length.csv
 # The format of the tasklist is 
-# [{'target_1_fontsize':int,'target_1_length':int,'target_2_fontsize':int,'target_2_length':int},{},{},...]
+# [{'small_fontsize':int,'smallword_length':int,'big_fontsize':int,'bigword_length':int},{},{},...]
 def get_tasklist():
     tasklist = config.tasklist
     return json.dumps(tasklist)
 
-@app.route('/getStim/<target_1_fontsize>/<target_1_length>/<target_2_fontsize>/<target_2_length>')
-def getStim(target_1_fontsize,target_1_length,target_2_fontsize,target_2_length, word = config.word): # word = config.experiment
+@app.route('/getStim/<small_fontsize>/<smallword_length>/<big_fontsize>/<bigword_length>')
+def getStim(small_fontsize,smallword_length,big_fontsize,bigword_length, word = config.word): # word = config.experiment
     if word == 'pseudoword':
-        return get_pseudo_stimuli(int(config.numberOfWords),{'length':int(target_1_length), 'fontsize':int(target_1_fontsize)}, {'length':int(target_2_length),'fontsize':int(target_2_fontsize)})
+        return get_pseudo_stimuli(int(config.numberOfWords),{'length':int(smallword_length), 'fontsize':int(small_fontsize)}, {'length':int(bigword_length),'fontsize':int(big_fontsize)})
     if word == 'english':
-        return get_english_stimuli(int(config.numberOfWords),{'length':int(target_1_length), 'fontsize':int(target_1_fontsize)}, {'length':int(target_2_length),'fontsize':int(target_2_fontsize)})
+        return get_english_stimuli(int(config.numberOfWords),{'length':int(smallword_length), 'fontsize':int(small_fontsize)}, {'length':int(bigword_length),'fontsize':int(big_fontsize)})
 
 # No adescenders, pseudoword
 def pseudoword(size = 5, charset = "weruosazxcvnm"):
@@ -167,17 +167,17 @@ def get_english_stimuli(numberOfWords, target1, target2):
 # Specifications about the length of targets, fontsize of the correct and wrong, and the number of words
 # are passed from the frontend to the server
 # the specifications from the frontend are from tasklist.csv (test_length.csv)
-@app.route('/getMultiTargets/<numberOfTargets>/<correct_fontsize>/<wrong_fontsize>/<word_length>')
-def getMultiTargets(numberOfTargets,correct_fontsize,wrong_fontsize,word_length):
+@app.route('/getMultiTargets/<number_of_targets>/<correct_fontsize>/<wrong_fontsize>/<word_length>')
+def getMultiTargets(number_of_targets,correct_fontsize,wrong_fontsize,word_length):
     legit_words = get_legit_word(decent_word_list,int(word_length),int(word_length))
     target_words = []
-    for i in range(int(numberOfTargets)):
+    for i in range(int(number_of_targets)):
         correct_target = random.choice(legit_words)
         legit_words.remove(correct_target)
         target_words.append(correct_target)
     print(target_words)
     
-    for i in range(int(numberOfTargets)):
+    for i in range(int(number_of_targets)):
         if i == 0:
             target_words[i] = {'text': target_words[i], 'fontsize': correct_fontsize, 'html': 'target'}
         else:
