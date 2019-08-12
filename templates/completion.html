@@ -77,10 +77,12 @@
                     <input type="radio" name="eyetrace" value="other" id="radio_eyetrace_other">Other: 
                     <input type="text" name="eyetrace" id="eyetrace_other" style="visibility: hidden;"><br>
                 </form>
+
                 <br>
                 <b>We'd love to hear your feedbacks!</b><br>
                 <textarea id="comments" rows="4" cols = "100" placeholder="Please feel to point out any deficiency on experiment design/user experience/bugs,etc. Your comment is greatly appreciated."></textarea>
             </fieldset>
+
             <br>
             <div style="text-align: center;">
                 <button id="nextButton" style="text-align: center;">Next</button>
@@ -124,7 +126,8 @@
                 var difficulty = document.getElementById("difficulty_range").value;
                 var confidence = document.getElementById("confidence_range").value;
                 var edu = getRadioVal(document.getElementById("edu_form"),"edu");
-                var hand = getRadioVal(document.getElementById("hand_form"),"hand");              
+                var hand = getRadioVal(document.getElementById("hand_form"),"hand");
+                var comments = document.getElementsById("comments").value;           
                 var gender = getRadioVal(document.getElementById("gender_form"),"gender");
                 if (gender === "other"){
                     gender = $("#gender_other").value;
@@ -142,6 +145,7 @@
                     "difficulty": difficulty,
                     "confidence": confidence,
                     "eyetrace": eyetrace,
+                    "comments": comments,
                 };
                 $.ajax({
                     type: 'POST',

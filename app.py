@@ -343,6 +343,7 @@ def post_demographic_data():
     difficulty = data["difficulty"]
     confidence = data["confidence"]
     eyetrace = data["eyetrace"]
+    comments = data["comments"]
 
     # connection = get_connection()
     # cursor = connection.cursor()

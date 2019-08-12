@@ -346,12 +346,13 @@ def post_demographic_data():
     difficulty = data["difficulty"]
     confidence = data["confidence"]
     eyetrace = data["eyetrace"]
+    comments = data["comments"]
 
     connection = get_connection()
     cursor = connection.cursor()
     cursor.execute("""
-            INSERT INTO pilot_demographics (turker_id,age,gender,hand,education,difficulty,confidence,eyetrace)
-            VALUES (%s,%s,%s,%s,%s,%s,%s,%s)
+            INSERT INTO pilot_demographics (turker_id,age,gender,hand,education,difficulty,confidence,eyetrace,comments)
+            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)
                 """,
             (turker_id,age,gender,hand,education,difficulty,confidence,eyetrace))
     connection.commit()
