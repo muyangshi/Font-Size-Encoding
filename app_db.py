@@ -56,7 +56,7 @@ def get_description():
     turker_id = flask.request.form['turker_id']
     connection = get_connection()
     cursor = connection.cursor()
-    cursor.execute("SELECT EXISTS(SELECT turker_id FROM pilot_data_on_circle WHERE turker_id = %s)",(turker_id,))
+    cursor.execute("SELECT EXISTS(SELECT turker_id FROM pilot_opposite_on_circle WHERE turker_id = %s)",(turker_id,))
     existance = cursor.fetchone()[0]
     print(existance,type(existance))
     connection.commit()
@@ -265,7 +265,7 @@ def post_data():
     connection = get_connection()
     cursor = connection.cursor()
     cursor.execute("""
-            INSERT INTO pilot_data_on_circle (turker_id,cloud_width,cloud_height,cloud_center_x,cloud_center_y,clicked_word,correct_word,wrong_word,distance_between_targets,time,correct_word_x,correct_word_y,correct_word_fontsize,correct_word_width,correct_word_height,correct_word_center_distance,wrong_word_x,wrong_word_y,wrong_word_fontsize,wrong_word_width,wrong_word_height,wrong_word_center_distance,number_of_words,span_content)
+            INSERT INTO pilot_opposite_on_circle (turker_id,cloud_width,cloud_height,cloud_center_x,cloud_center_y,clicked_word,correct_word,wrong_word,distance_between_targets,time,correct_word_x,correct_word_y,correct_word_fontsize,correct_word_width,correct_word_height,correct_word_center_distance,wrong_word_x,wrong_word_y,wrong_word_fontsize,wrong_word_width,wrong_word_height,wrong_word_center_distance,number_of_words,span_content)
             VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);
             """,
             (turker_id,cloud_width,cloud_height,cloud_center_x,cloud_center_y,clicked_word,correct_word,wrong_word,distance_between_targets,time,correct_word_x,correct_word_y,correct_word_fontsize,correct_word_width,correct_word_height,correct_word_center_distance,wrong_word_x,wrong_word_y,wrong_word_fontsize,wrong_word_width,wrong_word_height,wrong_word_center_distance,number_of_words,span_content))
@@ -315,7 +315,7 @@ def post_data_multi():
     connection = get_connection()
     cursor = connection.cursor()
     cursor.execute("""
-            INSERT INTO pilot_multi_target (turker_id,cloud_width,cloud_height,cloud_center_x,cloud_center_y,clicked_word,time,clicked_word_x,clicked_word_y,clicked_word_center_distance,clicked_word_fontsize,correct_fontsize,wrong_fontsize,num_words_in_ring0,num_words_in_ring1,num_words_in_ring2,number_of_targets,number_of_words,span_content)
+            INSERT INTO pilot_multi_rings (turker_id,cloud_width,cloud_height,cloud_center_x,cloud_center_y,clicked_word,time,clicked_word_x,clicked_word_y,clicked_word_center_distance,clicked_word_fontsize,correct_fontsize,wrong_fontsize,num_words_in_ring0,num_words_in_ring1,num_words_in_ring2,number_of_targets,number_of_words,span_content)
             VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);
             """,
             (turker_id,cloud_width,cloud_height,cloud_center_x,cloud_center_y,clicked_word,time,clicked_word_x,clicked_word_y,clicked_word_center_distance,clicked_word_fontsize,correct_fontsize,wrong_fontsize,num_words_in_ring0,num_words_in_ring1,num_words_in_ring2,number_of_targets,number_of_words,span_content))
@@ -341,6 +341,7 @@ def post_demographic_data():
     turker_id = data["turker_id"]
     age = data["age"]
     gender = data["gender"]
+    hand = data["hand"]
     education = data["education"]
     difficulty = data["difficulty"]
     confidence = data["confidence"]
@@ -349,18 +350,18 @@ def post_demographic_data():
     connection = get_connection()
     cursor = connection.cursor()
     cursor.execute("""
-            INSERT INTO pilot_demographic_data (turker_id,age,gender,education,difficulty,confidence,eyetrace)
-            VALUES (%s,%s,%s,%s,%s,%s,%s)
+            INSERT INTO pilot_demographics (turker_id,age,gender,hand,education,difficulty,confidence,eyetrace)
+            VALUES (%s,%s,%s,%s,%s,%s,%s,%s)
                 """,
-            (turker_id,age,gender,education,difficulty,confidence,eyetrace))
+            (turker_id,age,gender,hand,education,difficulty,confidence,eyetrace))
     connection.commit()
     cursor.close()
     connection.close()
 
     # with open('pilot_demographic_data.csv','a',newline='') as csvfile:
     #     writer = csv.writer(csvfile,delimiter = ',',quotechar='"')
-    #     # writer.writerow(['tuerker_id','age','gender','difficulty','confidence','eyetrace'])
-    #     writer.writerow([turker_id,age,gender,difficulty,confidence,eyetrace])
+    #     # writer.writerow(['tuerker_id','age','gender','hand','difficulty','confidence','eyetrace'])
+    #     writer.writerow([turker_id,age,gender,hand,difficulty,confidence,eyetrace])
     return json.dumps("success saving data")
 ##########################################################################################################################################################################################################################
 

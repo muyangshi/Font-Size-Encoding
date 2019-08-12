@@ -40,6 +40,13 @@
                 </form>
 
                 <br>
+                <b>Handedness:</b><br>
+                <form id="hand_form">
+                    <input type="radio" name="hand" value="left" />I am left-handed
+                    <input type="radio" name="hand" value="right" />I am right-handed
+                </form>
+
+                <br>
                 <b>Education Level:</b><br>
                 <form id="edu_form">
                     <input type="radio" name="edu" value="1" />Some High School
@@ -116,7 +123,8 @@
                 var age = document.getElementsByName("age")[0].value;
                 var difficulty = document.getElementById("difficulty_range").value;
                 var confidence = document.getElementById("confidence_range").value;
-                var edu = getRadioVal(document.getElementById("edu_form"),"edu");                
+                var edu = getRadioVal(document.getElementById("edu_form"),"edu");
+                var hand = getRadioVal(document.getElementById("hand_form"),"hand");              
                 var gender = getRadioVal(document.getElementById("gender_form"),"gender");
                 if (gender === "other"){
                     gender = $("#gender_other").value;
@@ -129,6 +137,7 @@
                     "turker_id": turker_id,
                     "age": age,
                     "gender": gender,
+                    "hand": hand,
                     "education": edu,
                     "difficulty": difficulty,
                     "confidence": confidence,

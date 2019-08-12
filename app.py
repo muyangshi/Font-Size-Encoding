@@ -338,6 +338,7 @@ def post_demographic_data():
     turker_id = data["turker_id"]
     age = data["age"]
     gender = data["gender"]
+    hand = data["hand"]
     education = data["education"]
     difficulty = data["difficulty"]
     confidence = data["confidence"]
@@ -356,8 +357,8 @@ def post_demographic_data():
 
     # with open('pilot_demographic_data.csv','a',newline='') as csvfile:
     #     writer = csv.writer(csvfile,delimiter = ',',quotechar='"')
-    #     # writer.writerow(['tuerker_id','age','gender','difficulty','confidence','eyetrace'])
-    #     writer.writerow([turker_id,age,gender,difficulty,confidence,eyetrace])
+    #     # writer.writerow(['tuerker_id','age','gender','hand','difficulty','confidence','eyetrace'])
+    #     writer.writerow([turker_id,age,gender,hand,difficulty,confidence,eyetrace])
     return json.dumps("success saving data")
 ##########################################################################################################################################################################################################################
 
