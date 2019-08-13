@@ -25,13 +25,10 @@ def get_connection():
 def get_stimuli_data():
     connection = get_connection()
     cursor = connection.cursor()
-    cursor.execute("""
-                SELECT * FROM pilot_data_on_circle 
-                WHERE turker_id = %s OR turker_id= %s OR turker_id = %s OR turker_id = %s OR turker_id = %s OR turker_id = %s OR turker_id = %s""",
-                ('ericalexander','alper','alpersmells','skylar','muyang','muyang2','mular'))
+    cursor.execute("SELECT turker_id,clicked_word,correct_word,wrong_word,distance_between_targets,time,correct_word_fontsize,wrong_word_fontsize FROM pilot_opposite_on_circle")
     data_list = cursor.fetchall()
     print(data_list[0])
-    with open('temp.csv','a',newline='') as csvdata:
+    with open('pilot_Aug_13.csv','a',newline='') as csvdata:
         writer = csv.writer(csvdata,delimiter = ',',quotechar = '"')
         for row in data_list:
             writer.writerow(row)
