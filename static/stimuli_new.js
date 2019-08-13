@@ -440,21 +440,6 @@ function drawDistractorsCallback(word_array,block,flash_time){
             afterCloudRender: () => {
                 startTime = new Date();
                 $.each($(".target"),(index,target)=>{target.style.visibility = "visible";});
-                // if (block === true){ // setTimeOut on 2 seconds after the words are shown   
-                //     var block_target = function(){
-                //         var target0_left = $("#target0").css("left");
-                //         var target0_top = $("#target0").css("top");
-                //         var target1_left = $("#target1").css("left");
-                //         var target1_top = $("#target1").css("top");
-                //         var block0 = makeBlock('block0',target0_left,target0_top);
-                //         var block1 = makeBlock('block1',target1_left,target1_top);
-                //         $("#JQWC").append(block0,block1);
-                //         $("#block0").bind("click",function(){$("#target0").trigger("click");});
-                //         $("#block1").bind("click",function(){$("#target1").trigger("click");});
-                //                     // .ready(()=>{alert("Times Up. You cannot look at the target words anymore. Please click at the rectangle that covers the word you think is bigger.");});     
-                //     }
-                //     timeout_block = setTimeout(block_target,flash_time);
-                // }
 
                 if (block === true){
                     var block_target = () => {
@@ -463,7 +448,10 @@ function drawDistractorsCallback(word_array,block,flash_time){
                         var target_top = parseFloat(target.style.top);
                         var block = makeBlock("block"+index,target_left,target_top);
                         $("#JQWC").append(block);
-                        $("#block"+index).bind("click",function(){$("#target"+index).trigger("click");});
+                        $("#block"+index).bind("click",function(){
+                            $(this).css("border","3px solid");
+                            $("#target"+index).trigger("click");
+                        });
                     });}
                     timeout_block = setTimeout(block_target,flash_time);
                 }

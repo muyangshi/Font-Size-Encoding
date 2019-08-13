@@ -97,7 +97,7 @@
         <!-- <script type="text/javascript" src="{{url_for('static', filename='jquery-3.4.1.min.js')}}"></script> -->
         <script type="text/javascript" src="../static/jquery-3.4.1.min.js"></script>
         <script>
-            var code = {{ Hash_Code }};
+            var code = '{{ Hash_Code }}';
             var turker_id = '{{ ID }}';
             var post_demographic_url = '{{url_for("post_demographic_data")}}';
             var difficulty_slider = document.getElementById("difficulty_range");
