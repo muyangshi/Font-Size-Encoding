@@ -16,9 +16,11 @@
  */
 
 (function initialize() {
-    var start = document.getElementById('Button_startStimuli')
+    var start = document.getElementById('Button_startStimuli');
     start.onclick = onStartButtonClicked;
     console.log("device pixel ratio is: " + window.devicePixelRatio);
+    $("#center_cross").css("cursor","pointer")
+                    .bind("click",function(){submit_word();});
 })();
 
 /*
@@ -28,15 +30,17 @@
  */
 var timeout_block;
 var already_placed_targets;
+var clicked_word_stack = null; // "stack" that holds the clicked_word
 
 
 function onStartButtonClicked() {
     // Clear the page content to contain only the fixation cross, and empty the word arrays
     already_placed_targets = [];
+    clicked_word_stack = null;
 
     // Process bar
     document.getElementById("Greeting").innerHTML = '<div style="position: absolute; top: 0; right: 0; text-align:right;">You have '+tasklist.length+' tasks left</div>'; 
-    
+
     // Specifications about the target words are loaded from the csv to the tasklist
     // then from the tasklist to the python functions method as params
     var task = tasklist[0];
@@ -312,7 +316,7 @@ function drawTargetsOpposite(target_array,distractor_array,distance_between,flas
         word_span[0].style.top = top + "px";
         
 
-        $(word_span).bind("click", function(){postData($(this));});
+        $(word_span).bind("click", function(){click_word($(this));});
         $(word_span).bind("mouseover", function() {this.style.cursor = 'pointer';});
 
     already_placed_targets.push(word_span[0]);
@@ -340,7 +344,7 @@ function drawTargetsOpposite(target_array,distractor_array,distance_between,flas
         word_span[0].style.top = top + "px";
 
 
-        $(word_span).bind("click", function(){postData($(this));});
+        $(word_span).bind("click", function(){click_word($(this));});
         $(word_span).bind("mouseover", function() {this.style.cursor = 'pointer';});
 
     already_placed_targets.push(word_span[0])
@@ -449,7 +453,9 @@ function drawDistractorsCallback(word_array,block,flash_time){
                         var block = makeBlock("block"+index,target_left,target_top);
                         $("#JQWC").append(block);
                         $("#block"+index).bind("click",function(){
-                            $(this).css("border","3px solid");
+                            if (clicked_word_stack === null){
+                                $(this).css("border","3px solid");
+                            }
                             $("#target"+index).trigger("click");
                         });
                     });}
@@ -458,6 +464,25 @@ function drawDistractorsCallback(word_array,block,flash_time){
             }
         }
     );
+}
+
+function click_word(clickedword){
+    if (clicked_word_stack === null){
+        clicked_word_stack = clickedword;
+    }
+    else {
+        alert("Please trust your intuition :)")
+    }
+}
+
+
+function submit_word(){
+    if (clicked_word_stack != null){
+        postData(clicked_word_stack);
+    }
+    else {
+        alert("You haven't select anything");
+    }
 }
 
 function makeBlock(id,left,top){
@@ -642,6 +667,8 @@ function postDataMulti(clickedword){
 
 function nextTask(){
     document.getElementById('JQWC').innerHTML = '<span id="center_cross" style="position: absolute;top: 480px;left: 487.0156px;font-size: 30px;color: red;">&#10011;</span>';
+    $("#center_cross").css("cursor","pointer")
+                    .bind("click",function(){submit_word();});
     tasklist.shift();
     if (tasklist.length == 0){
         console.log('All tasks completed')
