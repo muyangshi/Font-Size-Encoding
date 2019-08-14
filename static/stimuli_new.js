@@ -452,7 +452,7 @@ function click_word(clickedword){
     clearTimeout(timeout_block);
     $(".distractor").css("visibility","hidden");
     $(".target").css("visibility","hidden");
-    $("#Greeting").append('<div id="notification" style="position: absolute;top: 200px;left: 37%;font-size: larger;">Click the red cross to proceed to the next task</div>');
+    $("#Greeting").append('<div id="notification" style="position: absolute;top: 200px;left: 40%;font-size: larger;">Click the red cross to proceed to the next task</div>');
     if (clicked_word_stack === null){
         clicked_word_stack = clickedword;
     }
