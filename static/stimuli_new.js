@@ -31,7 +31,9 @@
 var timeout_block;
 var already_placed_targets;
 var clicked_word_stack = null; // "stack" that holds the clicked_word
-
+var ring_type = null; //Specify which postData function to be used
+var startTime;
+var endTime;
 
 function onStartButtonClicked() {
     // Clear the page content to contain only the fixation cross, and empty the word arrays
@@ -55,7 +57,54 @@ function onStartButtonClicked() {
      * opposite_on_circle: 2 targets on a single circle. the 2 target words are on the same diameter of that circle
      */
     switch (rule){
+        case "opposite_on_circle": 
+            ring_type = "opposite_on_circle";
+        // The two target words being positioned on the opposite side of a circle
+            var targets;
+            var distractors;
+            $.ajax({
+                    url: flask_util.url_for('getStim', {
+                        small_fontsize: task["small_fontsize"],
+                        smallword_length: task["smallword_length"],
+                        big_fontsize: task["big_fontsize"],
+                        bigword_length: task["bigword_length"]}),
+                    success:
+                        function(data){
+                            distractors = data.map(function(dictionary) {
+                                if (dictionary["html"] === "target"){
+                                    return { 
+                                        text: dictionary['text'], 
+                                        weight: dictionary['fontsize'],
+                                        html: {class: dictionary['html']},
+                                        handlers: { 
+                                            click: function() {postData($(this));},
+                                            mouseover: function() {this.style.cursor = 'pointer';} 
+                                        }
+                                    }
+                                }
+                                else {
+                                    return { 
+                                        text: dictionary['text'], 
+                                        weight: dictionary['fontsize'],
+                                        html: {class: dictionary['html']},
+                                        handlers: {
+                                            mouseover: function() {this.style.cursor = "default";}
+                                        }
+                                    }
+                                }
+                            });
+
+                            targets = [];
+                            for (var i = 0; i < 2; i++){
+                                targets.push(distractors.shift());
+                            }
+                            drawTargetsOpposite(targets,distractors,distance_between,flash_time,drawDistractorsCallback);
+                        },
+                    dataType: "json"
+                });
+            break;
         case "single_circle":
+            ring_type = "single_circle";
             var distractors;
             var targets;
             $.ajax({
@@ -100,6 +149,7 @@ function onStartButtonClicked() {
             });
             break;
         case "multiple_circles": 
+            ring_type = "multiple_circles";
             // 3 targets on each level of circle
             var number_of_rings = 3;
             var number_of_targets = 3;
@@ -166,124 +216,13 @@ function onStartButtonClicked() {
                 dataType: "json"
             });
             break;
-        case "opposite_on_circle": 
-        // The two target words being positioned on the opposite side of a circle
-            var targets;
-            var distractors;
-            $.ajax({
-                    url: flask_util.url_for('getStim', {
-                        small_fontsize: task["small_fontsize"],
-                        smallword_length: task["smallword_length"],
-                        big_fontsize: task["big_fontsize"],
-                        bigword_length: task["bigword_length"]}),
-                    success:
-                        function(data){
-                            distractors = data.map(function(dictionary) {
-                                if (dictionary["html"] === "target"){
-                                    return { 
-                                        text: dictionary['text'], 
-                                        weight: dictionary['fontsize'],
-                                        html: {class: dictionary['html']},
-                                        handlers: { 
-                                            click: function() {postData($(this));},
-                                            mouseover: function() {this.style.cursor = 'pointer';} 
-                                        }
-                                    }
-                                }
-                                else {
-                                    return { 
-                                        text: dictionary['text'], 
-                                        weight: dictionary['fontsize'],
-                                        html: {class: dictionary['html']},
-                                        handlers: {
-                                            mouseover: function() {this.style.cursor = "default";}
-                                        }
-                                    }
-                                }
-                            });
-
-                            targets = [];
-                            for (var i = 0; i < 2; i++){
-                                targets.push(distractors.shift());
-                            }
-                            drawTargetsOpposite(targets,distractors,distance_between,flash_time,drawDistractorsCallback);
-                        },
-                    dataType: "json"
-                });
-            break;
         default:
             alert("rule not understand");
     }
 }
 
-function drawTargetsOnRing(target_array,distractor_array,radius,flash_time,callback){
-    $("#JQWC").addClass("jqcloud");
-    var cloud_center_x = $("#JQWC").width() / 2.0;
-    var cloud_center_y = $("#JQWC").height() / 2.0;
-    target_array.forEach((target_word,index,array)=>{
-        var font_size = target_word["weight"];
-        var word_span = $('<span>').attr(target_word.html)
-                                    .addClass("ring0")
-                                    .attr("id","target"+index);
-        word_span.append(target_word.text);
-        $("#JQWC").append(word_span);
-        word_span[0].style.visibility = "hidden";
-        word_span[0].style.fontSize = font_size + "px";
-        word_span[0].style.color = "black";
-        var width = word_span.width();
-        var height = word_span.height();
-        // var radius = distance_between / 2.0
-        var x = Math.random()*(radius*2)-radius;
-        var y = Math.sqrt(Math.pow(radius,2) - Math.pow(x,2)); // and here y will always be positive
-        var coefficient = [-1,1];
-            y = y*coefficient[Math.floor(Math.random()*coefficient.length)];
-        var left = cloud_center_x - width / 2.0 - x;
-        var top = cloud_center_y - height / 2.0 - y;
-        word_span[0].style.position = "absolute";
-        word_span[0].style.left = left + "px";
-        word_span[0].style.top = top + "px";
-        $(word_span).bind("click", function(){postDataMulti($(this));});
-        $(word_span).bind("mouseover", function() {this.style.cursor = 'pointer';});
-        
-        var hitTest = function(elem, other_elems) {
-            // Pairwise overlap detection
-            var overlapping = function(a, b) {
-                if (Math.abs(2.0*a.offsetLeft + a.offsetWidth - 2.0*b.offsetLeft - b.offsetWidth) < a.offsetWidth + b.offsetWidth) {
-                    if (Math.abs(2.0*a.offsetTop + a.offsetHeight - 2.0*b.offsetTop - b.offsetHeight) < a.offsetHeight + b.offsetHeight) {
-                        return true;
-                    }
-                }
-                return false;
-            };
-            var i = 0;
-            // Check elements for overlap one by one, stop and return false as soon as an overlap is found
-            for(i = 0; i < other_elems.length; i++) {
-                if (overlapping(elem, other_elems[i])) {
-                    return true;
-                }
-            }
-            return false;
-        };
-
-        do{
-            var overlap = hitTest(word_span[0],already_placed_targets);
-            if (overlap === true) {
-                var x = Math.random()*(radius*2)-radius;
-                var y = Math.sqrt(Math.pow(radius,2) - Math.pow(x,2)); // and here y will always be positive
-                var coefficient = [-1,1];
-                    y = y*coefficient[Math.floor(Math.random()*coefficient.length)];
-                var left = cloud_center_x - width / 2.0 - x;
-                var top = cloud_center_y - height / 2.0 - y;
-                word_span[0].style.left = left + "px";
-                word_span[0].style.top = top + "px";
-            }
-        } while (overlap === true)
-
-        already_placed_targets.push(word_span[0]);
-    });
-    callback(distractor_array,true,flash_time);
-}
-
+// Two targets drawn opposite along the diameter of a circle
+// Click block then click the central cross to continue
 function drawTargetsOpposite(target_array,distractor_array,distance_between,flash_time,callback){
     $("#JQWC").addClass("jqcloud");
     var cloud_center_x = $("#JQWC").width() / 2.0;
@@ -356,6 +295,76 @@ function drawTargetsOpposite(target_array,distractor_array,distance_between,flas
     var targets_distance = Math.sqrt(Math.pow(targets_x_distance,2) + Math.pow(targets_y_distance,2));
     console.log("distance between the two target is: " + targets_distance);
 
+    callback(distractor_array,true,flash_time);
+}
+
+// Multiple targets drawn on a single circle
+// Click the block first then click the central red cross to continue
+function drawTargetsOnRing(target_array,distractor_array,radius,flash_time,callback){
+    $("#JQWC").addClass("jqcloud");
+    var cloud_center_x = $("#JQWC").width() / 2.0;
+    var cloud_center_y = $("#JQWC").height() / 2.0;
+    target_array.forEach((target_word,index,array)=>{
+        var font_size = target_word["weight"];
+        var word_span = $('<span>').attr(target_word.html)
+                                    .addClass("ring0")
+                                    .attr("id","target"+index);
+        word_span.append(target_word.text);
+        $("#JQWC").append(word_span);
+        word_span[0].style.visibility = "hidden";
+        word_span[0].style.fontSize = font_size + "px";
+        word_span[0].style.color = "black";
+        var width = word_span.width();
+        var height = word_span.height();
+        // var radius = distance_between / 2.0
+        var x = Math.random()*(radius*2)-radius;
+        var y = Math.sqrt(Math.pow(radius,2) - Math.pow(x,2)); // and here y will always be positive
+        var coefficient = [-1,1];
+            y = y*coefficient[Math.floor(Math.random()*coefficient.length)];
+        var left = cloud_center_x - width / 2.0 - x;
+        var top = cloud_center_y - height / 2.0 - y;
+        word_span[0].style.position = "absolute";
+        word_span[0].style.left = left + "px";
+        word_span[0].style.top = top + "px";
+        $(word_span).bind("click", function(){click_word($(this));});
+        $(word_span).bind("mouseover", function() {this.style.cursor = 'pointer';});
+        
+        var hitTest = function(elem, other_elems) {
+            // Pairwise overlap detection
+            var overlapping = function(a, b) {
+                if (Math.abs(2.0*a.offsetLeft + a.offsetWidth - 2.0*b.offsetLeft - b.offsetWidth) < a.offsetWidth + b.offsetWidth) {
+                    if (Math.abs(2.0*a.offsetTop + a.offsetHeight - 2.0*b.offsetTop - b.offsetHeight) < a.offsetHeight + b.offsetHeight) {
+                        return true;
+                    }
+                }
+                return false;
+            };
+            var i = 0;
+            // Check elements for overlap one by one, stop and return false as soon as an overlap is found
+            for(i = 0; i < other_elems.length; i++) {
+                if (overlapping(elem, other_elems[i])) {
+                    return true;
+                }
+            }
+            return false;
+        };
+
+        do{
+            var overlap = hitTest(word_span[0],already_placed_targets);
+            if (overlap === true) {
+                var x = Math.random()*(radius*2)-radius;
+                var y = Math.sqrt(Math.pow(radius,2) - Math.pow(x,2)); // and here y will always be positive
+                var coefficient = [-1,1];
+                    y = y*coefficient[Math.floor(Math.random()*coefficient.length)];
+                var left = cloud_center_x - width / 2.0 - x;
+                var top = cloud_center_y - height / 2.0 - y;
+                word_span[0].style.left = left + "px";
+                word_span[0].style.top = top + "px";
+            }
+        } while (overlap === true)
+
+        already_placed_targets.push(word_span[0]);
+    });
     callback(distractor_array,true,flash_time);
 }
 
@@ -438,6 +447,39 @@ function drawTargetsMultiRings(target_2Darray,distractor_array,flash_time){
     });
 }
 
+function click_word(clickedword){
+    endTime = new Date();
+    clearTimeout(timeout_block);
+    $(".distractor").css("visibility","hidden");
+    $(".target").not($(clickedword)).css("visibility","hidden");
+    if (clicked_word_stack === null){
+        clicked_word_stack = clickedword;
+    }
+    else {
+        alert("Please trust your intuition :)")
+    }
+}
+
+function submit_word(){
+    if (clicked_word_stack != null){
+        switch(ring_type){
+            case "opposite_on_circle":
+                postData(clicked_word_stack);
+                break;
+            case "single_circle":
+                postDataMulti(clicked_word_stack);
+                break;
+            default:
+                alert("Which postData() to use?");
+        }
+    }
+    else {
+        alert("You haven't select anything");
+    }
+}
+
+
+
 function drawDistractorsCallback(word_array,block,flash_time){
     $("#JQWC").jQCloud(word_array,already_placed_targets,"distractor",
         {   delayedMode: false,
@@ -453,9 +495,17 @@ function drawDistractorsCallback(word_array,block,flash_time){
                         var block = makeBlock("block"+index,target_left,target_top);
                         $("#JQWC").append(block);
                         $("#block"+index).bind("click",function(){
+                            // highlight the clicked block
                             if (clicked_word_stack === null){
                                 $(this).css("border","3px solid");
                             }
+                            // hide the irrelevant words and blocks to prevent changing mind
+                            $(".distractor").css("visibility","hidden");
+                            $(".target").css("visibility","hidden");
+                            $(".block").not($(this)).css("visibility","hidden");
+
+                            // trigger the target underneath's click, which add this word
+                            // to the clicked_word_stack
                             $("#target"+index).trigger("click");
                         });
                     });}
@@ -465,26 +515,6 @@ function drawDistractorsCallback(word_array,block,flash_time){
         }
     );
 }
-
-function click_word(clickedword){
-    if (clicked_word_stack === null){
-        clicked_word_stack = clickedword;
-    }
-    else {
-        alert("Please trust your intuition :)")
-    }
-}
-
-
-function submit_word(){
-    if (clicked_word_stack != null){
-        postData(clicked_word_stack);
-    }
-    else {
-        alert("You haven't select anything");
-    }
-}
-
 function makeBlock(id,left,top){
     var block = $('<span>').attr('id',id)
                             .attr('class','block')
@@ -499,10 +529,10 @@ function makeBlock(id,left,top){
     return block;
 }
 
-
+// The postData function used for opposite_on_circle
 function postData(clickedword){
     clearTimeout(timeout_block);
-    endTime = new Date();
+    // endTime = new Date();
     var timeDiff = endTime - startTime; // in ms
     timeDiff /= 1000; // strip the ms
     // alert(typeof(timeDiff));
@@ -587,7 +617,8 @@ function postData(clickedword){
         success: function(response) {
             // alert('Response collected, please be ready for the next one');
             nextTask();
-            // console.log(response);
+            // console.log(word_data);
+            console.log(response);
         },
         error: function(error) {
             alert('error saving data');
@@ -597,7 +628,7 @@ function postData(clickedword){
 }
 
 function postDataMulti(clickedword){
-    endTime = new Date();
+    // endTime = new Date();
     var timeDiff = endTime - startTime; // in ms
     timeDiff /= 1000; // strip the ms
     var number_of_words = document.getElementById("JQWC").childElementCount - 1; // minus the dot span
@@ -657,6 +688,7 @@ function postDataMulti(clickedword){
         success: function(response) {
             nextTask();
             console.log(response);
+            // console.log(word_data);
         },
         error: function(error) {
             alert('error saving data');
