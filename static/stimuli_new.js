@@ -41,7 +41,7 @@ function onStartButtonClicked() {
     clicked_word_stack = null;
 
     // Process bar
-    document.getElementById("Greeting").innerHTML = '<div style="position: absolute; top: 0; right: 0; text-align:right;">You have '+tasklist.length+' tasks left</div>'; 
+    document.getElementById("Greeting").innerHTML = '<div id="progress_bar" style="position: absolute; top: 0; right: 0; text-align:right;">You have '+tasklist.length+' tasks left</div>'; 
 
     // Specifications about the target words are loaded from the csv to the tasklist
     // then from the tasklist to the python functions method as params
@@ -451,7 +451,8 @@ function click_word(clickedword){
     endTime = new Date();
     clearTimeout(timeout_block);
     $(".distractor").css("visibility","hidden");
-    $(".target").not($(clickedword)).css("visibility","hidden");
+    $(".target").css("visibility","hidden");
+    $("#Greeting").append('<div id="notification" style="position: absolute;top: 200px;left: 37%;font-size: larger;">Click the red cross to proceed to the next task</div>');
     if (clicked_word_stack === null){
         clicked_word_stack = clickedword;
     }
@@ -494,6 +495,8 @@ function drawDistractorsCallback(word_array,block,flash_time){
                         var target_top = parseFloat(target.style.top);
                         var block = makeBlock("block"+index,target_left,target_top);
                         $("#JQWC").append(block);
+                        $(".target").css("visibility","hidden");
+
                         $("#block"+index).bind("click",function(){
                             // highlight the clicked block
                             if (clicked_word_stack === null){
@@ -501,8 +504,7 @@ function drawDistractorsCallback(word_array,block,flash_time){
                             }
                             // hide the irrelevant words and blocks to prevent changing mind
                             $(".distractor").css("visibility","hidden");
-                            $(".target").css("visibility","hidden");
-                            $(".block").not($(this)).css("visibility","hidden");
+                            $(".block").css("visibility","hidden");
 
                             // trigger the target underneath's click, which add this word
                             // to the clicked_word_stack
