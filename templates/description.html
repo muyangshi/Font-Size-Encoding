@@ -8,42 +8,32 @@
 	</head>
 
 	<body>
-        <!--<h1 style="text-align: center;">Hello {{ ID }}</h1>
-
-        <h2 style="text-align: center;">Task Description</h2>
-        <div style="text-align: center;">
-            <p>In this study, you will do the following:<br/>
-                1.After you are ready, click start<br/>
-                2.Cloud will show up after you click start<br/>
-                3.You pick and click the bigger black word<br/>
-                4.Cloud will keep regenerate itself, until your task is finished<br/>
-            </p>
-        </div>-->
-
-				<h1>Hello {{ ID }}</h1>
+        		<h1>Hello {{ ID }}</h1>
 
 				<p>Please read these instructions. Remember that you can choose to exit the task at any time, but you will not receive compensation unless you finish the task.</p>
 
 				<h2>Instructions</h2>
 
-				<p>For each question, you will be presented with a word cloud like the one below. Some of the words are highlighted in <strong>black font</strong>. Your task is to click on the black word with the <strong>largest font size</strong>.</p>
+                <p>For each question, you will be presented with a word cloud like the one below. Some of the words are highlighted in <strong>black font</strong>. Your task is to click on the black word with the <strong>largest font size</strong>.</p>
 
 				<p>For instance, in the word cloud below, "macro" and "nassau" are highlighted in black font. Of the two, "macro" has the larger font size. Therefore, clicking "macro" would be the correct answer.</p>
 
-				<p>Finally, while performing this task, keep your eyes fixed on the <strong style="color: red">red dot</strong> in the middle of the word cloud rather than looking at the words (as well as you are able).</p>
+                <p>The highlighted words will only be shown for a <strong>limited time period</strong>, after which they will be covered by a grey box. Click on the box that you think covers the largest black word.</p>
 
-        <div><!-- style="text-align: center;">
-            <p>The wordcloud will look similar to this one below:</p>-->
-            <div id="WordCloudContainer"><!-- style="text-align: center;">-->
+                <p>Then you can click on the central red cross to proceed to the next word cloud, at your pace. You will see your progress bar on the top right corner of your page.</p>
+
+				<p>Finally, while performing this task, keep your eyes fixed on the <strong style="color: red">red cross</strong> in the middle of the word cloud rather than looking at the words (as well as you are able).</p>
+
+        <div>
+            <div id="WordCloudContainer">
                 <div class="jqcloud" id="JQWC" style="width: 650px; height: 450px; display: inline-block;"><span class="w5 distractor" id="JQWC_word_0" style="position: absolute; left: 313px; top: 216.5px; font-size: 12px;">ron</span><span class="w5 distractor" id="JQWC_word_1" style="position: absolute; left: 292.465px; top: 234.496px; font-size: 14px;">narrower</span><span class="w5 distractor" id="JQWC_word_2" style="position: absolute; left: 341.448px; top: 213.806px; font-size: 17px;">mare</span><span class="w5 distractor" id="JQWC_word_3" style="position: absolute; left: 296.424px; top: 197.402px; font-size: 17px;">move</span><span class="w5 distractor" id="JQWC_word_4" style="position: absolute; left: 309.91px; top: 178.597px; font-size: 16px;">scum</span><span class="w5 distractor" id="JQWC_word_5" style="position: absolute; left: 363.5px; top: 236.974px; font-size: 19px;">evans</span><span class="w5 target" id="JQWC_word_6" style="position: absolute; left: 259.233px; top: 250.823px; font-size: 15px; color: black; cursor: pointer;">nassau</span><span class="w5 distractor" id="JQWC_word_7" style="position: absolute; left: 306.529px; top: 161.289px; font-size: 13px;">converse</span><span class="w5 distractor" id="JQWC_word_8" style="position: absolute; left: 361.137px; top: 189.882px; font-size: 20px;">swears</span><span class="w5 distractor" id="JQWC_word_9" style="position: absolute; left: 250.568px; top: 212.132px; font-size: 18px;">wars</span><span class="w5 distractor" id="JQWC_word_10" style="position: absolute; left: 300.235px; top: 268.497px; font-size: 18px;">secure</span><span class="w5 distractor" id="JQWC_word_11" style="position: absolute; left: 228.578px; top: 185.082px; font-size: 16px;">season</span><span class="w5 distractor" id="JQWC_word_12" style="position: absolute; left: 265.179px; top: 235.403px; font-size: 11px;">owen</span><span class="w5 distractor" id="JQWC_word_13" style="position: absolute; left: 361.908px; top: 174.749px; font-size: 11px;">ceos</span><span class="w5 distractor" id="JQWC_word_14" style="position: absolute; left: 256.696px; top: 158.573px; font-size: 12px;">momma</span><span class="w5 distractor" id="JQWC_word_15" style="position: absolute; left: 243.253px; top: 272.503px; font-size: 10px;">meanness</span><span class="w5 distractor" id="JQWC_word_16" style="position: absolute; left: 354.205px; top: 277.123px; font-size: 19px;">vancouver</span><span class="w5 distractor" id="JQWC_word_17" style="position: absolute; left: 415.535px; top: 231.783px; font-size: 22px;">u.s.a</span><span class="w5 distractor" id="JQWC_word_18" style="position: absolute; left: 291.93px; top: 289.435px; font-size: 16px;">woo</span><span class="w5 distractor" id="JQWC_word_19" style="position: absolute; left: 321.683px; top: 252.231px; font-size: 14px;">u.s.s.r</span><span class="w5 distractor" id="JQWC_word_20" style="position: absolute; left: 227.534px; top: 246.384px; font-size: 13px;">swan</span><span class="w5 distractor" id="JQWC_word_21" style="position: absolute; left: 230.675px; top: 290.26px; font-size: 16px;">screws</span><span class="w5 distractor" id="JQWC_word_22" style="position: absolute; left: 163.314px; top: 209.312px; font-size: 17px;">commune</span><span class="w5 distractor" id="JQWC_word_23" style="position: absolute; left: 323.329px; top: 300.693px; font-size: 22px;">corners</span><span class="w5 distractor" id="JQWC_word_24" style="position: absolute; left: 358.906px; top: 150.349px; font-size: 17px;">cow</span><span class="w5 distractor" id="JQWC_word_25" style="position: absolute; left: 396.274px; top: 218.821px; font-size: 11px;">soccer</span><span class="w5 distractor" id="JQWC_word_26" style="position: absolute; left: 386.25px; top: 259.654px; font-size: 14px;">emma</span><span class="w5 distractor" id="JQWC_word_27" style="position: absolute; left: 297.744px; top: 142.988px; font-size: 12px;">max</span><span class="w5 distractor" id="JQWC_word_28" style="position: absolute; left: 390.373px; top: 167.879px; font-size: 15px;">wave</span><span class="w5 distractor" id="JQWC_word_29" style="position: absolute; left: 434.51px; top: 183.703px; font-size: 21px;">mcewen</span><span class="w5 distractor" id="JQWC_word_30" style="position: absolute; left: 323.342px; top: 129.421px; font-size: 18px;">moon</span><span class="w5 distractor" id="JQWC_word_31" style="position: absolute; left: 224.561px; top: 154.233px; font-size: 14px;">sewn</span><span class="w5 target" id="JQWC_word_32" style="position: absolute; left: 397.065px; top: 130.342px; font-size: 23px; color: black; cursor: pointer;">macro</span><span class="w5 distractor" id="JQWC_word_33" style="position: absolute; left: 253.697px; top: 174.111px; font-size: 10px;">renounce</span><span class="w5 distractor" id="JQWC_word_34" style="position: absolute; left: 312.029px; top: 328.016px; font-size: 23px;">sorrows</span><span class="w5 distractor" id="JQWC_word_35" style="position: absolute; left: 220.485px; top: 229.786px; font-size: 10px;">move</span><span class="w5 distractor" id="JQWC_word_36" style="position: absolute; left: 159.364px; top: 235.93px; font-size: 18px;">exxon</span><span class="w5 distractor" id="JQWC_word_37" style="position: absolute; left: 256.992px; top: 128.061px; font-size: 11px;">ozone</span><span class="w5 distractor" id="JQWC_word_38" style="position: absolute; left: 254.218px; top: 322.839px; font-size: 16px;">mesa</span><span class="w5 distractor" id="JQWC_word_39" style="position: absolute; left: 458.049px; top: 213.48px; font-size: 16px;">arena</span>
-
-									<span class="dot" style="position: absolute;top: 225px;left: 325px;height: 5px;width: 5px;background-color: red;border-radius: 35%;display: inline-block;"></span>
+                    <span id="center_cross" style="position: absolute;top: 225px;left: 325px;font-size: 30px;color: red;">&#10011;</span>
                 </div>
             </div>
         </div>
 
-        <div><!-- style="text-align: center;">-->
-            <p><!-- style="text-align: center;">-->
+        <div>
+            <p>
                 When you are ready, click "Next" below.<br/>
             </p>
             <button id="start_stim">Next</button>
