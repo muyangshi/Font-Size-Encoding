@@ -283,7 +283,7 @@ def post_data():
     #     # 'wrong_word_x','wrong_word_y','wrong_word_fontsize','wrong_word_width','wrong_word_height','wrong_word_center_distance',
     #     # 'number_of_words','span_content'])
     #     writer.writerow([turker_id,cloud_width,cloud_height,cloud_center_x,cloud_center_y,clicked_word,correct_word,wrong_word,distance_between_targets,time,correct_word_x,correct_word_y,correct_word_fontsize,correct_word_width,correct_word_height,correct_word_center_distance,wrong_word_x,wrong_word_y,wrong_word_fontsize,wrong_word_width,wrong_word_height,wrong_word_center_distance,number_of_words,span_content])
-    return json.dumps("data")
+    return json.dumps([turker_id,clicked_word,time])
 
 # Post hypo2 stimuli data
 @app.route('/word_cognition_study/post_data_multi',methods=['POST'])
@@ -331,7 +331,7 @@ def post_data_multi():
     #     correct_fontsize,wrong_fontsize,
     #     num_words_in_ring0,num_words_in_ring1,num_words_in_ring2,number_of_targets,number_of_words,
     #     span_content])
-    return json.dumps("success")
+    return json.dumps([turker_id,clicked_word,time])
 
 
 # Post demographic data
@@ -354,7 +354,7 @@ def post_demographic_data():
             INSERT INTO pilot_demographics (turker_id,age,gender,hand,education,difficulty,confidence,eyetrace,comments)
             VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)
                 """,
-            (turker_id,age,gender,hand,education,difficulty,confidence,eyetrace))
+            (turker_id,age,gender,hand,education,difficulty,confidence,eyetrace,comments))
     connection.commit()
     cursor.close()
     connection.close()
