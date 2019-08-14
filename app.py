@@ -321,13 +321,13 @@ def post_data_multi():
     # cursor.close()
     # connection.close()
 
-    with open('hypo2_client_data.csv','a',newline='',encoding="utf-8") as csvfile:
-        writer = csv.writer(csvfile,delimiter=',',quotechar='"')
-        writer.writerow([turker_id,cloud_width,cloud_height,cloud_center_x,cloud_center_y,
-        clicked_word,time,clicked_word_x,clicked_word_y,clicked_word_center_distance,clicked_word_fontsize,
-        correct_fontsize,wrong_fontsize,
-        num_words_in_ring0,num_words_in_ring1,num_words_in_ring2,number_of_targets,number_of_words,
-        span_content])
+    # with open('hypo2_client_data.csv','a',newline='',encoding="utf-8") as csvfile:
+    #     writer = csv.writer(csvfile,delimiter=',',quotechar='"')
+    #     writer.writerow([turker_id,cloud_width,cloud_height,cloud_center_x,cloud_center_y,
+    #     clicked_word,time,clicked_word_x,clicked_word_y,clicked_word_center_distance,clicked_word_fontsize,
+    #     correct_fontsize,wrong_fontsize,
+    #     num_words_in_ring0,num_words_in_ring1,num_words_in_ring2,number_of_targets,number_of_words,
+    #     span_content])
     return json.dumps("success")
 
 
