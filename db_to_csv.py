@@ -22,11 +22,12 @@ def get_connection():
 def get_stimuli_data():
     connection = get_connection()
     cursor = connection.cursor()
-    cursor.execute("SELECT turker_id,clicked_word,correct_word,wrong_word,distance_between_targets,time,correct_word_fontsize,wrong_word_fontsize,correct_word_width,wrong_word_width FROM pilot_opposite_on_circle")
+    cursor.execute("SELECT turker_id,clicked_word,correct_word,wrong_word,distance_between_targets,time,correct_word_fontsize,wrong_word_fontsize,correct_word_width,wrong_word_width,correct_word_height,wrong_word_height,correct_word_x,wrong_word_x,correct_word_y,wrong_word_y FROM pilot_opposite_on_circle")
     data_list = cursor.fetchall()
     print(data_list[0])
-    with open('pilot_Aug_15.csv','a',newline='') as csvdata:
+    with open('for_calculation.csv','a',newline='') as csvdata:
         writer = csv.writer(csvdata,delimiter = ',',quotechar = '"')
+        writer.writerow(['turker_id','clicked_word','correct_word','wrong_word','distance_between_targets','time','correct_word_fontsize','wrong_word_fontsize','correct_word_width','wrong_word_width','correct_word_height','wrong_word_height','correct_word_x','wrong_word_x','correct_word_y','wrong_word_y'])
         for row in data_list:
             writer.writerow(row)
     # connection.commit()
