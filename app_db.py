@@ -250,7 +250,7 @@ def post_data():
     correct_word_fontsize = int(data["correct_word_fontsize"]) #12 INTEGER
     correct_word_width = float(data["correct_word_width"]) #13 REAL
     correct_word_height = int(data["correct_word_height"]) #14 INTEGER
-    correct_word_center_distance = myround(int(data["correct_word_center_distance"]),50) #15 INTEGER
+    correct_word_center_distance = myround(float(data["correct_word_center_distance"]),50) #15 INTEGER
 
     wrong_word_x = float(data["wrong_word_x"]) #16 REAL
     wrong_word_y = float(data["wrong_word_y"]) #17 REAL
