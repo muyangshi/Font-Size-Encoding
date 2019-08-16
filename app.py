@@ -230,35 +230,35 @@ def receive_id():
 def post_data():
     data = flask.request.form # The following data are all casted into str class
 
-    turker_id = data["turker_id"] #0
+    turker_id = data["turker_id"] #0 TEXT
 
-    cloud_width = data["cloud_width"] #1
-    cloud_height = data["cloud_height"] #2
-    cloud_center_x = data["cloud_center_x"] #3
-    cloud_center_y = data["cloud_center_y"] #4
+    cloud_width = int(data["cloud_width"]) #1 INTEGER
+    cloud_height = int(data["cloud_height"]) #2 INTEGER
+    cloud_center_x = int(data["cloud_center_x"]) #3 INTEGER
+    cloud_center_y = int(data["cloud_center_y"]) #4 INTEGER
 
-    clicked_word = data["clicked_word"] #5
-    correct_word = data["correct_word"] #6
-    wrong_word = data["wrong_word"] #7
-    distance_between_targets = data["distance_between_targets"] #8
-    time = data["time"] #9
+    clicked_word = data["clicked_word"] #5 TEXT
+    correct_word = data["correct_word"] #6 TEXT
+    wrong_word = data["wrong_word"] #7 TEXT
+    distance_between_targets = myround(float(data["distance_between_targets"]),100) #8 INTEGER
+    time = float(data["time"]) #9 REAL
 
-    correct_word_x = data["correct_word_x"] #10
-    correct_word_y = data["correct_word_y"] #11
-    correct_word_fontsize = data["correct_word_fontsize"] #12
-    correct_word_width = data["correct_word_width"] #13
-    correct_word_height = data["correct_word_height"] #14
-    correct_word_center_distance = data["correct_word_center_distance"] #15
+    correct_word_x = float(data["correct_word_x"]) #10 REAL
+    correct_word_y = float(data["correct_word_y"]) #11 REAL
+    correct_word_fontsize = int(data["correct_word_fontsize"]) #12 INTEGER
+    correct_word_width = float(data["correct_word_width"]) #13 REAL
+    correct_word_height = int(data["correct_word_height"]) #14 INTEGER
+    correct_word_center_distance = myround(int(data["correct_word_center_distance"]),50) #15 INTEGER
 
-    wrong_word_x = data["wrong_word_x"] #16
-    wrong_word_y = data["wrong_word_y"] #17
-    wrong_word_fontsize = data["wrong_word_fontsize"] #18
-    wrong_word_width = data["wrong_word_width"] #19
-    wrong_word_height = data["wrong_word_height"] #20
-    wrong_word_center_distance = data["wrong_word_center_distance"] #21
+    wrong_word_x = float(data["wrong_word_x"]) #16 REAL
+    wrong_word_y = float(data["wrong_word_y"]) #17 REAL
+    wrong_word_fontsize = int(data["wrong_word_fontsize"]) #18 INTEGER
+    wrong_word_width = float(data["wrong_word_width"]) #19 REAL
+    wrong_word_height = int(data["wrong_word_height"]) #20 INTEGER
+    wrong_word_center_distance = myround(float(data["wrong_word_center_distance"]),50) #21 INTEGER
 
-    number_of_words = data["number_of_words"] #22
-    span_content = data["span_content"] #23
+    number_of_words = int(data["number_of_words"]) #22 INTEGER
+    span_content = data["span_content"] #23 TEXT
 
     # connection = get_connection()
     # cursor = connection.cursor()
@@ -394,6 +394,9 @@ def check_hashcode(hashcode):
                 return True
     return False 
 
+def myround(x,base):
+    return base * round(x/base)
+
 if __name__ == '__main__':
 	if len(sys.argv) != 3:
 		print('Usage: {0} host port'.format(sys.argv[0]))
@@ -403,6 +406,7 @@ if __name__ == '__main__':
 	host = sys.argv[1]
 	port = int(sys.argv[2])
 	app.run(host=host, port=port, debug=True)
+
 
 
 
