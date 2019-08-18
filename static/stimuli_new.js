@@ -34,6 +34,7 @@ var clicked_word_stack = null; // "stack" that holds the clicked_word
 var ring_type = null; //Specify which postData function to be used
 var startTime;
 var endTime;
+var total_num = tasklist.length;
 
 function onStartButtonClicked() {
     $("#center_cross").css("cursor", "pointer")
@@ -549,6 +550,8 @@ function postData(clickedword) {
     // alert(typeof(timeDiff));
     // alert('time taken: ' + timeDiff);
 
+    var question_index = total_num - tasklist.length + 1;
+
     var number_of_words = document.getElementById("JQWC").childElementCount - 1; // minus the dot span
     var span_content = document.getElementById("JQWC").innerHTML; //the span content
 
@@ -617,6 +620,7 @@ function postData(clickedword) {
 
         "number_of_words": number_of_words,
         "span_content": span_content,
+        "question_index": question_index
     };
 
     // $.post("/randomStim/post_data", word_data);
@@ -624,7 +628,8 @@ function postData(clickedword) {
     $.ajax({
         type: 'POST',
         url: post_data_url,
-        data: word_data,
+        data: JSON.stringify(word_data),
+        contentType: "application/json",
         success: function (response) {
             // alert('Response collected, please be ready for the next one');
             nextTask();
@@ -695,7 +700,8 @@ function postDataMulti(clickedword) {
     $.ajax({
         type: 'POST',
         url: post_data_multi_url,
-        data: word_data,
+        data: JSON.stringify(word_data),
+        contentType: "application/json",
         success: function (response) {
             nextTask();
             console.log(response);

@@ -173,7 +173,8 @@
                 $.ajax({
                     type: 'POST',
                     url: post_demographic_url,
-                    data: demographic_data,
+                    data: JSON.stringify(demographic_data),
+                    contentType: "application/json",
                     success: function(response){
                         alert("redirect to Amazon");
                     },
