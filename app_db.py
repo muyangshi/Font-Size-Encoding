@@ -351,8 +351,8 @@ def post_demographic_data():
     connection = get_connection()
     cursor = connection.cursor()
     cursor.execute("""
-            INSERT INTO pilot_demographics (turker_id,age,gender,hand,education,difficulty,confidence,eyetrace,comments)
-            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)
+            INSERT INTO pilot_demographics (turker_id,age,gender,hand,education,device,game,difficulty,confidence,eyetrace,comments)
+            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
                 """,
             (turker_id,age,gender,hand,education,difficulty,confidence,eyetrace,comments))
     connection.commit()

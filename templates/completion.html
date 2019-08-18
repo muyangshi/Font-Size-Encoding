@@ -55,6 +55,25 @@
                     <input type="radio" name="edu" value="4" />College Graduate
                     <input type="radio" name="edu" value="5" />Graduate Degree
                 </form>
+
+                <br>
+                <b>Device:</b><br>
+                Are you using a trackpad or a physical mouse?
+                <form id="device_form">
+                    <input type="radio" name="device" value="1" />Trackpad
+                    <input type="radio" name="device" value="2" />Physical mouse
+                </form>
+
+                <br>
+                <b>How often do you play Firts Person Shooter games?</b>
+                <form id="game_form">
+                    <input type="radio" name="game" value="1" />Never
+                    <input type="radio" name="game" value="2" />Seldom
+                    <input type="radio" name="game" value="3" />Sometimes
+                    <input type="radio" name="game" value="4" />Often
+                    <input type="radio" name="game" value="5" />Very Frequently
+                </form>
+
                 
                 <br>
                 <b>Difficulty:<br>
@@ -127,7 +146,9 @@
                 var confidence = document.getElementById("confidence_range").value;
                 var edu = getRadioVal(document.getElementById("edu_form"),"edu");
                 var hand = getRadioVal(document.getElementById("hand_form"),"hand");
-                var comments = document.getElementById("comments").value;           
+                var comments = document.getElementById("comments").value;
+                var device = getRadioVal($("#device_form"),"device");
+                var game = getRadioVal($("#game_form"),"game");         
                 var gender = getRadioVal(document.getElementById("gender_form"),"gender");
                 if (gender === "other"){
                     gender = $("#gender_other").value;
@@ -142,6 +163,8 @@
                     "gender": gender,
                     "hand": hand,
                     "education": edu,
+                    "device": device,
+                    "game": game,
                     "difficulty": difficulty,
                     "confidence": confidence,
                     "eyetrace": eyetrace,
