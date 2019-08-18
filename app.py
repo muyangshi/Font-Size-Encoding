@@ -228,8 +228,9 @@ def receive_id():
 # Post stimuli data
 @app.route('/randomStim/post_data', methods = ['POST'])
 def post_data():
-    data = flask.request.form # The following data are all casted into str class
-
+    # print(type(flask.request),type(flask.request.data))
+    data = json.loads(flask.request.data)
+    # print(type(data))
     turker_id = data["turker_id"] #0 TEXT
 
     cloud_width = int(data["cloud_width"]) #1 INTEGER
@@ -260,6 +261,13 @@ def post_data():
     number_of_words = int(data["number_of_words"]) #22 INTEGER
     span_content = data["span_content"] #23 TEXT
 
+    question_index = data["question_index"] #19
+    accuracy = 1 if clicked_word == correct_word else 0
+    clicked_x = correct_word_x if accuracy == 1 else wrong_word_x
+    clicked_y = correct_word_y if accuracy == 1 else wrong_word_y
+    angle = clicked_x/clicked_y
+    
+
     # connection = get_connection()
     # cursor = connection.cursor()
     # cursor.execute("""
@@ -286,7 +294,7 @@ def post_data():
 # Post hypo2 stimuli data
 @app.route('/word_cognition_study/post_data_multi',methods=['POST'])
 def post_data_multi():
-    data = flask.request.form
+    data = json.loads(flask.request.data)
 
     turker_id = data["turker_id"] #0
     cloud_width = data["cloud_width"] #1
@@ -309,6 +317,8 @@ def post_data_multi():
     number_of_targets = data["number_of_targets"] #16
     number_of_words = data["number_of_words"] #17
     span_content = data["span_content"] #18
+
+    question_index = data["question_index"] #19
 
     # connection = get_connection()
     # cursor = connection.cursor()
@@ -334,12 +344,14 @@ def post_data_multi():
 # Post demographic data
 @app.route('/word_cognition_study/completion/post_demographic_data', methods=['POST'])
 def post_demographic_data():
-    data = flask.request.form
+    data = json.loads(flask.request.data)
     turker_id = data["turker_id"]
     age = data["age"]
     gender = data["gender"]
     hand = data["hand"]
     education = data["education"]
+    device = data["device"]
+    game = data["game"]    
     difficulty = data["difficulty"]
     confidence = data["confidence"]
     eyetrace = data["eyetrace"]

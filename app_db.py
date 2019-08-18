@@ -230,7 +230,7 @@ def receive_id():
 # Post stimuli data
 @app.route('/randomStim/post_data', methods = ['POST'])
 def post_data():
-    data = flask.request.form # The following data are all casted into str class
+    data = json.loads(flask.request.data)
 
     turker_id = data["turker_id"] #0 TEXT
 
@@ -288,7 +288,7 @@ def post_data():
 # Post hypo2 stimuli data
 @app.route('/word_cognition_study/post_data_multi',methods=['POST'])
 def post_data_multi():
-    data = flask.request.form
+    data = json.loads(flask.request.data)
 
     turker_id = data["turker_id"] #0
     cloud_width = data["cloud_width"] #1
@@ -337,12 +337,14 @@ def post_data_multi():
 # Post demographic data
 @app.route('/word_cognition_study/completion/post_demographic_data', methods=['POST'])
 def post_demographic_data():
-    data = flask.request.form
+    data = json.loads(flask.request.data)
     turker_id = data["turker_id"]
     age = data["age"]
     gender = data["gender"]
     hand = data["hand"]
     education = data["education"]
+    device = data["device"]
+    game = data["game"]
     difficulty = data["difficulty"]
     confidence = data["confidence"]
     eyetrace = data["eyetrace"]
