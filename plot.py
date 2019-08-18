@@ -28,7 +28,7 @@ def distance_correct_data():
 def position_correct_data():
     correct_ans = []
     wrong_ans = []
-    with open('temp.csv','r') as csvdata:
+    with open('pilot_opposite_on_circle.csv','r') as csvdata:
         reader = csv.reader(csvdata,delimiter = ',')
         heading = next(reader)
         for row in reader:
@@ -214,6 +214,9 @@ def click_position_scatter():
     # Plot the mean value coordinates for the correct and wrong clicks
     scatterplot.scatter(correct_pos_mean[0],correct_pos_mean[1],c='blue',marker="s")
     scatterplot.scatter(wrong_pos_mean[0],wrong_pos_mean[1],c='red',marker="s")
+
+    scatterplot.scatter((correct_pos_mean[0]+wrong_pos_mean[0])/2,(correct_pos_mean[1]+wrong_pos_mean[1])/2,c='pink',marker="s")
+    scatterplot.scatter(0,0,c='black',marker="+")
 
 
     pyplot.title('Scatterplot of Word\'s Position versus Correctness')
