@@ -13,6 +13,7 @@ from flask_util_js import FlaskUtilJs
 from Configures import test_length_config as config
 # import config
 import psycopg2
+import math
 
 app = flask.Flask(__name__)
 fujs = FlaskUtilJs(app)
@@ -262,22 +263,16 @@ def post_data():
     span_content = data["span_content"] #23 TEXT
 
     question_index = data["question_index"] #19
+
+    # The below values are calculated
+    sizeDiff = correct_word_fontsize - wrong_word_fontsize
     accuracy = 1 if clicked_word == correct_word else 0
     clicked_x = correct_word_x if accuracy == 1 else wrong_word_x
     clicked_y = correct_word_y if accuracy == 1 else wrong_word_y
     angle = clicked_x/clicked_y
-    
-
-    # connection = get_connection()
-    # cursor = connection.cursor()
-    # cursor.execute("""
-    #         INSERT INTO pilot_data_on_circle (turker_id,cloud_width,cloud_height,cloud_center_x,cloud_center_y,clicked_word,correct_word,wrong_word,distance_between_targets,time,correct_word_x,correct_word_y,correct_word_fontsize,correct_word_width,correct_word_height,correct_word_center_distance,wrong_word_x,wrong_word_y,wrong_word_fontsize,wrong_word_width,wrong_word_height,wrong_word_center_distance,number_of_words,span_content)
-    #         VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);
-    #         """,
-    #         (turker_id,cloud_width,cloud_height,cloud_center_x,cloud_center_y,clicked_word,correct_word,wrong_word,distance_between_targets,time,correct_word_x,correct_word_y,correct_word_fontsize,correct_word_width,correct_word_height,correct_word_center_distance,wrong_word_x,wrong_word_y,wrong_word_fontsize,wrong_word_width,wrong_word_height,wrong_word_center_distance,number_of_words,span_content))
-    # connection.commit()
-    # cursor.close()
-    # connection.close()
+    block_height = 29
+    index_of_difficulty = math.log2(distance_between_targets/get_hypotenuse(angle,block_height,84.9844))
+    index_of_performance = index_of_difficulty/time
 
 
     # with open('pilot_client_data.csv','a', newline='') as csvfile:
@@ -289,7 +284,7 @@ def post_data():
     #     # 'wrong_word_x','wrong_word_y','wrong_word_fontsize','wrong_word_width','wrong_word_height','wrong_word_center_distance',
     #     # 'number_of_words','span_content'])
     #     writer.writerow([turker_id,cloud_width,cloud_height,cloud_center_x,cloud_center_y,clicked_word,correct_word,wrong_word,distance_between_targets,time,correct_word_x,correct_word_y,correct_word_fontsize,correct_word_width,correct_word_height,correct_word_center_distance,wrong_word_x,wrong_word_y,wrong_word_fontsize,wrong_word_width,wrong_word_height,wrong_word_center_distance,number_of_words,span_content])
-    return json.dumps([turker_id,clicked_word,time])
+    return json.dumps([turker_id,clicked_word,time,sizeDiff,accuracy,angle,index_of_difficulty])
 
 # Post hypo2 stimuli data
 @app.route('/word_cognition_study/post_data_multi',methods=['POST'])
@@ -320,17 +315,6 @@ def post_data_multi():
 
     question_index = data["question_index"] #19
 
-    # connection = get_connection()
-    # cursor = connection.cursor()
-    # cursor.execute("""
-    #         INSERT INTO pilot_multi_target (turker_id,cloud_width,cloud_height,cloud_center_x,cloud_center_y,clicked_word,time,clicked_word_x,clicked_word_y,clicked_word_center_distance,clicked_word_fontsize,correct_fontsize,wrong_fontsize,num_words_in_ring0,num_words_in_ring1,num_words_in_ring2,number_of_targets,number_of_words,span_content)
-    #         VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);
-    #         """,
-    #         (turker_id,cloud_width,cloud_height,cloud_center_x,cloud_center_y,clicked_word,time,clicked_word_x,clicked_word_y,clicked_word_center_distance,clicked_word_fontsize,correct_fontsize,wrong_fontsize,num_words_in_ring0,num_words_in_ring1,num_words_in_ring2,number_of_targets,number_of_words,span_content))
-    # connection.commit()
-    # cursor.close()
-    # connection.close()
-
     # with open('hypo2_client_data.csv','a',newline='',encoding="utf-8") as csvfile:
     #     writer = csv.writer(csvfile,delimiter=',',quotechar='"')
     #     writer.writerow([turker_id,cloud_width,cloud_height,cloud_center_x,cloud_center_y,
@@ -356,17 +340,6 @@ def post_demographic_data():
     confidence = data["confidence"]
     eyetrace = data["eyetrace"]
     comments = data["comments"]
-
-    # connection = get_connection()
-    # cursor = connection.cursor()
-    # cursor.execute("""
-    #         INSERT INTO pilot_demographic_data (turker_id,age,gender,education,difficulty,confidence,eyetrace)
-    #         VALUES (%s,%s,%s,%s,%s,%s,%s)
-    #             """,
-    #         (turker_id,age,gender,education,difficulty,confidence,eyetrace))
-    # connection.commit()
-    # cursor.close()
-    # connection.close()
 
     # with open('pilot_demographic_data.csv','a',newline='') as csvfile:
     #     writer = csv.writer(csvfile,delimiter = ',',quotechar='"')
@@ -408,6 +381,14 @@ def check_hashcode(hashcode):
 
 def myround(x,base):
     return base * round(x/base)
+
+def get_hypotenuse(angle,opposite=29,width=84.9844):
+    adjacent = angle*opposite
+    if adjacent > width:
+        angle = 1/angle
+        adjacent = width*angle
+    hypotenuse = math.sqrt(math.pow(width,2)+math.pow(adjacent,2))
+    return hypotenuse
 
 if __name__ == '__main__':
 	if len(sys.argv) != 3:

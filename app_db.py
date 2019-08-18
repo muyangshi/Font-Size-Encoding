@@ -13,6 +13,7 @@ from flask_util_js import FlaskUtilJs
 from Configures import test_length_config as config
 # import config
 import psycopg2
+import math
 
 app = flask.Flask(__name__)
 fujs = FlaskUtilJs(app)
@@ -261,6 +262,18 @@ def post_data():
 
     number_of_words = int(data["number_of_words"]) #22 INTEGER
     span_content = data["span_content"] #23 TEXT
+    
+    question_index = data["question_index"]
+    
+    # The below values are calculated
+    sizeDiff = correct_word_fontsize - wrong_word_fontsize
+    accuracy = 1 if clicked_word == correct_word else 0
+    clicked_x = correct_word_x if accuracy == 1 else wrong_word_x
+    clicked_y = correct_word_y if accuracy == 1 else wrong_word_y
+    angle = clicked_x/clicked_y
+    block_height = 29
+    index_of_difficulty = math.log2(distance_between_targets/get_hypotenuse(angle,block_height,84.9844))
+    index_of_performance = index_of_difficulty/time
 
     connection = get_connection()
     cursor = connection.cursor()
@@ -401,6 +414,14 @@ def check_hashcode(hashcode):
 
 def myround(x,base):
     return base * round(x/base)
+
+def get_hypotenuse(angle,opposite=29,width=84.9844):
+    adjacent = angle*opposite
+    if adjacent > width:
+        angle = 1/angle
+        adjacent = width*angle
+    hypotenuse = math.sqrt(math.pow(width,2)+math.pow(adjacent,2))
+    return hypotenuse
 
 if __name__ == '__main__':
 	if len(sys.argv) != 3:
