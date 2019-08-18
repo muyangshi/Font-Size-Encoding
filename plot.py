@@ -6,6 +6,8 @@ from collections import OrderedDict
 import re
 import math
 
+filename = 'pilot_opposite_on_circle.csv'
+
 # Load the correctness versus target_distance(distance between the two targets) from the csv
 # (distance_between_targets,correct)
 def distance_correct_data():
@@ -13,7 +15,7 @@ def distance_correct_data():
     # distance = []
     correct_ans = []
     wrong_ans = []
-    with open('temp.csv','r') as csvdata:
+    with open(filename,'r') as csvdata:
         reader = csv.reader(csvdata,delimiter = ',')
         heading = next(reader)
         for row in reader:
@@ -28,7 +30,7 @@ def distance_correct_data():
 def position_correct_data():
     correct_ans = []
     wrong_ans = []
-    with open('pilot_opposite_on_circle.csv','r') as csvdata:
+    with open(filename,'r') as csvdata:
         reader = csv.reader(csvdata,delimiter = ',')
         heading = next(reader)
         for row in reader:
@@ -46,7 +48,7 @@ def position_correct_data():
 def dist_from_center():
     correct_ans = []
     wrong_ans = []
-    with open('temp.csv','r') as csvdata:
+    with open(filename,'r') as csvdata:
         reader = csv.reader(csvdata,delimiter = ',')
         heading = next(reader)
         for row in reader:
@@ -79,7 +81,7 @@ def load_time_and_distance_between_targets():
     d500 = []
     d600 = []
     derror = []
-    with open('temp.csv','r') as csvdata:
+    with open(filename,'r') as csvdata:
         reader = csv.reader(csvdata,delimiter=',')
         heading = next(reader)
         for row in reader:
