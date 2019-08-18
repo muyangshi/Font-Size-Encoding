@@ -8,8 +8,8 @@
 	</head>
 
 	<body>
-        <div id="Greeting" style="position: relative">
-            <h3 style="text-align: center;">Hello, {{ID}}. Please try your best to look at the red cross.  <button id="Button_startStimuli">Start!</button></h3>
+        <div id="Status_Bar" style="position: fixed; left:50%; transform: translateX(-50%)">
+            <div><h3>Hello, {{ID}}. Please always look at the red cross. Click it to start.</h3></div>
         </div>
 
         <div id="WordCloudContainer" style="text-align: center;">
@@ -22,14 +22,16 @@
 
         <form action="{{url_for('get_completion')}}" method = "POST" id="get_completion_page">
         </form>
-
+        <script type="text/javascript" src="{{url_for('static', filename='jquery-3.4.1.min.js')}}"></script>
         <script>
             var turker_id = '{{ ID }}';
             var tasklist =JSON.parse('{{ List_From_Server }}'.replace(/&#34;/g,'"')); //received the task list as a string, and parse it in JS
             var post_data_url = '{{url_for("post_data")}}'
             var post_data_multi_url = '{{url_for("post_data_multi")}}'
+            $("#center_cross").css("cursor", "pointer")
+                .bind("click",function(){onStartButtonClicked();});
         </script>
-        <script type="text/javascript" src="{{url_for('static', filename='jquery-3.4.1.min.js')}}"></script>
+
         <script type="text/javascript" src="{{url_for('static', filename='jqcloud-1.0.4.js')}}"></script>
         <script type="text/javascript" src="{{url_for('static', filename='stimuli_new.js')}}"></script>
         
