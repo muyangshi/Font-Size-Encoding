@@ -426,6 +426,7 @@ def myround(x,base):
     return base * round(x/base)
 
 def get_hypotenuse(angle,opposite=29,width=84.9844):
+    angle = math.fabs(angle)
     adjacent = angle*opposite
     if adjacent > width:
         angle = 1/angle
