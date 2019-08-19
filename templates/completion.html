@@ -196,6 +196,10 @@
                         break; // and break out of for loop
                     }
                 }
+                // console.log(typeof(val)+val);
+                if (val === undefined){
+                    val = 0;
+                }
                 return val; // return value of checked radio or undefined if none checked
             }
         </script>
