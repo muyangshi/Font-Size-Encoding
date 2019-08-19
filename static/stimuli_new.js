@@ -19,10 +19,9 @@
     // var start = document.getElementById('Button_startStimuli');
     // start.onclick = onStartButtonClicked;
     console.log("device pixel ratio is: " + window.devicePixelRatio);
-
-
 })();
 
+tasklist = shuffle(tasklist);
 /*
  * Global variables stored here are for the ease of access for functions
  * timeout_block is pointing to the setTimeout function that create the blocks, which should be canceled if the user react before the blocks are created.
@@ -35,6 +34,9 @@ var ring_type = null; //Specify which postData function to be used
 var startTime;
 var endTime;
 var total_num = tasklist.length;
+var target_num;
+
+
 
 function onStartButtonClicked() {
     $("#center_cross").css("cursor", "pointer")
@@ -64,6 +66,7 @@ function onStartButtonClicked() {
     switch (rule) {
         case "opposite_on_circle":
             ring_type = "opposite_on_circle";
+            target_num = 2;
             // The two target words being positioned on the opposite side of a circle
             var targets;
             var distractors;
@@ -111,6 +114,7 @@ function onStartButtonClicked() {
             break;
         case "single_circle":
             ring_type = "single_circle";
+            target_num = task["number_of_targets"];
             var distractors;
             var targets;
             $.ajax({
@@ -157,6 +161,7 @@ function onStartButtonClicked() {
             break;
         case "multiple_circles":
             ring_type = "multiple_circles";
+            target_num = task["number_of_targets"]
             // 3 targets on each level of circle
             var number_of_rings = 3;
             var number_of_targets = 3;
@@ -490,11 +495,14 @@ function submit_word() {
 
 
 function drawDistractorsCallback(word_array, block, flash_time) {
-    $("#JQWC").jQCloud(word_array, already_placed_targets, "distractor",
-        {
-            delayedMode: false,
-            afterCloudRender: () => {
-                startTime = new Date();
+    $("#JQWC").jQCloud(word_array, already_placed_targets, "distractor",{
+        delayedMode: false,
+        afterCloudRender: () => {
+            if ($(".target").length > target_num) {
+                console.log("Multiple Targets appeared on screen")
+                nextTask();
+            }
+            else {startTime = new Date();
                 $.each($(".target"), (index, target) => { target.style.visibility = "visible"; });
 
                 if (block === true) {
@@ -525,7 +533,7 @@ function drawDistractorsCallback(word_array, block, flash_time) {
                 }
             }
         }
-    );
+    });
 }
 function makeBlock(id, left, top) {
     var block = $('<span>').attr('id', id)
@@ -726,4 +734,23 @@ function nextTask() {
         setTimeout(onStartButtonClicked, 10);
         // onStartButtonClicked();
     }
+}
+
+function shuffle(array) {
+    var currentIndex = array.length, temporaryValue, randomIndex;
+  
+    // While there remain elements to shuffle...
+    while (0 !== currentIndex) {
+  
+      // Pick a remaining element...
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex -= 1;
+  
+      // And swap it with the current element.
+      temporaryValue = array[currentIndex];
+      array[currentIndex] = array[randomIndex];
+      array[randomIndex] = temporaryValue;
+    }
+  
+    return array;
 }
