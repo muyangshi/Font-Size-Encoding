@@ -147,8 +147,8 @@
                 var edu = getRadioVal(document.getElementById("edu_form"),"edu");
                 var hand = getRadioVal(document.getElementById("hand_form"),"hand");
                 var comments = document.getElementById("comments").value;
-                var device = getRadioVal($("#device_form"),"device");
-                var game = getRadioVal($("#game_form"),"game");         
+                var device = getRadioVal($("#device_form")[0],"device");
+                var game = getRadioVal($("#game_form")[0],"game");         
                 var gender = getRadioVal(document.getElementById("gender_form"),"gender");
                 if (gender === "other"){
                     gender = $("#gender_other").value;
