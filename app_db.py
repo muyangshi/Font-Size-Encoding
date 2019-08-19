@@ -429,8 +429,9 @@ def get_hypotenuse(angle,opposite=29,width=84.9844):
     adjacent = angle*opposite
     if adjacent > width:
         angle = 1/angle
-        adjacent = width*angle
-    hypotenuse = math.sqrt(math.pow(width,2)+math.pow(adjacent,2))
+        opposite = width
+        adjacent = opposite*angle
+    hypotenuse = math.sqrt(math.pow(opposite,2)+math.pow(adjacent,2))
     return hypotenuse
 
 if __name__ == '__main__':
