@@ -11,7 +11,7 @@
 
         <div id="instruction" style="margin: auto; width: 60%; ">
             <fieldset>
-            <legend>Instructions:</legend>
+            <legend><h3>Instructions:</h3></legend>
             <p>
                 Thank you! You have completed the experiment. <br>
                 Would you fill out the inofrmation down below? They will be kept confidence. <br>
@@ -24,7 +24,7 @@
         <br>
         <div id="demographic" style="margin: auto; width: 60%; ">
             <fieldset>
-                <legend>Demographics:</legend>
+                <legend><h3>Demographics:</h3></legend>
                 
                 <b>Age (in years):</b><br>
                 <input type="text" name="age"><br>
@@ -78,12 +78,12 @@
                 <br>
                 <b>Difficulty:<br>
                 i) How difficult was it to distinguish between the smaller word and the larger word? On a scale from 1 (very easy) - 5 (very difficult)<br></b>
-                1 (very easy) <input type="range" min="1" max="5" value="3" class="slider" id="difficulty_range" style="width: 30%"> 5 (very difficult) <br>
+                1 (very easy) <input type="range" min="1" max="5" value="1" class="slider" id="difficulty_range" style="width: 30%"> 5 (very difficult) <br>
                 Value: <span id="difficulty_value"></span><br>
 
                 <br>
                 <b>ii) What percentage of the questions do you think you got correct? (From 0% to 100%)<br></b>
-                0% <input type="range" min="1" max="100" value="50" class="slider" id="confidence_range" style="width: 50%"> 100%<br>
+                0% <input type="range" min="0" max="100" value="0" step="5" class="slider" id="confidence_range" style="width: 50%"> 100%<br>
                 Value: <span id="confidence_value"></span>%<br>
 
                 <br>
@@ -195,6 +195,10 @@
                         val = radios[i].value; // if so, hold its value in val
                         break; // and break out of for loop
                     }
+                }
+                // console.log(typeof(val)+val);
+                if (val === undefined){
+                    val = 0;
                 }
                 return val; // return value of checked radio or undefined if none checked
             }
