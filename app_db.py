@@ -57,7 +57,7 @@ def get_description():
     turker_id = flask.request.form['turker_id']
     connection = get_connection()
     cursor = connection.cursor()
-    cursor.execute("SELECT EXISTS(SELECT turker_id FROM opposite_on_circle WHERE turker_id = %s)",(turker_id,))
+    cursor.execute("SELECT EXISTS(SELECT turker_id FROM pilot_opposite_on_circle WHERE turker_id = %s)",(turker_id,))
     existance = cursor.fetchone()[0]
     print(existance,type(existance))
     connection.commit()
@@ -263,7 +263,7 @@ def post_data():
     number_of_words = int(data["number_of_words"]) #22 INTEGER
     span_content = data["span_content"] #23 TEXT
     
-    question_index = data["question_index"]
+    question_index = data["question_index"] #24 INTEGER
     
     # The below values are calculated
     sizeDiff = correct_word_fontsize - wrong_word_fontsize
@@ -278,10 +278,20 @@ def post_data():
     connection = get_connection()
     cursor = connection.cursor()
     cursor.execute("""
-            INSERT INTO opposite_on_circle (turker_id,cloud_width,cloud_height,cloud_center_x,cloud_center_y,clicked_word,correct_word,wrong_word,distance_between_targets,time,correct_word_x,correct_word_y,correct_word_fontsize,correct_word_width,correct_word_height,correct_word_center_distance,wrong_word_x,wrong_word_y,wrong_word_fontsize,wrong_word_width,wrong_word_height,wrong_word_center_distance,number_of_words,span_content)
-            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);
+            INSERT INTO pilot_opposite_on_circle (turker_id,cloud_width,cloud_height,cloud_center_x,cloud_center_y,
+            clicked_word,correct_word,wrong_word,distance_between_targets,time,
+            correct_word_x,correct_word_y,correct_word_fontsize,correct_word_width,correct_word_height,correct_word_center_distance,
+            wrong_word_x,wrong_word_y,wrong_word_fontsize,wrong_word_width,wrong_word_height,wrong_word_center_distance,
+            number_of_words,span_content,question_index,
+            sizeDiff,accuracy,clicked_x,clicked_y,angle,index_of_difficulty,index_of_performance)
+            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);
             """,
-            (turker_id,cloud_width,cloud_height,cloud_center_x,cloud_center_y,clicked_word,correct_word,wrong_word,distance_between_targets,time,correct_word_x,correct_word_y,correct_word_fontsize,correct_word_width,correct_word_height,correct_word_center_distance,wrong_word_x,wrong_word_y,wrong_word_fontsize,wrong_word_width,wrong_word_height,wrong_word_center_distance,number_of_words,span_content))
+            (turker_id,cloud_width,cloud_height,cloud_center_x,cloud_center_y,
+            clicked_word,correct_word,wrong_word,distance_between_targets,time,
+            correct_word_x,correct_word_y,correct_word_fontsize,correct_word_width,correct_word_height,correct_word_center_distance,
+            wrong_word_x,wrong_word_y,wrong_word_fontsize,wrong_word_width,wrong_word_height,wrong_word_center_distance,
+            number_of_words,span_content,question_index,
+            sizeDiff,accuracy,clicked_x,clicked_y,angle,index_of_difficulty,index_of_performance))
     connection.commit()
     cursor.close()
     connection.close()
@@ -369,7 +379,7 @@ def post_demographic_data():
             INSERT INTO pilot_demographics (turker_id,age,gender,hand,education,device,game,difficulty,confidence,eyetrace,comments)
             VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
                 """,
-            (turker_id,age,gender,hand,education,difficulty,confidence,eyetrace,comments))
+            (turker_id,age,gender,hand,education,device,game,difficulty,confidence,eyetrace,comments))
     connection.commit()
     cursor.close()
     connection.close()

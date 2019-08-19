@@ -262,7 +262,7 @@ def post_data():
     number_of_words = int(data["number_of_words"]) #22 INTEGER
     span_content = data["span_content"] #23 TEXT
 
-    question_index = data["question_index"] #19
+    question_index = data["question_index"] #24 INTEGER
 
     # The below values are calculated
     sizeDiff = correct_word_fontsize - wrong_word_fontsize
@@ -335,7 +335,7 @@ def post_demographic_data():
     hand = data["hand"]
     education = data["education"]
     device = data["device"]
-    game = data["game"]    
+    game = data["game"]
     difficulty = data["difficulty"]
     confidence = data["confidence"]
     eyetrace = data["eyetrace"]
