@@ -95,7 +95,7 @@ def get_completion():
 # [{'small_fontsize':int,'smallword_length':int,'big_fontsize':int,'bigword_length':int},{},{},...]
 def get_tasklist():
     tasklist = config.tasklist
-    return json.dumps(tasklist)
+    return tasklist
 
 @app.route('/getStim/<small_fontsize>/<smallword_length>/<big_fontsize>/<bigword_length>')
 def getStim(small_fontsize,smallword_length,big_fontsize,bigword_length, word = config.word): # word = config.experiment
