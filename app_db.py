@@ -228,7 +228,7 @@ def receive_id():
     return json.dumps({'id':turker_id,'hashcode':hashcode})
 
 # Post stimuli data
-@app.route('/randomStim/post_data', methods = ['POST'])
+@app.route('/word_cognition_study/post_data', methods = ['POST'])
 def post_data():
     data = json.loads(flask.request.data)
 
@@ -296,16 +296,6 @@ def post_data():
     cursor.close()
     connection.close()
 
-
-    # with open('pilot_client_data.csv','a', newline='') as csvfile:
-    #     writer = csv.writer(csvfile, delimiter = ',', quotechar='"')
-    #     # writer.writerow(['turker_id',
-    #     # 'cloud_width','cloud_height','cloud_center_x','cloud_center_y',
-    #     # 'clicked_word','correct_word','wrong_word','distance_between_targets',
-    #     # 'correct_word_x','correct_word_y','correct_word_fontsize','correct_word_width','correct_word_height','correct_word_center_distance',
-    #     # 'wrong_word_x','wrong_word_y','wrong_word_fontsize','wrong_word_width','wrong_word_height','wrong_word_center_distance',
-    #     # 'number_of_words','span_content'])
-    #     writer.writerow([turker_id,cloud_width,cloud_height,cloud_center_x,cloud_center_y,clicked_word,correct_word,wrong_word,distance_between_targets,time,correct_word_x,correct_word_y,correct_word_fontsize,correct_word_width,correct_word_height,correct_word_center_distance,wrong_word_x,wrong_word_y,wrong_word_fontsize,wrong_word_width,wrong_word_height,wrong_word_center_distance,number_of_words,span_content])
     return json.dumps([turker_id,clicked_word,time,sizeDiff,accuracy,angle,index_of_difficulty])
 
 # Post hypo2 stimuli data
@@ -337,21 +327,27 @@ def post_data_multi():
 
     question_index = int(data["question_index"]) #19
 
-    sizeDiff = correct_fontsize - wrong_fontsize
-    accuracy = 1 if clicked_word_fontsize == correct_fontsize else 0
-    angle = clicked_word_x/clicked_word_y
+    sizeDiff = correct_fontsize - wrong_fontsize #20
+    accuracy = 1 if clicked_word_fontsize == correct_fontsize else 0 #21
+    angle = clicked_word_x/clicked_word_y #22
     block_width = data["block_width"]
     block_height = data["block_height"]
-    index_of_difficulty = math.log2(2*clicked_word_center_distance/get_hypotenuse(angle,block_height,block_width))
-    index_of_performance = index_of_difficulty/time
+    index_of_difficulty = math.log2(2*clicked_word_center_distance/get_hypotenuse(angle,block_height,block_width)) #23
+    index_of_performance = index_of_difficulty/time #24
 
     connection = get_connection()
     cursor = connection.cursor()
     cursor.execute("""
-            INSERT INTO pilot_multi_rings (turker_id,cloud_width,cloud_height,cloud_center_x,cloud_center_y,clicked_word,time,clicked_word_x,clicked_word_y,clicked_word_center_distance,clicked_word_fontsize,correct_fontsize,wrong_fontsize,num_words_in_ring0,num_words_in_ring1,num_words_in_ring2,number_of_targets,number_of_words,span_content)
-            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);
+            INSERT INTO pilot_multi_rings (turker_id,cloud_width,cloud_height,cloud_center_x,cloud_center_y,
+            clicked_word,time,clicked_word_x,clicked_word_y,clicked_word_center_distance,clicked_word_fontsize,correct_fontsize,wrong_fontsize,
+            num_words_in_ring0,num_words_in_ring1,num_words_in_ring2,number_of_targets,number_of_words,span_content,
+            question_index,sizeDiff,accuracy,angle,index_of_difficulty,index_of_performance)
+            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);
             """,
-            (turker_id,cloud_width,cloud_height,cloud_center_x,cloud_center_y,clicked_word,time,clicked_word_x,clicked_word_y,clicked_word_center_distance,clicked_word_fontsize,correct_fontsize,wrong_fontsize,num_words_in_ring0,num_words_in_ring1,num_words_in_ring2,number_of_targets,number_of_words,span_content))
+            (turker_id,cloud_width,cloud_height,cloud_center_x,cloud_center_y,
+            clicked_word,time,clicked_word_x,clicked_word_y,clicked_word_center_distance,clicked_word_fontsize,correct_fontsize,wrong_fontsize,
+            num_words_in_ring0,num_words_in_ring1,num_words_in_ring2,number_of_targets,number_of_words,span_content,
+            question_index,sizeDiff,accuracy,angle,index_of_difficulty,index_of_performance))
     connection.commit()
     cursor.close()
     connection.close()
