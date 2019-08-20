@@ -271,8 +271,9 @@ def post_data():
     clicked_x = correct_word_x if accuracy == 1 else wrong_word_x
     clicked_y = correct_word_y if accuracy == 1 else wrong_word_y
     angle = clicked_x/clicked_y
-    block_height = 29
-    index_of_difficulty = math.log2(distance_between_targets/get_hypotenuse(angle,block_height,84.9844))
+    block_width = data["block_width"]
+    block_height = data["block_height"]
+    index_of_difficulty = math.log2(distance_between_targets/get_hypotenuse(angle,block_height,block_width))
     index_of_performance = index_of_difficulty/time
 
     connection = get_connection()
