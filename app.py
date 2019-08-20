@@ -55,18 +55,7 @@ def get_landing_page():
 @app.route('/word_cognition_study/description', methods = ['POST'])
 def get_description():
     turker_id = flask.request.form['turker_id']
-    # connection = get_connection()
-    # cursor = connection.cursor()
-    # cursor.execute("SELECT EXISTS ( SELECT turker_id FROM turker WHERE turker_id = %s)",(turker_id,))
-    # existance = cursor.fetchone()[0]
-    # print(existance,type(existance))
-    # connection.commit()
-    # cursor.close()
-    # connection.close()
-    # id_list = ['1','2','3','4','5']
     participant = 'new'
-    # if existance == True:
-        # participant = 'tested'
     return flask.render_template('description.html', ID = turker_id, Participant = participant)
 
 # Get the description page; turker_id is passed from description page through HTML form
@@ -210,15 +199,6 @@ def receive_id():
     turker_id = data["turker_id"]
     hashcode = hash(turker_id+'Carleton')
 
-    # connection = get_connection()
-    # cursor = connection.cursor()
-    # cursor.execute("SELECT turker_id FROM turker WHERE turker_id = %s",(turker_id,))
-    # if len(cursor.fetchall()) == 0:
-    #     cursor.execute("INSERT INTO turker (turker_id,hashcode) VALUES (%s, %s)",(turker_id,hashcode))
-    # connection.commit()
-    # cursor.close()
-    # connection.close()
-
     # with open('pilot_client_id.csv','a', newline='') as csvfile:
     #     writer = csv.writer(csvfile, delimiter = ',', quotechar='"')
     #     # hashcode = hash(turker_id+'Carleton')
@@ -228,9 +208,8 @@ def receive_id():
 # Post stimuli data
 @app.route('/randomStim/post_data', methods = ['POST'])
 def post_data():
-    # print(type(flask.request),type(flask.request.data))
     data = json.loads(flask.request.data)
-    # print(type(data))
+
     turker_id = data["turker_id"] #0 TEXT
 
     cloud_width = int(data["cloud_width"]) #1 INTEGER
@@ -391,11 +370,13 @@ def myround(x,base):
     return base * round(x/base)
 
 def get_hypotenuse(angle,opposite=29,width=84.9844):
+    angle = math.fabs(angle)
     adjacent = angle*opposite
     if adjacent > width:
         angle = 1/angle
-        adjacent = width*angle
-    hypotenuse = math.sqrt(math.pow(width,2)+math.pow(adjacent,2))
+        opposite = width
+        adjacent = opposite*angle
+    hypotenuse = math.sqrt(math.pow(opposite,2)+math.pow(adjacent,2))
     return hypotenuse
 
 if __name__ == '__main__':
@@ -407,69 +388,3 @@ if __name__ == '__main__':
 	host = sys.argv[1]
 	port = int(sys.argv[2])
 	app.run(host=host, port=port, debug=True)
-
-
-
-
-
-# def list_of_stimuli():
-#     # Messy Pointer, so read the file first time for length, 
-#     # and then read it again for use
-#     row_count = -1
-#     with open('client_tasklist.csv','r',newline='') as csvfile:
-#         row_counter = csv.reader(csvfile, delimiter = ',', quotechar='"')
-#         # row_count = len(list(reader))
-#         row_count = sum(1 for row in row_counter)
-#         # print(row_count)
-#     # Return a random row in the tasklist
-#     with open('client_tasklist.csv','r',newline='') as csvfile:
-#         client_tasklist = csv.reader(csvfile,delimiter = ',', quotechar='"')
-#         task_list = []
-#         random_row = random.randint(1,row_count) # 1 <= n <= row_count
-#         # print(random_row)
-#         for i in range(random_row-1):
-#             next(client_tasklist)
-#         row = next(client_tasklist)
-#         # print(row)
-#         for num in row:
-#             task_list.append(int(num))
-#         # print(task_list)
-#     return task_list
-
-# # Return a list of words in JSON format
-# @app.route('/randomStim/<numberOfWords>')
-# def randomStim(numberOfWords):
-#     try:
-#         random_words = random.sample(words, int(numberOfWords))
-#         return json.dumps(random_words)
-#     except ValueError:
-#         print('numberOfWords is too big!')
-
-# words = ['Apples', 'Apricots', 'Avocados',
-#     'Bananas', 'Boysenberries', 'Blueberries', 'Bing Cherry',
-#     'Cherries', 'Cantaloupe', 'Crab apples', 'Clementine', 'Cucumbers',
-#     'Damson plum', 'Dinosaur Eggs', 'Dates', 'Dewberries', 'Dragon Fruit',
-#     'Elderberry', 'Eggfruit', 'Evergreen Huckleberry', 'Entawak',
-#     'Fig', 'Farkleberry', 'Finger Lime',
-#     'Grapefruit', 'Grapes', 'Gooseberries', 'Guava',
-#     'Honeydew melon', 'Hackberry', 'Honeycrisp Apples',
-#     'Indian Prune', 'Indonesian Lime', 'Imbe', 'Indian Fig',
-#     'Apples', 'Apricots', 'Avocados',
-#     'Bananas', 'Boysenberries', 'Blueberries', 'Bing Cherry',
-#     'Cherries', 'Cantaloupe', 'Crab apples', 'Clementine', 'Cucumbers',
-#     'Damson plum', 'Dinosaur Eggs', 'Dates', 'Dewberries', 'Dragon Fruit',
-#     'Elderberry', 'Eggfruit', 'Evergreen Huckleberry', 'Entawak',
-#     'Fig', 'Farkleberry', 'Finger Lime',
-#     'Grapefruit', 'Grapes', 'Gooseberries', 'Guava',
-#     'Honeydew melon', 'Hackberry', 'Honeycrisp Apples',
-#     'Indian Prune', 'Indonesian Lime', 'Imbe', 'Indian Fig',
-#     'Apples', 'Apricots', 'Avocados',
-#     'Bananas', 'Boysenberries', 'Blueberries', 'Bing Cherry',
-#     'Cherries', 'Cantaloupe', 'Crab apples', 'Clementine', 'Cucumbers',
-#     'Damson plum', 'Dinosaur Eggs', 'Dates', 'Dewberries', 'Dragon Fruit',
-#     'Elderberry', 'Eggfruit', 'Evergreen Huckleberry', 'Entawak',
-#     'Fig', 'Farkleberry', 'Finger Lime',
-#     'Grapefruit', 'Grapes', 'Gooseberries', 'Guava',
-#     'Honeydew melon', 'Hackberry', 'Honeycrisp Apples',
-#     'Indian Prune', 'Indonesian Lime', 'Imbe', 'Indian Fig']
-
