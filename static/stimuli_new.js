@@ -560,6 +560,11 @@ function postData(clickedword) {
 
     var question_index = total_num - tasklist.length + 1;
 
+    if ($(".block") !== null){
+        var block_width = $(".block").width() + parseInt($(".block").css("padding-left"));
+        var block_height = $(".block").height();
+    }
+
     var number_of_words = document.getElementById("JQWC").childElementCount - 1; // minus the dot span
     var span_content = document.getElementById("JQWC").innerHTML; //the span content
 
@@ -628,7 +633,10 @@ function postData(clickedword) {
 
         "number_of_words": number_of_words,
         "span_content": span_content,
-        "question_index": question_index
+        "question_index": question_index,
+
+        "block_width": block_width,
+        "block_height": block_height
     };
 
     // $.post("/randomStim/post_data", word_data);
@@ -655,6 +663,14 @@ function postDataMulti(clickedword) {
     // endTime = new Date();
     var timeDiff = endTime - startTime; // in ms
     timeDiff /= 1000; // strip the ms
+
+    var question_index = total_num - tasklist.length + 1;
+
+    if ($(".block") !== null){
+        var block_width = $(".block").width() + parseInt($(".block").css("padding-left"));
+        var block_height = $(".block").height();
+    }
+
     var number_of_words = document.getElementById("JQWC").childElementCount - 1; // minus the dot span
     var span_content = document.getElementById("JQWC").innerHTML; //the span content
     var cloud_width = $("#JQWC").width(); // width of the container in int
@@ -674,10 +690,10 @@ function postDataMulti(clickedword) {
 
     var clicked_word_text = clickedword[0].innerHTML;
     var clicked_word_fontsize = parseInt(clickedword[0].style.fontSize);
-    var clickedword_width = clickedword.width();
-    var clickedword_height = clickedword.height();
-    var clicked_word_x = parseFloat(clickedword.css("left")) + clickedword_width / 2.0 - cloud_center_x;
-    var clicked_word_y = cloud_center_y - parseFloat(clickedword.css("top")) - clickedword_height / 2.0;
+    var clicked_word_width = clickedword.width();
+    var clicked_word_height = clickedword.height();
+    var clicked_word_x = parseFloat(clickedword.css("left")) + clicked_word_width / 2.0 - cloud_center_x;
+    var clicked_word_y = cloud_center_y - parseFloat(clickedword.css("top")) - clicked_word_height / 2.0;
     var clicked_word_center_distance = Math.sqrt(Math.pow(clicked_word_x, 2) + Math.pow(clicked_word_y, 2));
 
     var word_data = {
@@ -691,7 +707,10 @@ function postDataMulti(clickedword) {
         "time": timeDiff,
         "clicked_word_x": clicked_word_x,
         "clicked_word_y": clicked_word_y,
+        "clicked_word_width": clicked_word_width,
+        "clicked_word_height": clicked_word_height,
         "clicked_word_center_distance": clicked_word_center_distance,
+
         "clicked_word_fontsize": clicked_word_fontsize,
         "correct_fontsize": correct_fontsize,
         "wrong_fontsize": wrong_fontsize,
@@ -703,6 +722,9 @@ function postDataMulti(clickedword) {
         "number_of_words": number_of_words,
         "span_content": span_content,
 
+        "question_index": question_index,
+        "block_width": block_width,
+        "block_height": block_height
     };
 
     $.ajax({
