@@ -99,7 +99,7 @@ def get_tasklist():
     tasklist = config.tasklist
     return tasklist
 
-@app.route('/getStim/<small_fontsize>/<smallword_length>/<big_fontsize>/<bigword_length>')
+@app.route('/word_cognition_study/getStim/<small_fontsize>/<smallword_length>/<big_fontsize>/<bigword_length>')
 def getStim(small_fontsize,smallword_length,big_fontsize,bigword_length, word = config.word): # word = config.experiment
     if word == 'pseudoword':
         return get_pseudo_stimuli(int(config.numberOfWords),{'length':int(smallword_length), 'fontsize':int(small_fontsize)}, {'length':int(bigword_length),'fontsize':int(big_fontsize)})
