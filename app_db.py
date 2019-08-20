@@ -176,14 +176,13 @@ def getMultiTargets(number_of_targets,correct_fontsize,wrong_fontsize,word_lengt
         correct_target = random.choice(legit_words)
         legit_words.remove(correct_target)
         target_words.append(correct_target)
-    print(target_words)
     
     for i in range(int(number_of_targets)):
         if i == 0:
             target_words[i] = {'text': target_words[i], 'fontsize': correct_fontsize, 'html': 'target'}
         else:
             target_words[i] = {'text': target_words[i], 'fontsize': wrong_fontsize, 'html': 'target'}
-    print(target_words)
+    print("the targets are: ", target_words)
     return json.dumps(target_words)
 
 # Used for hypo2
@@ -263,7 +262,7 @@ def post_data():
     number_of_words = int(data["number_of_words"]) #22 INTEGER
     span_content = data["span_content"] #23 TEXT
     
-    question_index = data["question_index"] #24 INTEGER
+    question_index = int(data["question_index"]) #24 INTEGER
     
     # The below values are calculated
     sizeDiff = correct_word_fontsize - wrong_word_fontsize
@@ -307,7 +306,7 @@ def post_data():
     #     # 'wrong_word_x','wrong_word_y','wrong_word_fontsize','wrong_word_width','wrong_word_height','wrong_word_center_distance',
     #     # 'number_of_words','span_content'])
     #     writer.writerow([turker_id,cloud_width,cloud_height,cloud_center_x,cloud_center_y,clicked_word,correct_word,wrong_word,distance_between_targets,time,correct_word_x,correct_word_y,correct_word_fontsize,correct_word_width,correct_word_height,correct_word_center_distance,wrong_word_x,wrong_word_y,wrong_word_fontsize,wrong_word_width,wrong_word_height,wrong_word_center_distance,number_of_words,span_content])
-    return json.dumps([turker_id,clicked_word,time])
+    return json.dumps([turker_id,clicked_word,time,sizeDiff,accuracy,angle,index_of_difficulty])
 
 # Post hypo2 stimuli data
 @app.route('/word_cognition_study/post_data_multi',methods=['POST'])
@@ -315,26 +314,36 @@ def post_data_multi():
     data = json.loads(flask.request.data)
 
     turker_id = data["turker_id"] #0
-    cloud_width = data["cloud_width"] #1
-    cloud_height = data["cloud_height"] #2
-    cloud_center_x = data["cloud_center_x"] #3
-    cloud_center_y = data["cloud_center_y"] #4
+    cloud_width = int(data["cloud_width"]) #1
+    cloud_height = int(data["cloud_height"]) #2
+    cloud_center_x = int(data["cloud_center_x"]) #3
+    cloud_center_y = int(data["cloud_center_y"]) #4
 
     clicked_word = data["clicked_word"] #5
-    time = data["time"] #6
-    clicked_word_x = data["clicked_word_x"] #7
-    clicked_word_y = data["clicked_word_y"] #8
-    clicked_word_center_distance = data["clicked_word_center_distance"] #9
-    clicked_word_fontsize = data["clicked_word_fontsize"] #10
-    correct_fontsize = data["correct_fontsize"] #11
-    wrong_fontsize = data["wrong_fontsize"] #12
+    time = float(data["time"]) #6
+    clicked_word_x = float(data["clicked_word_x"]) #7
+    clicked_word_y = float(data["clicked_word_y"]) #8
+    clicked_word_center_distance = myround(data["clicked_word_center_distance"],50) #9
+    clicked_word_fontsize = int(data["clicked_word_fontsize"]) #10
+    correct_fontsize = int(data["correct_fontsize"]) #11
+    wrong_fontsize = int(data["wrong_fontsize"]) #12
 
-    num_words_in_ring0 = data["num_words_in_ring0"] #13
-    num_words_in_ring1 = data["num_words_in_ring1"] #14
-    num_words_in_ring2 = data["num_words_in_ring2"] #15
-    number_of_targets = data["number_of_targets"] #16
-    number_of_words = data["number_of_words"] #17
+    num_words_in_ring0 = int(data["num_words_in_ring0"]) #13
+    num_words_in_ring1 = int(data["num_words_in_ring1"]) #14
+    num_words_in_ring2 = int(data["num_words_in_ring2"]) #15
+    number_of_targets = int(data["number_of_targets"]) #16
+    number_of_words = int(data["number_of_words"]) #17
     span_content = data["span_content"] #18
+
+    question_index = int(data["question_index"]) #19
+
+    sizeDiff = correct_fontsize - wrong_fontsize
+    accuracy = 1 if clicked_word_fontsize == correct_fontsize else 0
+    angle = clicked_word_x/clicked_word_y
+    block_width = data["block_width"]
+    block_height = data["block_height"]
+    index_of_difficulty = math.log2(2*clicked_word_center_distance/get_hypotenuse(angle,block_height,block_width))
+    index_of_performance = index_of_difficulty/time
 
     connection = get_connection()
     cursor = connection.cursor()
@@ -347,14 +356,6 @@ def post_data_multi():
     cursor.close()
     connection.close()
 
-
-    # with open('hypo2_client_data.csv','a',newline='') as csvfile:
-    #     writer = csv.writer(csvfile,delimiter=',',quotechar='"')
-    #     writer.writerow([turker_id,cloud_width,cloud_height,cloud_center_x,cloud_center_y,
-    #     clicked_word,time,clicked_word_x,clicked_word_y,clicked_word_center_distance,clicked_word_fontsize,
-    #     correct_fontsize,wrong_fontsize,
-    #     num_words_in_ring0,num_words_in_ring1,num_words_in_ring2,number_of_targets,number_of_words,
-    #     span_content])
     return json.dumps([turker_id,clicked_word,time])
 
 
@@ -445,68 +446,3 @@ if __name__ == '__main__':
 	host = sys.argv[1]
 	port = int(sys.argv[2])
 	app.run(host=host, port=port, debug=True)
-
-
-
-
-# def list_of_stimuli():
-#     # Messy Pointer, so read the file first time for length, 
-#     # and then read it again for use
-#     row_count = -1
-#     with open('client_tasklist.csv','r',newline='') as csvfile:
-#         row_counter = csv.reader(csvfile, delimiter = ',', quotechar='"')
-#         # row_count = len(list(reader))
-#         row_count = sum(1 for row in row_counter)
-#         # print(row_count)
-#     # Return a random row in the tasklist
-#     with open('client_tasklist.csv','r',newline='') as csvfile:
-#         client_tasklist = csv.reader(csvfile,delimiter = ',', quotechar='"')
-#         task_list = []
-#         random_row = random.randint(1,row_count) # 1 <= n <= row_count
-#         # print(random_row)
-#         for i in range(random_row-1):
-#             next(client_tasklist)
-#         row = next(client_tasklist)
-#         # print(row)
-#         for num in row:
-#             task_list.append(int(num))
-#         # print(task_list)
-#     return task_list
-
-# # Return a list of words in JSON format
-# @app.route('/randomStim/<numberOfWords>')
-# def randomStim(numberOfWords):
-#     try:
-#         random_words = random.sample(words, int(numberOfWords))
-#         return json.dumps(random_words)
-#     except ValueError:
-#         print('numberOfWords is too big!')
-
-# words = ['Apples', 'Apricots', 'Avocados',
-#     'Bananas', 'Boysenberries', 'Blueberries', 'Bing Cherry',
-#     'Cherries', 'Cantaloupe', 'Crab apples', 'Clementine', 'Cucumbers',
-#     'Damson plum', 'Dinosaur Eggs', 'Dates', 'Dewberries', 'Dragon Fruit',
-#     'Elderberry', 'Eggfruit', 'Evergreen Huckleberry', 'Entawak',
-#     'Fig', 'Farkleberry', 'Finger Lime',
-#     'Grapefruit', 'Grapes', 'Gooseberries', 'Guava',
-#     'Honeydew melon', 'Hackberry', 'Honeycrisp Apples',
-#     'Indian Prune', 'Indonesian Lime', 'Imbe', 'Indian Fig',
-#     'Apples', 'Apricots', 'Avocados',
-#     'Bananas', 'Boysenberries', 'Blueberries', 'Bing Cherry',
-#     'Cherries', 'Cantaloupe', 'Crab apples', 'Clementine', 'Cucumbers',
-#     'Damson plum', 'Dinosaur Eggs', 'Dates', 'Dewberries', 'Dragon Fruit',
-#     'Elderberry', 'Eggfruit', 'Evergreen Huckleberry', 'Entawak',
-#     'Fig', 'Farkleberry', 'Finger Lime',
-#     'Grapefruit', 'Grapes', 'Gooseberries', 'Guava',
-#     'Honeydew melon', 'Hackberry', 'Honeycrisp Apples',
-#     'Indian Prune', 'Indonesian Lime', 'Imbe', 'Indian Fig',
-#     'Apples', 'Apricots', 'Avocados',
-#     'Bananas', 'Boysenberries', 'Blueberries', 'Bing Cherry',
-#     'Cherries', 'Cantaloupe', 'Crab apples', 'Clementine', 'Cucumbers',
-#     'Damson plum', 'Dinosaur Eggs', 'Dates', 'Dewberries', 'Dragon Fruit',
-#     'Elderberry', 'Eggfruit', 'Evergreen Huckleberry', 'Entawak',
-#     'Fig', 'Farkleberry', 'Finger Lime',
-#     'Grapefruit', 'Grapes', 'Gooseberries', 'Guava',
-#     'Honeydew melon', 'Hackberry', 'Honeycrisp Apples',
-#     'Indian Prune', 'Indonesian Lime', 'Imbe', 'Indian Fig']
-
