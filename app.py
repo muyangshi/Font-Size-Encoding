@@ -206,7 +206,7 @@ def receive_id():
     return json.dumps({'id':turker_id,'hashcode':hashcode})
 
 # Post stimuli data
-@app.route('/randomStim/post_data', methods = ['POST'])
+@app.route('/word_cognition_study/post_data', methods = ['POST'])
 def post_data():
     data = json.loads(flask.request.data)
 
@@ -294,13 +294,13 @@ def post_data_multi():
 
     question_index = int(data["question_index"]) #19
 
-    sizeDiff = correct_fontsize - wrong_fontsize
-    accuracy = 1 if clicked_word_fontsize == correct_fontsize else 0
-    angle = clicked_word_x/clicked_word_y
+    sizeDiff = correct_fontsize - wrong_fontsize #20
+    accuracy = 1 if clicked_word_fontsize == correct_fontsize else 0 #21
+    angle = clicked_word_x/clicked_word_y #22
     block_width = data["block_width"]
     block_height = data["block_height"]
-    index_of_difficulty = math.log2(2*clicked_word_center_distance/get_hypotenuse(angle,block_height,block_width))
-    index_of_performance = index_of_difficulty/time
+    index_of_difficulty = math.log2(2*clicked_word_center_distance/get_hypotenuse(angle,block_height,block_width)) #23
+    index_of_performance = index_of_difficulty/time #24
 
     # with open('hypo2_client_data.csv','a',newline='',encoding="utf-8") as csvfile:
     #     writer = csv.writer(csvfile,delimiter=',',quotechar='"')
