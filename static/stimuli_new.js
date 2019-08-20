@@ -71,12 +71,13 @@ function onStartButtonClicked() {
             var targets;
             var distractors;
             $.ajax({
-                url: flask_util.url_for('getStim', {
-                    small_fontsize: task["small_fontsize"],
-                    smallword_length: task["smallword_length"],
-                    big_fontsize: task["big_fontsize"],
-                    bigword_length: task["bigword_length"]
-                }),
+                url: $SCRIPT_ROOT +"/" + "getStim" + "/" + task["small_fontsize"] + "/" + task["smallword_length"] + "/" + task["big_fontsize"] + "/" + task["bigword_length"],
+                // url: flask_util.url_for('getStim', {
+                //     small_fontsize: task["small_fontsize"],
+                //     smallword_length: task["smallword_length"],
+                //     big_fontsize: task["big_fontsize"],
+                //     bigword_length: task["bigword_length"]
+                // }),
                 success:
                     function (data) {
                         distractors = data.map(function (dictionary) {
