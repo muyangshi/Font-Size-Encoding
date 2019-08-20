@@ -338,7 +338,7 @@ def post_data_multi():
     connection = get_connection()
     cursor = connection.cursor()
     cursor.execute("""
-            INSERT INTO pilot_multi_rings (turker_id,cloud_width,cloud_height,cloud_center_x,cloud_center_y,
+            INSERT INTO pilot_multi_targets (turker_id,cloud_width,cloud_height,cloud_center_x,cloud_center_y,
             clicked_word,time,clicked_word_x,clicked_word_y,clicked_word_center_distance,clicked_word_fontsize,correct_fontsize,wrong_fontsize,
             num_words_in_ring0,num_words_in_ring1,num_words_in_ring2,number_of_targets,number_of_words,span_content,
             question_index,sizeDiff,accuracy,angle,index_of_difficulty,index_of_performance)
