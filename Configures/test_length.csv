@@ -1,6 +1,6 @@
 number_of_targets,small_fontsize,smallword_length,big_fontsize,bigword_length,distance_between,flash_time,rule
-2,20,6,21,6,100,300,opposite_on_circle
-2,20,6,21,6,200,300,opposite_on_circle
+2,20,6,21,6,100,300,single_circle
+2,20,6,21,6,200,300,multiple_circles
 2,20,6,21,6,300,300,opposite_on_circle
 2,20,6,21,6,400,300,opposite_on_circle
 2,20,6,21,6,500,300,opposite_on_circle
