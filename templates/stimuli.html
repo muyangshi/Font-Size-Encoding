@@ -25,7 +25,6 @@
         <script type="text/javascript" src="{{url_for('static', filename='jquery-3.4.1.min.js')}}"></script>
         <script>
             var turker_id = '{{ ID }}';
-            // var tasklist =JSON.parse('{{ List_From_Server }}'.replace(/&#34;/g,'"')); //received the task list as a string, and parse it in JS
             var tasklist = {{ List_From_Server|tojson }}
             var post_data_url = '{{url_for("post_data")}}'
             var post_data_multi_url = '{{url_for("post_data_multi")}}'

@@ -48,7 +48,7 @@ function onStartButtonClicked() {
     clicked_word_stack = null;
 
     // Add Process bar to the Status_Bar div
-    document.getElementById("Status_Bar").innerHTML = '<div id="progress_bar"><h3>You have ' + tasklist.length + ' tasks left</h3></div>';
+    document.getElementById("Status_Bar").innerHTML = '<div id="progress_bar" style="text-align: center;"><h3>You have ' + tasklist.length + ' tasks left</h3></div>';
 
     // Specifications about the target words are loaded from the csv to the tasklist
     // then from the tasklist to the python functions method as params
