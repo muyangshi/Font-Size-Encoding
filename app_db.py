@@ -261,18 +261,27 @@ def post_data():
 
     number_of_words = int(data["number_of_words"]) #22 INTEGER
     span_content = data["span_content"] #23 TEXT
-    
+
     question_index = int(data["question_index"]) #24 INTEGER
-    
+
     # The below values are calculated
     sizeDiff = correct_word_fontsize - wrong_word_fontsize
     accuracy = 1 if clicked_word == correct_word else 0
+
     clicked_x = correct_word_x if accuracy == 1 else wrong_word_x
     clicked_y = correct_word_y if accuracy == 1 else wrong_word_y
+    clicked_word_width = correct_word_width if accuracy == 1 else wrong_word_width
+    clicked_word_height = correct_word_height if accuracy == 1 else wrong_word_height
+
     angle = clicked_x/clicked_y
-    block_width = data["block_width"]
-    block_height = data["block_height"]
-    index_of_difficulty = math.log2(distance_between_targets/get_hypotenuse(angle,block_height,block_width))
+    try:
+        block_width = data["block_width"]
+        block_height = data["block_height"]
+        index_of_difficulty = math.log2(distance_between_targets/get_hypotenuse(angle,block_height,block_width))
+    except KeyError:
+        block_width = -1
+        block_height = -1
+        index_of_difficulty = math.log2(distance_between_targets/get_hypotenuse(angle,clicked_word_height,clicked_word_width))
     index_of_performance = index_of_difficulty/time
 
     connection = get_connection()
@@ -314,6 +323,7 @@ def post_data_multi():
     clicked_word_x = float(data["clicked_word_x"]) #7
     clicked_word_y = float(data["clicked_word_y"]) #8
     clicked_word_center_distance = myround(data["clicked_word_center_distance"],50) #9
+
     clicked_word_fontsize = int(data["clicked_word_fontsize"]) #10
     correct_fontsize = int(data["correct_fontsize"]) #11
     wrong_fontsize = int(data["wrong_fontsize"]) #12
@@ -330,9 +340,18 @@ def post_data_multi():
     sizeDiff = correct_fontsize - wrong_fontsize #20
     accuracy = 1 if clicked_word_fontsize == correct_fontsize else 0 #21
     angle = clicked_word_x/clicked_word_y #22
-    block_width = data["block_width"]
-    block_height = data["block_height"]
-    index_of_difficulty = math.log2(2*clicked_word_center_distance/get_hypotenuse(angle,block_height,block_width)) #23
+
+    clicked_word_width = float(data["clicked_word_width"])
+    clicked_word_height = float(data["clicked_word_height"])
+
+    try:
+        block_width = data["block_width"]
+        block_height = data["block_height"]
+        index_of_difficulty = math.log2(2*clicked_word_center_distance/get_hypotenuse(angle,block_height,block_width)) #23
+    except KeyError:
+        block_width = -1
+        block_height = -1
+        index_of_difficulty = math.log2(2*clicked_word_center_distance/get_hypotenuse(angle,clicked_word_height,clicked_word_height))
     index_of_performance = index_of_difficulty/time #24
 
     connection = get_connection()
@@ -352,7 +371,11 @@ def post_data_multi():
     cursor.close()
     connection.close()
 
-    return json.dumps([turker_id,clicked_word,time])
+    return json.dumps([turker_id,
+                        clicked_word,time,clicked_word_x,clicked_word_y,clicked_word_center_distance,
+                        clicked_word_fontsize,correct_fontsize,wrong_fontsize,
+                        num_words_in_ring0,num_words_in_ring1,num_words_in_ring2,number_of_targets,number_of_words,
+                        sizeDiff,accuracy,angle,index_of_difficulty])
 
 
 # Post demographic data
