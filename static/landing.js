@@ -14,6 +14,11 @@ function initialize() {
     if (next) {
         next.onclick = onNextClicked;
     }
+    $(document).keypress(function(e){
+        if (e.which == 13){
+            $("#next").click();
+        }
+    });
 
 }
 

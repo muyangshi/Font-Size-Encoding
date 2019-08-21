@@ -272,7 +272,7 @@
     </div>
     <form action="{{url_for('get_stimuli_page')}}" method="POST" id="get_stimuli_page"></form>
 
-    <script type="text/javascript" src="../static/jquery-3.4.1.min.js"></script>
+    <script type="text/javascript" src="{{url_for('static', filename='jquery-3.4.1.min.js')}}"></script>
     <script type="text/javascript">
         var turker_id = '{{ ID }}';
         var participant = '{{ Participant }}'
