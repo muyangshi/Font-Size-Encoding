@@ -63,11 +63,13 @@ def get_description():
     connection.commit()
     cursor.close()
     connection.close()
-    # id_list = ['1','2','3','4','5']
-    # participant = 'new'
+    
     if existance == True:
         participant = 'tested'
     else:
+        participant = 'new'
+    
+    if turker_id == 'superman':
         participant = 'new'
     return flask.render_template('description.html', ID = turker_id, Participant = participant)
 
