@@ -23,9 +23,7 @@
         <form action="{{url_for('get_completion')}}" method = "POST" id="get_completion_page">
         </form>
         <script type="text/javascript" src="{{url_for('static', filename='jquery-3.4.1.min.js')}}"></script>
-        <script type="text/javascript">
-            $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
-        </script>
+        <script type="text/javascript">$SCRIPT_ROOT = {{ request.script_root|tojson|safe }};</script>
         <script>
             var turker_id = '{{ ID }}';
             var tasklist = {{ List_From_Server|tojson }}
@@ -36,7 +34,7 @@
         </script>
 
         <script type="text/javascript" src="{{url_for('static', filename='jqcloud-1.0.4.js')}}"></script>
-        <script type="text/javascript" src="{{url_for('static', filename='stimuli_new.js')}}"></script>
+        <script type="text/javascript" src="{{url_for('static', filename='stimuli.js')}}"></script>
         
     </body>
     
