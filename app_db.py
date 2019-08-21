@@ -390,6 +390,7 @@ def post_demographic_data():
     hand = data["hand"]
     education = data["education"]
     device = data["device"]
+    browser = data["browser"]
     game = data["game"]
     difficulty = data["difficulty"]
     confidence = data["confidence"]
@@ -399,10 +400,10 @@ def post_demographic_data():
     connection = get_connection()
     cursor = connection.cursor()
     cursor.execute("""
-            INSERT INTO pilot_demographics (turker_id,age,gender,hand,education,device,game,difficulty,confidence,eyetrace,comments)
-            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
+            INSERT INTO pilot_demographics (turker_id,age,gender,hand,education,device,browser,game,difficulty,confidence,eyetrace,comments)
+            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
                 """,
-            (turker_id,age,gender,hand,education,device,game,difficulty,confidence,eyetrace,comments))
+            (turker_id,age,gender,hand,education,device,browser,game,difficulty,confidence,eyetrace,comments))
     connection.commit()
     cursor.close()
     connection.close()
