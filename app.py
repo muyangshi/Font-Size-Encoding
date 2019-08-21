@@ -58,6 +58,13 @@ def get_description():
     participant = 'new'
     return flask.render_template('description.html', ID = turker_id, Participant = participant)
 
+@app.route('/word_cognition_study/description/<experiment>', methods = ['POST'])
+def experiment(experiment):
+    turker_id = flask.request.form['turker_id']
+    participant = 'new'
+    description_page = 'description_'+str(experiment)+'.html'
+    return flask.render_template(description_page, ID = turker_id, Participant = participant)
+
 # Get the description page; turker_id is passed from description page through HTML form
 @app.route('/word_cognition_study/stimuli', methods = ['POST'])
 def get_stimuli_page():
@@ -345,6 +352,7 @@ def post_demographic_data():
     hand = data["hand"]
     education = data["education"]
     device = data["device"]
+    browser = data["browser"]
     game = data["game"]
     difficulty = data["difficulty"]
     confidence = data["confidence"]

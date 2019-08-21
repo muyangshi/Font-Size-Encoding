@@ -58,7 +58,18 @@
 
                 <br>
                 <b>Device:</b><br>
-                Are you using a trackpad or a physical mouse?
+                i) Which browser are you using?
+                <form id="browser_form">
+                    <input type="radio" name="browser" value="1" />Chrome
+                    <input type="radio" name="browser" value="2" />Firefox
+                    <input type="radio" name="browser" value="3" />Safari
+                    <input type="radio" name="browser" value="4" />Microsoft Edge
+                    <input type="radio" name="browser" value="5" />Opera
+                    <input type="radio" name="browser" value="6" />IE
+                    <input type="radio" name="browser" value="7" />Other
+                </form>
+                <br>
+                ii) Are you using a trackpad or a physical mouse?
                 <form id="device_form">
                     <input type="radio" name="device" value="1" />Trackpad
                     <input type="radio" name="device" value="2" />Physical mouse
@@ -149,6 +160,7 @@
                 var hand = getRadioVal(document.getElementById("hand_form"),"hand");
                 var comments = document.getElementById("comments").value;
                 var device = getRadioVal($("#device_form")[0],"device");
+                var browser = getRadioVal($("#browser_form")[0],"browser");
                 var game = getRadioVal($("#game_form")[0],"game");         
                 var gender = getRadioVal(document.getElementById("gender_form"),"gender");
                 if (gender === "other"){
@@ -165,6 +177,7 @@
                     "hand": hand,
                     "education": edu,
                     "device": device,
+                    "browser": browser,
                     "game": game,
                     "difficulty": difficulty,
                     "confidence": confidence,
