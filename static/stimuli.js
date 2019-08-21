@@ -71,7 +71,7 @@ function onStartButtonClicked() {
             var targets;
             var distractors;
             $.ajax({
-                url: $SCRIPT_ROOT +"/" + "getStim" + "/" + task["small_fontsize"] + "/" + task["smallword_length"] + "/" + task["big_fontsize"] + "/" + task["bigword_length"],
+                url: $SCRIPT_ROOT +"/_" + "getStim" + "/" + task["small_fontsize"] + "/" + task["smallword_length"] + "/" + task["big_fontsize"] + "/" + task["bigword_length"],
                 // url: flask_util.url_for('getStim', {
                 //     small_fontsize: task["small_fontsize"],
                 //     smallword_length: task["smallword_length"],
@@ -119,7 +119,7 @@ function onStartButtonClicked() {
             var distractors;
             var targets;
             $.ajax({
-                url: $SCRIPT_ROOT+ "/getDistractors",
+                url: $SCRIPT_ROOT+ "/_getDistractors",
                 // url: flask_util.url_for('getDistractors'),
                 success:
                     function (data) {
@@ -136,7 +136,7 @@ function onStartButtonClicked() {
                         var wrong_fontsize = task["small_fontsize"];
                         var word_length = task["smallword_length"];
                         $.ajax({
-                            url: $SCRIPT_ROOT + `/getMultiTargets/${number_of_targets}/${correct_fontsize}/${wrong_fontsize}/${word_length}`,
+                            url: $SCRIPT_ROOT + `/_getMultiTargets/${number_of_targets}/${correct_fontsize}/${wrong_fontsize}/${word_length}`,
                             // url: flask_util.url_for('getMultiTargets', {
                             //     number_of_targets: task["number_of_targets"],
                             //     correct_fontsize: task["big_fontsize"],
@@ -174,7 +174,7 @@ function onStartButtonClicked() {
             var distractors;
             var targets;
             $.ajax({
-                url: $SCRIPT_ROOT+'/getDistractors',
+                url: $SCRIPT_ROOT+'/_getDistractors',
                 success:
                     function (data) {
                         distractors = data.map(function (dictionary) {
@@ -200,7 +200,7 @@ function onStartButtonClicked() {
                                 var wrong_fontsize = task["small_fontsize"];
                                 var word_length = task["smallword_length"];
                                 $.ajax({
-                                    url: $SCRIPT_ROOT + `/getMultiTargets/${number_of_targets}/${correct_fontsize}/${wrong_fontsize}/${word_length}`,
+                                    url: $SCRIPT_ROOT + `/_getMultiTargets/${number_of_targets}/${correct_fontsize}/${wrong_fontsize}/${word_length}`,
                                     // url: flask_util.url_for('getMultiTargets', {
                                     //     number_of_targets: number_of_targets,
                                     //     correct_fontsize: task["big_fontsize"],

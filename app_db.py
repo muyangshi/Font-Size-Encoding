@@ -101,7 +101,7 @@ def get_tasklist():
     tasklist = config.tasklist
     return tasklist
 
-@app.route('/getStim/<small_fontsize>/<smallword_length>/<big_fontsize>/<bigword_length>')
+@app.route('/_getStim/<small_fontsize>/<smallword_length>/<big_fontsize>/<bigword_length>')
 def getStim(small_fontsize,smallword_length,big_fontsize,bigword_length, word = config.word): # word = config.experiment
     if word == 'pseudoword':
         return get_pseudo_stimuli(int(config.numberOfWords),{'length':int(smallword_length), 'fontsize':int(small_fontsize)}, {'length':int(bigword_length),'fontsize':int(big_fontsize)})
@@ -170,7 +170,7 @@ def get_english_stimuli(numberOfWords, target1, target2):
 # Specifications about the length of targets, fontsize of the correct and wrong, and the number of words
 # are passed from the frontend to the server
 # the specifications from the frontend are from tasklist.csv (test_length.csv)
-@app.route('/getMultiTargets/<number_of_targets>/<correct_fontsize>/<wrong_fontsize>/<word_length>')
+@app.route('/_getMultiTargets/<number_of_targets>/<correct_fontsize>/<wrong_fontsize>/<word_length>')
 def getMultiTargets(number_of_targets,correct_fontsize,wrong_fontsize,word_length):
     legit_words = get_legit_word(decent_word_list,int(word_length),int(word_length))
     target_words = []
@@ -192,7 +192,7 @@ def getMultiTargets(number_of_targets,correct_fontsize,wrong_fontsize,word_lengt
 # are found in the config file
 # no parameters are needed from the frontend
 # return a list of words in dictionary to the front end
-@app.route('/getDistractors')
+@app.route('/_getDistractors')
 def getDistractors():
     legit_words = get_legit_word(decent_word_list,config.minLen,config.maxLen)
     distractor_words = []
@@ -208,7 +208,7 @@ def getDistractors():
 # Write data to csvfile/database
 ##########################################################################################################################################################################################################################
 # Write the turker's id into a csvfile --> client_id.csv
-@app.route('/word_cognition_study/turker_id', methods = ['POST'])
+@app.route('/_turker_id', methods = ['POST'])
 def receive_id():
     data = flask.request.form
     turker_id = data["turker_id"]
@@ -230,7 +230,7 @@ def receive_id():
     return json.dumps({'id':turker_id,'hashcode':hashcode})
 
 # Post stimuli data
-@app.route('/word_cognition_study/post_data', methods = ['POST'])
+@app.route('/_post_data', methods = ['POST'])
 def post_data():
     data = json.loads(flask.request.data)
 
@@ -310,7 +310,7 @@ def post_data():
     return json.dumps([turker_id,clicked_word,time,sizeDiff,accuracy,angle,index_of_difficulty])
 
 # Post hypo2 stimuli data
-@app.route('/word_cognition_study/post_data_multi',methods=['POST'])
+@app.route('/_post_data_multi',methods=['POST'])
 def post_data_multi():
     data = json.loads(flask.request.data)
 
@@ -381,7 +381,7 @@ def post_data_multi():
 
 
 # Post demographic data
-@app.route('/word_cognition_study/completion/post_demographic_data', methods=['POST'])
+@app.route('/_post_demographic_data', methods=['POST'])
 def post_demographic_data():
     data = json.loads(flask.request.data)
     turker_id = data["turker_id"]
