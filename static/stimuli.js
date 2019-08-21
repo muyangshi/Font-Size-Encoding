@@ -517,10 +517,6 @@ function drawDistractorsCallback(word_array, block, flash_time) {
                 nextTask();
             }
             else {startTime = new Date();
-                $.each($(".target"), (index, target) => {
-                    target.style.visibility = "visible";
-                    $(target).css("font-weight","bold");
-                });
 
                 if (block === true) {
                     var block_target = () => {
@@ -546,8 +542,39 @@ function drawDistractorsCallback(word_array, block, flash_time) {
                             });
                         });
                     }
-                    timeout_block = setTimeout(block_target, flash_time);
+                    // timeout_block = setTimeout(block_target, flash_time);
                 }
+
+                $.each($(".target"), (index, target) => {
+                    target.style.visibility = "visible";
+                }).promise().done(()=>{timeout_block = setTimeout(block_target,flash_time);});
+
+                // if (block === true) {
+                //     var block_target = () => {
+                //         $.each($(".target"), (index, target) => {
+                //             var target_left = parseFloat(target.style.left);
+                //             var target_top = parseFloat(target.style.top);
+                //             var block = makeBlock("block" + index, target_left, target_top);
+                //             $("#JQWC").append(block);
+                //             $(".target").css("visibility", "hidden");
+
+                //             $("#block" + index).bind("click", function () {
+                //                 // highlight the clicked block
+                //                 if (clicked_word_stack === null) {
+                //                     $(this).css("border", "3px solid");
+                //                 }
+                //                 // hide the irrelevant words and blocks to prevent changing mind
+                //                 $(".distractor").css("visibility", "hidden");
+                //                 $(".block").css("visibility", "hidden");
+
+                //                 // trigger the target underneath's click, which add this word
+                //                 // to the clicked_word_stack
+                //                 $("#target" + index).trigger("click");
+                //             });
+                //         });
+                //     }
+                //     // timeout_block = setTimeout(block_target, flash_time);
+                // }
             }
         }
     });
