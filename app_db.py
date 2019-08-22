@@ -58,18 +58,21 @@ def get_description():
 
     connection = get_connection()
     cursor = connection.cursor()
+    participant = 'new'
     cursor.execute("SELECT EXISTS(SELECT turker_id FROM pilot_opposite_on_circle WHERE turker_id = %s)",(turker_id,))
     existance = cursor.fetchone()[0]
-    if existance == False:
+    if existance == True:
+        participant = 'tested'
+    else:
         cursor.execute("SELECT EXISTS(SELECT turker_id FROM pilot_multi_targets WHERE turker_id = %s)",(turker_id,))
         existance = cursor.fetchone()[0]
-        if existance == False:
+        if existance == True:
+            participant = 'tested'
+        else:
             cursor.execute("SELECT EXISTS(SELECT turker_id FROM pilot_multi_rings WHERE turker_id = %s)",(turker_id,))
             existance = cursor.fetchone()[0]
-            if existance == False:
-                participant = 'new'
-    else:
-        participante = 'tested'
+            if existance == True:
+                participant = 'tested'
 
     print(existance,type(existance))
     connection.commit()
