@@ -57,7 +57,7 @@ def get_description():
     turker_id = flask.request.form['turker_id']
     connection = get_connection()
     cursor = connection.cursor()
-    cursor.execute("SELECT EXISTS(SELECT pilot_opposite_on_circle.turker_id,pilot_multi_rings.turker_id FROM pilot_opposite_on_circle,pilot_multi_rings WHERE pilot_opposite_on_circle.turker_id = '%s' OR pilot_multi_rings.turker_id = '%s')",(turker_id,turker_id))
+    cursor.execute("SELECT EXISTS(SELECT pilot_opposite_on_circle.turker_id,pilot_multi_rings.turker_id,pilot_multi_targets.turker_id FROM pilot_opposite_on_circle,pilot_multi_rings,pilot_multi_targets WHERE pilot_opposite_on_circle.turker_id = %s OR pilot_multi_rings.turker_id = %s OR pilot_multi_targets.turker_id=%s)",(turker_id,turker_id,turker_id))
     existance = cursor.fetchone()[0]
     print(existance,type(existance))
     connection.commit()
