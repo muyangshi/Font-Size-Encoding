@@ -61,10 +61,10 @@ def get_description():
     cursor.execute("SELECT EXISTS(SELECT turker_id FROM pilot_opposite_on_circle WHERE turker_id = '%s')",(turker_id,))
     existance = cursor.fetchone()[0]
     if existance == False:
-        cursor.execute("SELECT EXISTS(SELECT turker_id FROM pilot_single_circle WHERE turker_id = '%s')",(turker_id,))
+        cursor.execute("SELECT EXISTS(SELECT turker_id FROM pilot_multi_targets WHERE turker_id = '%s')",(turker_id,))
         existance = cursor.fetchone()[0]
         if existance == False:
-            cursor.execute("SELECT EXISTS(SELECT turker_id FROM pilot_multiple_circles WHERE turker_id = '%s')",(turker_id,))
+            cursor.execute("SELECT EXISTS(SELECT turker_id FROM pilot_multi_rings WHERE turker_id = '%s')",(turker_id,))
             existance = cursor.fetchone()[0]
             if existance == False:
                 participant = 'new'
