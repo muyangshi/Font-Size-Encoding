@@ -55,19 +55,31 @@ def get_landing_page():
 @app.route('/word_cognition_study/description', methods = ['POST'])
 def get_description():
     turker_id = flask.request.form['turker_id']
+
     connection = get_connection()
     cursor = connection.cursor()
-    cursor.execute("SELECT EXISTS(SELECT pilot_opposite_on_circle.turker_id,pilot_multi_rings.turker_id,pilot_multi_targets.turker_id FROM pilot_opposite_on_circle,pilot_multi_rings,pilot_multi_targets WHERE pilot_opposite_on_circle.turker_id = %s OR pilot_multi_rings.turker_id = %s OR pilot_multi_targets.turker_id=%s)",(turker_id,turker_id,turker_id))
+    cursor.execute("SELECT EXISTS(SELECT turker_id FROM pilot_opposite_on_circle WHERE turker_id = '%s')",(turker_id,))
     existance = cursor.fetchone()[0]
+    if existance == False:
+        cursor.execute("SELECT EXISTS(SELECT turker_id FROM pilot_single_circle WHERE turker_id = '%s')",(turker_id,))
+        existance = cursor.fetchone()[0]
+        if existance == False:
+            cursor.execute("SELECT EXISTS(SELECT turker_id FROM pilot_multiple_circles WHERE turker_id = '%s')",(turker_id,))
+            existance = cursor.fetchone()[0]
+            if existance == False:
+                participant = 'new'
+    else:
+        participante = 'tested'
+
     print(existance,type(existance))
     connection.commit()
     cursor.close()
     connection.close()
     
-    if existance == True:
-        participant = 'tested'
-    else:
-        participant = 'new'
+    # if existance == True:
+    #     participant = 'tested'
+    # else:
+    #     participant = 'new'
     
     if turker_id == 'superman':
         participant = 'new'
