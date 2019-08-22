@@ -56,21 +56,16 @@ def get_landing_page():
 def get_description():
     turker_id = flask.request.form['turker_id']
     participant = 'new'
-    return flask.render_template('description.html', ID = turker_id, Participant = participant)
-
-@app.route('/word_cognition_study/description/<experiment>', methods = ['POST'])
-def experiment(experiment):
-    turker_id = flask.request.form['turker_id']
-    participant = 'new'
-    description_page = 'description_'+str(experiment)+'.html'
-    return flask.render_template(description_page, ID = turker_id, Participant = participant)
+    return flask.render_template('experiment_1.html', ID = turker_id, Participant = participant)
 
 # Get the description page; turker_id is passed from description page through HTML form
 @app.route('/word_cognition_study/stimuli', methods = ['POST'])
 def get_stimuli_page():
     turker_id = flask.request.form['turker_id']
+    experiment = flask.request.form['experiment']
+    print(experiment)
     # print(turker_id)
-    return flask.render_template('stimuli.html', ID = turker_id, List_From_Server=get_tasklist())
+    return flask.render_template('stimuli.html', ID = turker_id, List_From_Server=get_tasklist(experiment))
 
 @app.route('/word_cognition_study/completion', methods=['POST'])
 def get_completion():
@@ -89,21 +84,29 @@ def get_completion():
 # Get the tasklist from test_length_config.py, the tasklist is from test_length.csv
 # The format of the tasklist is 
 # [{'small_fontsize':int,'smallword_length':int,'big_fontsize':int,'bigword_length':int},{},{},...]
-def get_tasklist():
-    tasklist = config.tasklist
+def get_tasklist(experiment):
+    if experiment == "opposite_on_circle":
+        tasklist = config.loadTask(config.tasklist_opposite_on_circle)
+    elif experiment == "single_circle":
+        tasklist = config.loadTask(config.tasklist_single_circle)
+    elif experiment == "multiple_circles":
+        tasklist = config.loadTask(config.tasklist_multiple_circles)
     return tasklist
 
+# This getStim is used for generating the words for experiment "opposite_on_circle". 
+# num_of_distractor + 2 makes a total number of 202 words.
+# the first two of those words are targets, and the 200 rest are distractors
 @app.route('/_getStim/<small_fontsize>/<smallword_length>/<big_fontsize>/<bigword_length>')
 def getStim(small_fontsize,smallword_length,big_fontsize,bigword_length, word = config.word): # word = config.experiment
     if word == 'pseudoword':
-        return get_pseudo_stimuli(int(config.numberOfWords),{'length':int(smallword_length), 'fontsize':int(small_fontsize)}, {'length':int(bigword_length),'fontsize':int(big_fontsize)})
+        return get_pseudo_stimuli(int(config.num_of_distractor)+2,{'length':int(smallword_length), 'fontsize':int(small_fontsize)}, {'length':int(bigword_length),'fontsize':int(big_fontsize)})
     if word == 'english':
-        return get_english_stimuli(int(config.numberOfWords),{'length':int(smallword_length), 'fontsize':int(small_fontsize)}, {'length':int(bigword_length),'fontsize':int(big_fontsize)})
+        return get_english_stimuli(int(config.num_of_distractor)+2,{'length':int(smallword_length), 'fontsize':int(small_fontsize)}, {'length':int(bigword_length),'fontsize':int(big_fontsize)})
 
 # No adescenders, pseudoword
 def pseudoword(size = 5, charset = "weruosazxcvnm"):
     return ''.join(random.choice(charset) for _ in range(size))
-def get_pseudo_stimuli(numberOfWords, target1, target2):
+def get_pseudo_stimuli(num_of_distractor, target1, target2):
     words = []
     target_words = []
     distractor_words = []
@@ -113,7 +116,7 @@ def get_pseudo_stimuli(numberOfWords, target1, target2):
     target_words.append(target_word_1)
     target_words.append(target_word_2)
 
-    for i in range(int(numberOfWords) - 2):
+    for i in range(int(num_of_distractor) - 2):
         distractor = {'text': pseudoword(size = random.randint(config.minLen,config.maxLen)), 'fontsize': random.randint(config.minSize,config.maxSize), 'html': 'distractor'}
         distractor_words.append(distractor)
 
@@ -128,7 +131,7 @@ def get_legit_word(wordlist,minLen,maxLen):
             if not (len(word) < minLen or len(word) > maxLen):
                 legit_word_list.append(word)
     return legit_word_list
-def get_english_stimuli(numberOfWords, target1, target2):
+def get_english_stimuli(num_of_distractor, target1, target2):
     legit_words = get_legit_word(decent_word_list,config.minLen,config.maxLen)
     target_words = []
     distractor_words = []
@@ -152,7 +155,7 @@ def get_english_stimuli(numberOfWords, target1, target2):
     target_words.append(target_word_1)
     target_words.append(target_word_2)
 
-    for i in range(int(numberOfWords) - 2):
+    for i in range(int(num_of_distractor) - 2):
         distractor = {'text': random.choice(legit_words), 'fontsize': random.randint(config.minSize,config.maxSize), 'html': 'distractor'}
         distractor_words.append(distractor)
 
@@ -188,7 +191,7 @@ def getMultiTargets(number_of_targets,correct_fontsize,wrong_fontsize,word_lengt
 def getDistractors():
     legit_words = get_legit_word(decent_word_list,config.minLen,config.maxLen)
     distractor_words = []
-    for i in range(int(config.numberOfWords)):
+    for i in range(int(config.num_of_distractor)):
         distractor = {'text': random.choice(legit_words), 'fontsize': random.randint(config.minSize,config.maxSize), 'html': 'distractor'}
         distractor_words.append(distractor)
     return json.dumps(distractor_words)

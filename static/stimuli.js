@@ -170,7 +170,6 @@ function onStartButtonClicked() {
             target_num = task["number_of_targets"]
             // 3 targets on each level of circle
             var number_of_rings = 3;
-            var number_of_targets = 3;
             var distractors;
             var targets;
             $.ajax({
