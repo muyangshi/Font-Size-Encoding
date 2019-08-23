@@ -45,18 +45,33 @@ def set_headers(response):
 
 @app.route('/')
 def get_hello_page():
-	return flask.redirect(flask.url_for('get_landing_page'))
+	return flask.redirect('/word_cognition_study/1')
 
-@app.route('/word_cognition_study')
-def get_landing_page():
-    return flask.render_template('landing.html')
+@app.route('/word_cognition_study/<exp>')
+def get_landing_page(exp):
+    if exp == '1':
+        experiment = 'opposite_on_circle'
+    elif exp == '2':
+        experiment = 'single_circle'
+    elif exp == '3':
+        experiment = 'multiple_circles'
+    return flask.render_template('landing.html',Experiment = experiment)
 
 # Get the description page, with turker_id as the data passed from HTML form from landing page
 @app.route('/word_cognition_study/description', methods = ['POST'])
 def get_description():
     turker_id = flask.request.form['turker_id']
+    experiment = flask.request.form['experiment']
+    if experiment == 'opposite_on_circle':
+        template = 'experiment_1.html'
+    elif experiment == 'single_circle':
+        template = 'experiment_2.html'
+    elif experiment == 'multiple_circles':
+        template = 'experiment_3.html'
+    else:
+        template = 'experiment_1.html'
     participant = 'new'
-    return flask.render_template('experiment_1.html', ID = turker_id, Participant = participant)
+    return flask.render_template(template, ID = turker_id, Participant = participant)
 
 # Get the description page; turker_id is passed from description page through HTML form
 @app.route('/word_cognition_study/stimuli', methods = ['POST'])
@@ -282,7 +297,7 @@ def post_data():
     #     # 'wrong_word_x','wrong_word_y','wrong_word_fontsize','wrong_word_width','wrong_word_height','wrong_word_center_distance',
     #     # 'number_of_words','span_content'])
     #     writer.writerow([turker_id,cloud_width,cloud_height,cloud_center_x,cloud_center_y,clicked_word,correct_word,wrong_word,distance_between_targets,time,correct_word_x,correct_word_y,correct_word_fontsize,correct_word_width,correct_word_height,correct_word_center_distance,wrong_word_x,wrong_word_y,wrong_word_fontsize,wrong_word_width,wrong_word_height,wrong_word_center_distance,number_of_words,span_content])
-    return json.dumps([turker_id,clicked_word,time,sizeDiff,accuracy,angle,index_of_difficulty])
+    return json.dumps([turker_id,clicked_word,correct_word,wrong_word,time,sizeDiff,accuracy,angle,index_of_difficulty])
 
 # Post hypo2 stimuli data
 @app.route('/_post_data_multi',methods=['POST'])
