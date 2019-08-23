@@ -565,7 +565,7 @@ function click_word(clickedword) {
     endTime = new Date();
     clearTimeout(timeout_func);
     hide_word("both");
-    $("#Status_Bar").append('<div id="notification" style="font-size: larger;">Processing...</div>');
+    $("#Status_Bar").append('<div id="notification" style="font-size: larger; text-align: center;">Processing...</div>');
     clicked_word_stack = clickedword;
     submit_word();
 }

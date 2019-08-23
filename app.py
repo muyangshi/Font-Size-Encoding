@@ -45,7 +45,7 @@ def set_headers(response):
 
 @app.route('/')
 def get_hello_page():
-	return flask.redirect('/word_cognition_study/1')
+	return flask.redirect(flask.url_for('get_landing_page',exp='1'))
 
 @app.route('/word_cognition_study/<exp>')
 def get_landing_page(exp):
