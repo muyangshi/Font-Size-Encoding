@@ -8,8 +8,8 @@
 	</head>
 
 	<body>
-        <div id="Status_Bar" style="position: fixed; left:50%; transform: translateX(-50%)">
-            <div><h3>Hello, {{ID}}. Please always look at the red cross. Click it to start.</h3></div>
+        <div id="Status_Bar" style="z-index: 2; position: fixed; left:50%; transform: translateX(-50%)">
+            <!-- <div><h3>Hello, {{ID}}. Please always look at the red cross. Click it to start.</h3></div> -->
         </div>
 
         <div id="WordCloudContainer" style="text-align: center;">
@@ -29,12 +29,10 @@
             var tasklist = {{ List_From_Server|tojson }}
             var post_data_url = '{{url_for("post_data")}}'
             var post_data_multi_url = '{{url_for("post_data_multi")}}'
-            $("#center_cross").css("cursor", "pointer")
-                .bind("click",function(){onStartButtonClicked();});
         </script>
 
         <script type="text/javascript" src="{{url_for('static', filename='jqcloud-1.0.4.js')}}"></script>
-        <script type="text/javascript" src="{{url_for('static', filename='stimuli.js')}}"></script>
+        <script type="text/javascript" src="{{url_for('static', filename='stimuli_reorder.js')}}"></script>
         
     </body>
     
