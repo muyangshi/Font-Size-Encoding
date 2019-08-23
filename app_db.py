@@ -45,16 +45,31 @@ def set_headers(response):
 
 @app.route('/')
 def get_hello_page():
-	return flask.redirect(flask.url_for('get_landing_page'))
+	return flask.redirect('/word_cognition_study/1')
 
-@app.route('/word_cognition_study')
-def get_landing_page():
-    return flask.render_template('landing.html')
+@app.route('/word_cognition_study/<exp>')
+def get_landing_page(exp):
+    if exp == '1':
+        experiment = 'opposite_on_circle'
+    elif exp == '2':
+        experiment = 'single_circle'
+    elif exp == '3':
+        experiment = 'multiple_circles'
+    return flask.render_template('landing.html',Experiment = experiment)
 
 # Get the description page, with turker_id as the data passed from HTML form from landing page
 @app.route('/word_cognition_study/description', methods = ['POST'])
 def get_description():
     turker_id = flask.request.form['turker_id']
+    experiment = flask.request.form['experiment']
+    if experiment == 'opposite_on_circle':
+        template = 'experiment_1.html'
+    elif experiment == 'single_circle':
+        template = 'experiment_2.html'
+    elif experiment == 'multiple_circles':
+        template = 'experiment_3.html'
+    else:
+        template = 'experiment_1.html'
 
     connection = get_connection()
     cursor = connection.cursor()
@@ -79,14 +94,9 @@ def get_description():
     cursor.close()
     connection.close()
     
-    # if existance == True:
-    #     participant = 'tested'
-    # else:
-    #     participant = 'new'
-    
     if turker_id == 'superman':
         participant = 'new'
-    return flask.render_template('experiment_1.html', ID = turker_id, Participant = participant)
+    return flask.render_template(template, ID = turker_id, Participant = participant)
 
 # Get the description page; turker_id is passed from description page through HTML form
 @app.route('/word_cognition_study/stimuli', methods = ['POST'])
