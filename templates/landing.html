@@ -57,21 +57,57 @@
 
 		<p>Filling in your Amazon Mechanical Turk ID and hitting the "Ready" button  indicates that you have read this consent form, have an opportunity to ask any questions about your participation in this research and voluntarily consent to participate.</p>
 
-    <p>Please provide you Amazon Turker ID</p>
-    <input id="turker_id">
-    <button id="next" disabled="disabled">Ready</button>
+	
+		<p>Please provide you Amazon Turker ID</p>
+		<input id="turker_id"><button id="next" disabled="disabled">Ready</button>
 
 		<div id="jscheck"><p><strong>JavaScript error.</strong> It seems that JavaScript might not be enabled in your browser. It is required that Javascript be enabled to participate in this task. Please check browser settings before accepting HIT.</p></div>
 
-	<form action="{{url_for('get_description')}}" method = "POST" id="get_description_page"></form>
-    <script type="text/javascript">
+		<form action="{{url_for('get_description')}}" method = "POST" id="get_description_page"></form>
+	<script type="text/javascript">
+		var $SCRIPT_ROOT = {{request.script_root|tojson|safe}}
         var turker_id_url = '{{url_for("receive_id")}}';
+		var experiment = '{{Experiment}}';
+		initialize();
 
-				// Enable the "Ready" button with JavaScript
-				$('#jscheck').html('');
-				//document.getElementById('jscheck').innerHTML="<p></p>";
-				document.getElementById('next').disabled="";
+		function initialize() {
+			var next = document.getElementById('next');
+			if (next) {
+				next.onclick = onNextClicked;
+			}
+			$(document).keypress(function(e){
+				if (e.which == 13){
+					$("#next").click();
+				}
+			});
+
+		}
+
+		function onNextClicked() {
+			var turker_id = document.getElementById('turker_id').value; // How to proceed after validating the ID?
+			$.ajax({
+				type: 'POST',
+				url: turker_id_url,
+				data: {'turker_id': turker_id,},
+				success: function(response) {
+					console.log(response);
+					// var experiment;
+					
+					var input = $("<input>").attr("type","hidden").attr("name","turker_id").val(turker_id);
+					var exp_type = $("<input>").attr("type","hidden").attr("name","experiment").val(experiment);
+					$('#get_description_page').append(exp_type).append(input).submit();
+				},
+				error: function(error) {
+					alert('error saving turker id');
+					console.log(error);
+				}
+			});
+		}
+			// Enable the "Ready" button with JavaScript
+			$('#jscheck').html('');
+			//document.getElementById('jscheck').innerHTML="<p></p>";
+			document.getElementById('next').disabled="";
     </script>
-    <script type="text/javascript" src="{{url_for('static', filename='landing.js')}}"></script>
+    <!-- <script type="text/javascript" src="{{url_for('static', filename='landing.js')}}"></script> -->
 	</body>
 </html>

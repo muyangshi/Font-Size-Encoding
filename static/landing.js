@@ -30,7 +30,10 @@ function onNextClicked() {
         data: {'turker_id': turker_id,},
         success: function(response) {
             console.log(response);
+            // var experiment;
+            
             var input = $("<input>").attr("type","hidden").attr("name","turker_id").val(turker_id);
+            // $('#get_description_page').append(experiment);
             $('#get_description_page').append(input).submit();
         },
         error: function(error) {
