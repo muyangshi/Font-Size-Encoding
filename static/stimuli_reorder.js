@@ -782,7 +782,7 @@ function postDataMulti(clickedword) {
         "block_width": block_width,
         "block_height": block_height,
 
-        "flash_time": flash_time
+        "flash_time": task["flash_time"]
     };
 
     $.ajax({
