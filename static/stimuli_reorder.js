@@ -456,6 +456,12 @@ function drawTargetsOnRing(target_array, distractor_array, radius, flash_time, c
 
         already_placed_targets.push(word_span[0]);
     });
+    var flash = Boolean;
+    if (flash_time !== -1){
+        flash = true;
+    } else {
+        flash = false;
+    }
     callback(distractor_array, true, flash_time);
 }
 
