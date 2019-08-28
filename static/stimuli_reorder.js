@@ -159,7 +159,7 @@ function load_cloud(){
                                         }
                                     });
                                     var radius = task["distance_between"] / 2;
-                                    drawTargetsOnRing(targets, distractors, radius, flash_time, drawDistractorsCallback);
+                                    drawTargetsOnRing(targets, distractors, radius, task["flash_time"], drawDistractorsCallback);
                                 },
                             dataType: "json"
                         });
