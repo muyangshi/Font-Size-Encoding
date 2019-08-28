@@ -462,7 +462,7 @@ function drawTargetsOnRing(target_array, distractor_array, radius, flash_time, c
     } else {
         flash = false;
     }
-    callback(distractor_array, true, flash_time);
+    callback(distractor_array, flash, flash_time);
 }
 
 function drawTargetsMultiRings(target_2Darray, distractor_array, flash_time) {
