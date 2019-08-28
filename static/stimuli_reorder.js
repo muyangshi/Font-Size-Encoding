@@ -24,6 +24,9 @@
  * already_placed_target is for ease of access within the helper funcitons
  */
 tasklist = shuffle(tasklist);
+
+var task;
+
 var total_num = tasklist.length;
 var target_num;
 
@@ -50,6 +53,7 @@ var experiment = null; //Specify which postData function to be used
 
 function onStartButtonClicked() {
     $("#center_cross").css("cursor", "pointer").off();
+    task = tasklist[0];
         
     // Clear the page content to contain only the fixation cross, and empty the word arrays
     already_placed_targets = [];
@@ -61,7 +65,7 @@ function onStartButtonClicked() {
 }
  
 function load_cloud(){
-    var task = tasklist[0];
+    // task = tasklist[0];
     var rule = task["rule"];
     /*
      * switch control for differen rule
@@ -376,7 +380,13 @@ function drawTargetsOpposite(target_array, distractor_array, distance_between, f
     var targets_distance = Math.sqrt(Math.pow(targets_x_distance, 2) + Math.pow(targets_y_distance, 2));
     console.log("distance between the two target is: " + targets_distance);
 
-    callback(distractor_array, true, flash_time);
+    var flash = Boolean;
+    if (flash_time !== -1){
+        flash = true;
+    } else {
+        flash = false;
+    }
+    callback(distractor_array, flash, flash_time);
 }
 
 // Multiple targets drawn on a single circle
