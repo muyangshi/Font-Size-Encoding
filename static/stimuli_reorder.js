@@ -605,6 +605,7 @@ function submit_word() {
 
 // The postData function used for opposite_on_circle
 function postData(clickedword) {
+    // alert(task['flash_time'])
     clearTimeout(timeout_func);
     // endTime = new Date();
     var timeDiff = endTime - startTime; // in ms
@@ -690,7 +691,9 @@ function postData(clickedword) {
         "question_index": question_index,
 
         "block_width": block_width,
-        "block_height": block_height
+        "block_height": block_height,
+
+        "flash_time": task["flash_time"]
     };
 
     // $.post("/randomStim/post_data", word_data);
@@ -712,6 +715,7 @@ function postData(clickedword) {
 }
 
 function postDataMulti(clickedword) {
+    // alert(task['flash_time'])
     // endTime = new Date();
     var timeDiff = endTime - startTime; // in ms
     timeDiff /= 1000; // strip the ms
@@ -776,7 +780,9 @@ function postDataMulti(clickedword) {
 
         "question_index": question_index,
         "block_width": block_width,
-        "block_height": block_height
+        "block_height": block_height,
+
+        "flash_time": flash_time
     };
 
     $.ajax({

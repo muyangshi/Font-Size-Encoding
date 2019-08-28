@@ -300,6 +300,8 @@ def post_data():
 
     question_index = int(data["question_index"]) #24 INTEGER
 
+    flash_time = int(data["flash_time"]) # 25 INTEGER
+
     # The below values are calculated
     sizeDiff = correct_word_fontsize - wrong_word_fontsize
     accuracy = 1 if clicked_word == correct_word else 0
@@ -328,20 +330,20 @@ def post_data():
             correct_word_x,correct_word_y,correct_word_fontsize,correct_word_width,correct_word_height,correct_word_center_distance,
             wrong_word_x,wrong_word_y,wrong_word_fontsize,wrong_word_width,wrong_word_height,wrong_word_center_distance,
             number_of_words,span_content,question_index,
-            sizeDiff,accuracy,clicked_x,clicked_y,angle,index_of_difficulty,index_of_performance)
-            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);
+            sizeDiff,accuracy,clicked_x,clicked_y,angle,index_of_difficulty,index_of_performance,flash_time)
+            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);
             """,
             (turker_id,cloud_width,cloud_height,cloud_center_x,cloud_center_y,
             clicked_word,correct_word,wrong_word,distance_between_targets,time,
             correct_word_x,correct_word_y,correct_word_fontsize,correct_word_width,correct_word_height,correct_word_center_distance,
             wrong_word_x,wrong_word_y,wrong_word_fontsize,wrong_word_width,wrong_word_height,wrong_word_center_distance,
             number_of_words,span_content,question_index,
-            sizeDiff,accuracy,clicked_x,clicked_y,angle,index_of_difficulty,index_of_performance))
+            sizeDiff,accuracy,clicked_x,clicked_y,angle,index_of_difficulty,index_of_performance,flash_time))
     connection.commit()
     cursor.close()
     connection.close()
 
-    return json.dumps([turker_id,clicked_word,time,sizeDiff,accuracy,angle,index_of_difficulty])
+    return json.dumps([turker_id,clicked_word,time,sizeDiff,accuracy,angle,index_of_difficulty,flash_time])
 
 # Post hypo2 stimuli data
 @app.route('/_post_data_multi',methods=['POST'])
@@ -373,6 +375,8 @@ def post_data_multi():
 
     question_index = int(data["question_index"]) #19
 
+    flash_time = int(data["flash_time"]) # 25 integer
+
     sizeDiff = correct_fontsize - wrong_fontsize #20
     accuracy = 1 if clicked_word_fontsize == correct_fontsize else 0 #21
     angle = clicked_word_x/clicked_word_y #22
@@ -396,13 +400,13 @@ def post_data_multi():
             INSERT INTO pilot_multi_targets (turker_id,cloud_width,cloud_height,cloud_center_x,cloud_center_y,
             clicked_word,time,clicked_word_x,clicked_word_y,clicked_word_center_distance,clicked_word_fontsize,correct_fontsize,wrong_fontsize,
             num_words_in_ring0,num_words_in_ring1,num_words_in_ring2,number_of_targets,number_of_words,span_content,
-            question_index,sizeDiff,accuracy,angle,index_of_difficulty,index_of_performance)
-            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);
+            question_index,sizeDiff,accuracy,angle,index_of_difficulty,index_of_performance,flash_time)
+            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);
             """,
             (turker_id,cloud_width,cloud_height,cloud_center_x,cloud_center_y,
             clicked_word,time,clicked_word_x,clicked_word_y,clicked_word_center_distance,clicked_word_fontsize,correct_fontsize,wrong_fontsize,
             num_words_in_ring0,num_words_in_ring1,num_words_in_ring2,number_of_targets,number_of_words,span_content,
-            question_index,sizeDiff,accuracy,angle,index_of_difficulty,index_of_performance))
+            question_index,sizeDiff,accuracy,angle,index_of_difficulty,index_of_performance,flash_time))
     connection.commit()
     cursor.close()
     connection.close()
@@ -411,7 +415,7 @@ def post_data_multi():
                         clicked_word,time,clicked_word_x,clicked_word_y,clicked_word_center_distance,
                         clicked_word_fontsize,correct_fontsize,wrong_fontsize,
                         num_words_in_ring0,num_words_in_ring1,num_words_in_ring2,number_of_targets,number_of_words,
-                        sizeDiff,accuracy,angle,index_of_difficulty])
+                        sizeDiff,accuracy,angle,index_of_difficulty,flash_time])
 
 
 # Post demographic data
