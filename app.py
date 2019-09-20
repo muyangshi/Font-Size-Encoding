@@ -14,6 +14,7 @@ from Configures import test_length_config as config
 # import config
 import psycopg2
 import math
+from datetime import datetime
 
 app = flask.Flask(__name__)
 fujs = FlaskUtilJs(app)
@@ -269,6 +270,8 @@ def post_data():
 
     flash_time = int(data["flash_time"]) # 25 INTEGER
 
+    time_stamp = str(datetime.utcnow())
+
     # The below values are calculated
     sizeDiff = correct_word_fontsize - wrong_word_fontsize
     accuracy = 1 if clicked_word == correct_word else 0
@@ -332,6 +335,8 @@ def post_data_multi():
     question_index = int(data["question_index"]) #19
 
     flash_time = int(data["flash_time"]) # 25 integer
+
+    time_stamp = str(datetime.utcnow())
 
     sizeDiff = correct_fontsize - wrong_fontsize #20
     accuracy = 1 if clicked_word_fontsize == correct_fontsize else 0 #21
