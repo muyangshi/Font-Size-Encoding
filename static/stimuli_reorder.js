@@ -53,6 +53,7 @@ var experiment = null; //Specify which postData function to be used
 
 function onStartButtonClicked() {
     $("#center_cross").css("cursor", "pointer").off();
+    // $("#Status_Bar").append('<div id="notification" style="font-size: larger; text-align: center;">Loading...</div>');
     task = tasklist[0];
         
     // Clear the page content to contain only the fixation cross, and empty the word arrays
@@ -61,6 +62,7 @@ function onStartButtonClicked() {
 
     // Add Process bar to the Status_Bar div
     document.getElementById("Status_Bar").innerHTML = '<div id="progress_bar" style="text-align: center;"><h3>You have ' + tasklist.length + ' tasks left</h3></div>';
+    $("#Status_Bar").append('<div id="notification" style="font-size: larger; text-align: center;">Loading...</div>');
     load_cloud();
 }
  
@@ -392,6 +394,7 @@ function drawTargetsOpposite(target_array, distractor_array, distance_between, f
 // Multiple targets drawn on a single circle
 // Click the block first then click the central red cross to continue
 function drawTargetsOnRing(target_array, distractor_array, radius, flash_time, callback) {
+    // $("#Status_Bar").append('<div id="notification" style="font-size: larger; text-align: center;">Loading...</div>');
     $("#JQWC").addClass("jqcloud");
     var cloud_center_x = $("#JQWC").width() / 2.0;
     var cloud_center_y = $("#JQWC").height() / 2.0;
@@ -555,7 +558,8 @@ function drawDistractorsCallback(word_array, block, flash_time) {
             else {
                 // console.log(block);
                 // console.log(flash_time);
-                $("#Status_Bar").append('<div id="notification" style="font-size: larger;">Task loaded. Click the red cross to start.</div>');
+                $("#notification").html("Task loaded. Click the red cross to start")
+                // $("#Status_Bar").append('<div id="notification" style="font-size: larger;">Task loaded. Click the red cross to start.</div>');
                 $("#center_cross").css("cursor","pointer").off()
                     .bind("click",()=>{show_stim(block,flash_time)});
             }
@@ -581,7 +585,8 @@ function click_word(clickedword) {
     endTime = new Date();
     clearTimeout(timeout_func);
     hide_word("both");
-    $("#Status_Bar").append('<div id="notification" style="font-size: larger; text-align: center;">Processing...</div>');
+    $("#notification").html("Processing...");
+    // $("#Status_Bar").append('<div id="notification" style="font-size: larger; text-align: center;">Processing...</div>');
     clicked_word_stack = clickedword;
     submit_word();
 }
