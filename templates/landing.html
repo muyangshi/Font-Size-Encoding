@@ -84,6 +84,8 @@
 		}
 
 		function onNextClicked() {
+			$("#next").html('submitting');
+			this.onclick = undefined;
 			var turker_id = document.getElementById('turker_id').value; // How to proceed after validating the ID?
 			$.ajax({
 				type: 'POST',

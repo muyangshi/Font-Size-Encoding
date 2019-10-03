@@ -8,9 +8,7 @@
 	</head>
 
 	<body>
-        <div id="Status_Bar" style="z-index: 2; position: fixed; left:50%; transform: translateX(-50%)">
-            <!-- <div><h3>Hello, {{ID}}. Please always look at the red cross. Click it to start.</h3></div> -->
-        </div>
+        <div id="Status_Bar" style="z-index: 2; position: fixed; left:50%; transform: translateX(-50%)"></div>
 
         <div id="WordCloudContainer" style="text-align: center;">
             <div id="JQWC" style="width: 1000px; height: 1000px; display: inline-block; position: relative;"><span id="center_cross" style="position: absolute;top: 480px;left: 487.0156px;font-size: 30px;color: red;">&#10011;</span></div>
@@ -32,7 +30,7 @@
         </script>
 
         <script type="text/javascript" src="{{url_for('static', filename='jqcloud-1.0.4.js')}}"></script>
-        <script type="text/javascript" src="{{url_for('static', filename='stimuli_reorder.js')}}"></script>
+        <script type="text/javascript" src="{{url_for('static', filename='stimuli.js')}}"></script>
         
     </body>
     
