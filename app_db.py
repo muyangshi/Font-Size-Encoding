@@ -82,7 +82,7 @@ def get_description():
     cursor = connection.cursor()
     participant = 'new'
     cursor.execute("SELECT turker_id FROM turker WHERE turker_id = %s",(turker_id,))
-    if len(cursor) > 1:
+    if len(cursor.fetchall()) > 1:
         participant = 'tested'
     else:
         participant = 'new'
