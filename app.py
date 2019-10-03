@@ -10,7 +10,7 @@ import flask
 import random
 import csv
 from flask_util_js import FlaskUtilJs
-from Configures import test_length_config as config
+from Configures import tasklist_config as config
 # import config
 import psycopg2
 import math
@@ -107,15 +107,15 @@ def get_completion():
 # The format of the tasklist is 
 # [{'small_fontsize':int,'smallword_length':int,'big_fontsize':int,'bigword_length':int},{},{},...]
 def get_tasklist(experiment):
-    if experiment == "opposite_on_circle":
-        tasklist = config.loadTask(config.tasklist_opposite_on_circle)
-    elif experiment == "single_circle":
-        tasklist = config.loadTask(config.tasklist_single_circle)
-    elif experiment == "multiple_circles":
-        tasklist = config.loadTask(config.tasklist_multiple_circles)
-    elif experiment == "opposite_on_circle_no_flash":
-        tasklist = config.loadTask(config.tasklist_opposite_on_circle_no_flash)
-    return tasklist
+    # if experiment == "opposite_on_circle":
+    #     tasklist = config.loadTask(config.tasklist_opposite_on_circle)
+    # elif experiment == "single_circle":
+    #     tasklist = config.loadTask(config.tasklist_single_circle)
+    # elif experiment == "multiple_circles":
+    #     tasklist = config.loadTask(config.tasklist_multiple_circles)
+    # elif experiment == "opposite_on_circle_no_flash":
+    #     tasklist = config.loadTask(config.tasklist_opposite_on_circle_no_flash)
+    return config.loadTask(config.tasklist_path(experiment))
 
 # This getStim is used for generating the words for experiment "opposite_on_circle". 
 # num_of_distractor + 2 makes a total number of 202 words.
@@ -203,7 +203,7 @@ def getMultiTargets(number_of_targets,correct_fontsize,wrong_fontsize,word_lengt
             target_words[i] = {'text': target_words[i], 'fontsize': correct_fontsize, 'html': 'target'}
         else:
             target_words[i] = {'text': target_words[i], 'fontsize': wrong_fontsize, 'html': 'target'}
-    print("the targets are: ", target_words)
+    # print("the targets are: ", target_words)
     return json.dumps(target_words)
 
 # Used for hypo2

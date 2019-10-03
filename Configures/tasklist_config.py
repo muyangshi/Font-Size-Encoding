@@ -24,9 +24,12 @@ def loadTask(tasklist_csv_path):
     return tasklist
 
 # tasklist_csv = os.path.join(os.path.dirname(os.path.abspath(__file__)),'test_length.csv')
-tasklist_opposite_on_circle = os.path.join(os.path.dirname(os.path.abspath(__file__)),'tasklist_opposite_on_circle.csv')
-tasklist_single_circle = os.path.join(os.path.dirname(os.path.abspath(__file__)),'tasklist_single_circle.csv')
-tasklist_multiple_circles = os.path.join(os.path.dirname(os.path.abspath(__file__)),'tasklist_multiple_circles.csv')
-tasklist_opposite_on_circle_no_flash = os.path.join(os.path.dirname(os.path.abspath(__file__)),'tasklist_opposite_on_circle_no_flash.csv')
+# tasklist_opposite_on_circle = os.path.join(os.path.dirname(os.path.abspath(__file__)),'tasklist_opposite_on_circle.csv')
+# tasklist_single_circle = os.path.join(os.path.dirname(os.path.abspath(__file__)),'tasklist_single_circle.csv')
+# tasklist_multiple_circles = os.path.join(os.path.dirname(os.path.abspath(__file__)),'tasklist_multiple_circles.csv')
+# tasklist_opposite_on_circle_no_flash = os.path.join(os.path.dirname(os.path.abspath(__file__)),'tasklist_opposite_on_circle_no_flash.csv')
+
+def tasklist_path(experiment):
+    return os.path.join(os.path.dirname(os.path.abspath(__file__)),'tasklist_'+experiment+'.csv')
 # print(tasklist_csv)
 # tasklist = loadTask(tasklist_csv)

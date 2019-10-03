@@ -10,7 +10,7 @@ import flask
 import random
 import csv
 from flask_util_js import FlaskUtilJs
-from Configures import test_length_config as config
+from Configures import tasklist_config as config
 # import config
 import psycopg2
 import math
@@ -18,6 +18,12 @@ from datetime import datetime
 
 app = flask.Flask(__name__)
 fujs = FlaskUtilJs(app)
+
+turker_database = 'turker'
+opposite_on_circle_database = 'pilot_opposite_on_circle'
+single_circle_database = 'pilot_single_circle'
+multiple_circle_database = 'pilot_multiple_circles'
+demographics_database = 'pilot_demographics'
 
 def get_connection():
 	'''
@@ -81,7 +87,7 @@ def get_description():
     connection = get_connection()
     cursor = connection.cursor()
     participant = 'new'
-    cursor.execute("SELECT turker_id FROM turker WHERE turker_id = %s",(turker_id,))
+    cursor.execute("SELECT turker_id FROM %s WHERE turker_id = %s",(turker_database,turker_id))
     if len(cursor.fetchall()) > 1:
         participant = 'tested'
     else:
@@ -136,15 +142,15 @@ def get_completion():
 # The format of the tasklist is 
 # [{'small_fontsize':int,'smallword_length':int,'big_fontsize':int,'bigword_length':int},{},{},...]
 def get_tasklist(experiment):
-    if experiment == "opposite_on_circle":
-        tasklist = config.loadTask(config.tasklist_opposite_on_circle)
-    elif experiment == "single_circle":
-        tasklist = config.loadTask(config.tasklist_single_circle)
-    elif experiment == "multiple_circles":
-        tasklist = config.loadTask(config.tasklist_multiple_circles)
-    elif experiment == "opposite_on_circle_no_flash":
-        tasklist = config.loadTask(config.tasklist_opposite_on_circle_no_flash)
-    return tasklist
+    # if experiment == "opposite_on_circle":
+    #     tasklist = config.loadTask(config.tasklist_opposite_on_circle)
+    # elif experiment == "single_circle":
+    #     tasklist = config.loadTask(config.tasklist_single_circle)
+    # elif experiment == "multiple_circles":
+    #     tasklist = config.loadTask(config.tasklist_multiple_circles)
+    # elif experiment == "opposite_on_circle_no_flash":
+    #     tasklist = config.loadTask(config.tasklist_opposite_on_circle_no_flash)
+    return config.loadTask(config.tasklist_path(experiment))
 
 # This getStim is used for generating the words for experiment "opposite_on_circle". 
 # num_of_distractor + 2 makes a total number of 202 words.
@@ -232,7 +238,7 @@ def getMultiTargets(number_of_targets,correct_fontsize,wrong_fontsize,word_lengt
             target_words[i] = {'text': target_words[i], 'fontsize': correct_fontsize, 'html': 'target'}
         else:
             target_words[i] = {'text': target_words[i], 'fontsize': wrong_fontsize, 'html': 'target'}
-    print("the targets are: ", target_words)
+    # print("the targets are: ", target_words)
     return json.dumps(target_words)
 
 # Used for hypo2
@@ -266,7 +272,7 @@ def receive_id():
     cursor = connection.cursor()
     # cursor.execute("SELECT turker_id FROM turker WHERE turker_id = %s",(turker_id,))
     # if len(cursor.fetchall()) == 0:
-    cursor.execute("INSERT INTO turker (turker_id,hashcode) VALUES (%s, %s)",(turker_id,hashcode))
+    cursor.execute("INSERT INTO %s (turker_id,hashcode) VALUES (%s, %s)",(turker_database,turker_id,hashcode))
     connection.commit()
     cursor.close()
     connection.close()
@@ -341,7 +347,7 @@ def post_data():
     connection = get_connection()
     cursor = connection.cursor()
     cursor.execute("""
-            INSERT INTO pilot_opposite_on_circle (turker_id,cloud_width,cloud_height,cloud_center_x,cloud_center_y,
+            INSERT INTO %s (turker_id,cloud_width,cloud_height,cloud_center_x,cloud_center_y,
             clicked_word,correct_word,wrong_word,distance_between_targets,time,
             correct_word_x,correct_word_y,correct_word_fontsize,correct_word_width,correct_word_height,correct_word_center_distance,
             wrong_word_x,wrong_word_y,wrong_word_fontsize,wrong_word_width,wrong_word_height,wrong_word_center_distance,
@@ -349,7 +355,7 @@ def post_data():
             sizeDiff,accuracy,clicked_x,clicked_y,angle,index_of_difficulty,index_of_performance,flash_time,time_stamp)
             VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);
             """,
-            (turker_id,cloud_width,cloud_height,cloud_center_x,cloud_center_y,
+            (opposite_on_circle_database,turker_id,cloud_width,cloud_height,cloud_center_x,cloud_center_y,
             clicked_word,correct_word,wrong_word,distance_between_targets,time,
             correct_word_x,correct_word_y,correct_word_fontsize,correct_word_width,correct_word_height,correct_word_center_distance,
             wrong_word_x,wrong_word_y,wrong_word_fontsize,wrong_word_width,wrong_word_height,wrong_word_center_distance,
@@ -415,13 +421,13 @@ def post_data_multi():
     connection = get_connection()
     cursor = connection.cursor()
     cursor.execute("""
-            INSERT INTO pilot_single_circle (turker_id,cloud_width,cloud_height,cloud_center_x,cloud_center_y,
+            INSERT INTO %s (turker_id,cloud_width,cloud_height,cloud_center_x,cloud_center_y,
             clicked_word,time,clicked_word_x,clicked_word_y,clicked_word_center_distance,clicked_word_fontsize,correct_fontsize,wrong_fontsize,
             num_words_in_ring0,num_words_in_ring1,num_words_in_ring2,number_of_targets,number_of_words,span_content,
             question_index,sizeDiff,accuracy,angle,index_of_difficulty,index_of_performance,flash_time,time_stamp)
             VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);
             """,
-            (turker_id,cloud_width,cloud_height,cloud_center_x,cloud_center_y,
+            (single_circle_database,turker_id,cloud_width,cloud_height,cloud_center_x,cloud_center_y,
             clicked_word,time,clicked_word_x,clicked_word_y,clicked_word_center_distance,clicked_word_fontsize,correct_fontsize,wrong_fontsize,
             num_words_in_ring0,num_words_in_ring1,num_words_in_ring2,number_of_targets,number_of_words,span_content,
             question_index,sizeDiff,accuracy,angle,index_of_difficulty,index_of_performance,flash_time,time_stamp))
@@ -456,10 +462,10 @@ def post_demographic_data():
     connection = get_connection()
     cursor = connection.cursor()
     cursor.execute("""
-            INSERT INTO pilot_demographics (turker_id,age,gender,hand,education,device,browser,game,difficulty,confidence,eyetrace,comments)
+            INSERT INTO %s (turker_id,age,gender,hand,education,device,browser,game,difficulty,confidence,eyetrace,comments)
             VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
                 """,
-            (turker_id,age,gender,hand,education,device,browser,game,difficulty,confidence,eyetrace,comments))
+            (demographics_database,turker_id,age,gender,hand,education,device,browser,game,difficulty,confidence,eyetrace,comments))
     connection.commit()
     cursor.close()
     connection.close()
