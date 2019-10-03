@@ -56,6 +56,8 @@ def get_landing_page(exp):
         experiment = 'single_circle'
     elif exp == '3':
         experiment = 'multiple_circles'
+    elif exp == '1n':
+        experiment = 'opposite_on_circle_no_flash'
     return flask.render_template('landing.html',Experiment = experiment)
 
 # Get the description page, with turker_id as the data passed from HTML form from landing page
@@ -63,34 +65,43 @@ def get_landing_page(exp):
 def get_description():
     turker_id = flask.request.form['turker_id']
     experiment = flask.request.form['experiment']
-    if experiment == 'opposite_on_circle':
-        template = 'experiment_1.html'
-    elif experiment == 'single_circle':
-        template = 'experiment_2.html'
-    elif experiment == 'multiple_circles':
-        template = 'experiment_3.html'
-    else:
-        template = 'experiment_1.html'
+    # if experiment == 'opposite_on_circle':
+    #     template = 'experiment_opposite_on_circle.html'
+    # elif experiment == 'single_circle':
+    #     template = 'experiment_single_circle.html'
+    # elif experiment == 'multiple_circles':
+    #     template = 'experiment_multiple_circles.html'
+    # elif experiment == "opposite_on_circle_no_flash":
+    #     template = 'experiment_opposite_on_circle.html'
+    # else:
+    #     template = 'experiment_opposite_on_circle.html'
+
+    template = 'description_' + experiment + '.html'
 
     connection = get_connection()
     cursor = connection.cursor()
     participant = 'new'
-    cursor.execute("SELECT EXISTS(SELECT turker_id FROM pilot_opposite_on_circle WHERE turker_id = %s)",(turker_id,))
-    existance = cursor.fetchone()[0]
-    if existance == True:
+    cursor.execute("SELECT turker_id FROM turker WHERE turker_id = %s",(turker_id,))
+    if len(cursor) > 1:
         participant = 'tested'
     else:
-        cursor.execute("SELECT EXISTS(SELECT turker_id FROM pilot_multi_targets WHERE turker_id = %s)",(turker_id,))
-        existance = cursor.fetchone()[0]
-        if existance == True:
-            participant = 'tested'
-        else:
-            cursor.execute("SELECT EXISTS(SELECT turker_id FROM pilot_multi_rings WHERE turker_id = %s)",(turker_id,))
-            existance = cursor.fetchone()[0]
-            if existance == True:
-                participant = 'tested'
+        participant = 'new'
+    # cursor.execute("SELECT EXISTS(SELECT turker_id FROM pilot_opposite_on_circle WHERE turker_id = %s)",(turker_id,))
+    # existance = cursor.fetchone()[0]
+    # if existance == True:
+    #     participant = 'tested'
+    # else:
+    #     cursor.execute("SELECT EXISTS(SELECT turker_id FROM pilot_multi_targets WHERE turker_id = %s)",(turker_id,))
+    #     existance = cursor.fetchone()[0]
+    #     if existance == True:
+    #         participant = 'tested'
+    #     else:
+    #         cursor.execute("SELECT EXISTS(SELECT turker_id FROM pilot_multi_rings WHERE turker_id = %s)",(turker_id,))
+    #         existance = cursor.fetchone()[0]
+    #         if existance == True:
+    #             participant = 'tested'
 
-    print(existance,type(existance))
+    # print(existance,type(existance))
     connection.commit()
     cursor.close()
     connection.close()
@@ -131,6 +142,8 @@ def get_tasklist(experiment):
         tasklist = config.loadTask(config.tasklist_single_circle)
     elif experiment == "multiple_circles":
         tasklist = config.loadTask(config.tasklist_multiple_circles)
+    elif experiment == "opposite_on_circle_no_flash":
+        tasklist = config.loadTask(config.tasklist_opposite_on_circle_no_flash)
     return tasklist
 
 # This getStim is used for generating the words for experiment "opposite_on_circle". 
@@ -251,9 +264,9 @@ def receive_id():
 
     connection = get_connection()
     cursor = connection.cursor()
-    cursor.execute("SELECT turker_id FROM turker WHERE turker_id = %s",(turker_id,))
-    if len(cursor.fetchall()) == 0:
-        cursor.execute("INSERT INTO turker (turker_id,hashcode) VALUES (%s, %s)",(turker_id,hashcode))
+    # cursor.execute("SELECT turker_id FROM turker WHERE turker_id = %s",(turker_id,))
+    # if len(cursor.fetchall()) == 0:
+    cursor.execute("INSERT INTO turker (turker_id,hashcode) VALUES (%s, %s)",(turker_id,hashcode))
     connection.commit()
     cursor.close()
     connection.close()
@@ -402,7 +415,7 @@ def post_data_multi():
     connection = get_connection()
     cursor = connection.cursor()
     cursor.execute("""
-            INSERT INTO pilot_multi_targets (turker_id,cloud_width,cloud_height,cloud_center_x,cloud_center_y,
+            INSERT INTO pilot_single_circle (turker_id,cloud_width,cloud_height,cloud_center_x,cloud_center_y,
             clicked_word,time,clicked_word_x,clicked_word_y,clicked_word_center_distance,clicked_word_fontsize,correct_fontsize,wrong_fontsize,
             num_words_in_ring0,num_words_in_ring1,num_words_in_ring2,number_of_targets,number_of_words,span_content,
             question_index,sizeDiff,accuracy,angle,index_of_difficulty,index_of_performance,flash_time,time_stamp)

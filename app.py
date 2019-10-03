@@ -56,6 +56,8 @@ def get_landing_page(exp):
         experiment = 'single_circle'
     elif exp == '3':
         experiment = 'multiple_circles'
+    elif exp == '1n':
+        experiment = 'opposite_on_circle_no_flash'
     return flask.render_template('landing.html',Experiment = experiment)
 
 # Get the description page, with turker_id as the data passed from HTML form from landing page
@@ -63,14 +65,18 @@ def get_landing_page(exp):
 def get_description():
     turker_id = flask.request.form['turker_id']
     experiment = flask.request.form['experiment']
-    if experiment == 'opposite_on_circle':
-        template = 'experiment_1.html'
-    elif experiment == 'single_circle':
-        template = 'experiment_2.html'
-    elif experiment == 'multiple_circles':
-        template = 'experiment_3.html'
-    else:
-        template = 'experiment_1.html'
+    # if experiment == 'opposite_on_circle':
+    #     template = 'experiment_opposite_on_circle.html'
+    # elif experiment == 'single_circle':
+    #     template = 'experiment_single_circle.html'
+    # elif experiment == 'multiple_circles':
+    #     template = 'experiment_multiple_circles.html'
+    # else:
+    #     template = 'experiment_1.html'
+
+    template = 'description_' + experiment + '.html'
+
+    
     participant = 'new'
     return flask.render_template(template, ID = turker_id, Participant = participant)
 
@@ -107,6 +113,8 @@ def get_tasklist(experiment):
         tasklist = config.loadTask(config.tasklist_single_circle)
     elif experiment == "multiple_circles":
         tasklist = config.loadTask(config.tasklist_multiple_circles)
+    elif experiment == "opposite_on_circle_no_flash":
+        tasklist = config.loadTask(config.tasklist_opposite_on_circle_no_flash)
     return tasklist
 
 # This getStim is used for generating the words for experiment "opposite_on_circle". 
