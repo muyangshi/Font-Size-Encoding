@@ -13,35 +13,48 @@
  * there can be multiple targets on a single_circle, except that 
  * they will no be exactly on the opposite side of each other
  * since there  could be more than two target words
+ * 
+ * as of Aug 22, try to let click_on_cross = visible, to reduce visual lag.
  */
+
+
+ /*
+ * Global variables stored here are for the ease of access for functions
+ * timeout_func is pointing to the setTimeout function that create the blocks, which should be canceled if the user react before the blocks are created.
+ * already_placed_target is for ease of access within the helper funcitons
+ */
+tasklist = shuffle(tasklist);
+
+var task;
+
+var total_num = tasklist.length;
+var target_num;
+
+var startTime;
+var endTime;
+
+var timeout_func;
+var already_placed_targets;
+
+var clicked_word_stack = null; // "stack" that holds the clicked_word
+var experiment = null; //Specify which postData function to be used
+
 
 (function initialize() {
     // var start = document.getElementById('Button_startStimuli');
     // start.onclick = onStartButtonClicked;
     console.log("device pixel ratio is: " + window.devicePixelRatio);
+    // $("#center_cross").bind("click",function(){onStartButtonClicked();});
+    // $("#center_cross").trigger("click");
+    onStartButtonClicked();
 })();
-
-tasklist = shuffle(tasklist);
-/*
- * Global variables stored here are for the ease of access for functions
- * timeout_block is pointing to the setTimeout function that create the blocks, which should be canceled if the user react before the blocks are created.
- * already_placed_target is for ease of access within the helper funcitons
- */
-var timeout_block;
-var already_placed_targets;
-var clicked_word_stack = null; // "stack" that holds the clicked_word
-var ring_type = null; //Specify which postData function to be used
-var startTime;
-var endTime;
-var total_num = tasklist.length;
-var target_num;
 
 
 
 function onStartButtonClicked() {
-    $("#center_cross").css("cursor", "pointer")
-        .off()
-        .bind("click", function () { submit_word(); });
+    $("#center_cross").css("cursor", "pointer").off();
+    // $("#Status_Bar").append('<div id="notification" style="font-size: larger; text-align: center;">Loading...</div>');
+    task = tasklist[0];
         
     // Clear the page content to contain only the fixation cross, and empty the word arrays
     already_placed_targets = [];
@@ -49,14 +62,13 @@ function onStartButtonClicked() {
 
     // Add Process bar to the Status_Bar div
     document.getElementById("Status_Bar").innerHTML = '<div id="progress_bar" style="text-align: center;"><h3>You have ' + tasklist.length + ' tasks left</h3></div>';
-
-    // Specifications about the target words are loaded from the csv to the tasklist
-    // then from the tasklist to the python functions method as params
-    var task = tasklist[0];
-    var distance_between = task["distance_between"];
+    $("#Status_Bar").append('<div id="notification" style="font-size: larger; text-align: center;">Loading...</div>');
+    load_cloud();
+}
+ 
+function load_cloud(){
+    // task = tasklist[0];
     var rule = task["rule"];
-    var flash_time = task["flash_time"];
-
     /*
      * switch control for differen rule
      * single_circle: multiple targets on a single circle
@@ -65,19 +77,13 @@ function onStartButtonClicked() {
      */
     switch (rule) {
         case "opposite_on_circle":
-            ring_type = "opposite_on_circle";
+            experiment = "opposite_on_circle";
             target_num = 2;
             // The two target words being positioned on the opposite side of a circle
             var targets;
             var distractors;
             $.ajax({
                 url: $SCRIPT_ROOT +"/_" + "getStim" + "/" + task["small_fontsize"] + "/" + task["smallword_length"] + "/" + task["big_fontsize"] + "/" + task["bigword_length"],
-                // url: flask_util.url_for('getStim', {
-                //     small_fontsize: task["small_fontsize"],
-                //     smallword_length: task["smallword_length"],
-                //     big_fontsize: task["big_fontsize"],
-                //     bigword_length: task["bigword_length"]
-                // }),
                 success:
                     function (data) {
                         distractors = data.map(function (dictionary) {
@@ -85,7 +91,8 @@ function onStartButtonClicked() {
                                 return {
                                     text: dictionary['text'],
                                     weight: dictionary['fontsize'],
-                                    html: { class: dictionary['html'] },
+                                    html: { class: dictionary['html'],
+                                            style: 'visibility: hidden' },
                                     handlers: {
                                         click: function () { postData($(this)); },
                                         mouseover: function () { this.style.cursor = 'pointer'; }
@@ -96,7 +103,8 @@ function onStartButtonClicked() {
                                 return {
                                     text: dictionary['text'],
                                     weight: dictionary['fontsize'],
-                                    html: { class: dictionary['html'] },
+                                    html: { class: dictionary['html'],
+                                            style: 'visibility: hidden' },
                                     handlers: {
                                         mouseover: function () { this.style.cursor = "default"; }
                                     }
@@ -108,13 +116,13 @@ function onStartButtonClicked() {
                         for (var i = 0; i < 2; i++) {
                             targets.push(distractors.shift());
                         }
-                        drawTargetsOpposite(targets, distractors, distance_between, flash_time, drawDistractorsCallback);
+                        drawTargetsOpposite(targets, distractors, task["distance_between"], task["flash_time"], drawDistractorsCallback);
                     },
                 dataType: "json"
             });
             break;
         case "single_circle":
-            ring_type = "single_circle";
+            experiment = "single_circle";
             target_num = task["number_of_targets"];
             var distractors;
             var targets;
@@ -127,7 +135,8 @@ function onStartButtonClicked() {
                             return {
                                 text: dictionary['text'],
                                 weight: dictionary['fontsize'],
-                                html: { class: dictionary['html'] },
+                                html: { class: dictionary['html'],
+                                        style: 'visibility: hidden' },
                                 handlers: { mouseover: function () { this.style.cursor = "default"; } }
                             }
                         });
@@ -137,27 +146,22 @@ function onStartButtonClicked() {
                         var word_length = task["smallword_length"];
                         $.ajax({
                             url: $SCRIPT_ROOT + `/_getMultiTargets/${number_of_targets}/${correct_fontsize}/${wrong_fontsize}/${word_length}`,
-                            // url: flask_util.url_for('getMultiTargets', {
-                            //     number_of_targets: task["number_of_targets"],
-                            //     correct_fontsize: task["big_fontsize"],
-                            //     wrong_fontsize: task["small_fontsize"],
-                            //     word_length: task["smallword_length"],
-                            // }),
                             success:
                                 function (data) {
                                     targets = data.map(function (dictionary) {
                                         return {
                                             text: dictionary['text'],
                                             weight: dictionary['fontsize'],
-                                            html: { class: dictionary['html'] },
+                                            html: { class: dictionary['html'],
+                                                    style: 'visibility: hidden' },
                                             handlers: {
                                                 click: function () { postDataMulti($(this)); },
                                                 mouseover: function () { this.style.cursor = "pointer"; }
                                             }
                                         }
                                     });
-                                    var radius = distance_between / 2;
-                                    drawTargetsOnRing(targets, distractors, radius, flash_time, drawDistractorsCallback);
+                                    var radius = task["distance_between"] / 2;
+                                    drawTargetsOnRing(targets, distractors, radius, task["flash_time"], drawDistractorsCallback);
                                 },
                             dataType: "json"
                         });
@@ -166,7 +170,7 @@ function onStartButtonClicked() {
             });
             break;
         case "multiple_circles":
-            ring_type = "multiple_circles";
+            experiment = "multiple_circles";
             target_num = task["number_of_targets"]
             // 3 targets on each level of circle
             var number_of_rings = 3;
@@ -184,7 +188,8 @@ function onStartButtonClicked() {
                             return {
                                 text: dictionary['text'],
                                 weight: dictionary['fontsize'],
-                                html: { class: dictionary['html'] },
+                                html: { class: dictionary['html'],
+                                        style: 'visibility: hidden' },
                                 handlers: { mouseover: function () { this.style.cursor = "default"; } }
                             }
                         });
@@ -200,19 +205,14 @@ function onStartButtonClicked() {
                                 var word_length = task["smallword_length"];
                                 $.ajax({
                                     url: $SCRIPT_ROOT + `/_getMultiTargets/${number_of_targets}/${correct_fontsize}/${wrong_fontsize}/${word_length}`,
-                                    // url: flask_util.url_for('getMultiTargets', {
-                                    //     number_of_targets: number_of_targets,
-                                    //     correct_fontsize: task["big_fontsize"],
-                                    //     wrong_fontsize: task["small_fontsize"],
-                                    //     word_length: task["smallword_length"]
-                                    // }),
                                     success:
                                         function (data) {
                                             formed_targets = data.map(function (dictionary) {
                                                 return {
                                                     text: dictionary['text'],
                                                     weight: dictionary['fontsize'],
-                                                    html: { class: dictionary['html'] },
+                                                    html: { class: dictionary['html'],
+                                                            style: 'visibility: hidden' },
                                                     handlers: {
                                                         click: function () { postDataMulti($(this)); },
                                                         mouseover: function () { this.style.cursor = "pointer"; }
@@ -225,7 +225,7 @@ function onStartButtonClicked() {
                                                 // Don't quite understand why success happens after all the url have been done
                                                 // Tried complete:, but it assume the ajax is complete after the url request, 
                                                 // but not after the three success callback
-                                                drawTargetsMultiRings(targets, distractors, flash_time);
+                                                drawTargetsMultiRings(targets, distractors, task["flash_time"]);
                                             }
                                         },
                                     dataType: "json"
@@ -243,6 +243,70 @@ function onStartButtonClicked() {
             alert("rule not understand");
     }
 }
+
+function show_word(word_type){
+    switch(word_type){
+        case "both":
+            $(".target, .distractor").css("visibility","visible");
+            break;
+        case "target":
+            $(".target").css("visibility","visible");
+            break;
+        case "distractor":
+            $(".distractor").css("visibility","visible");
+            break;
+    }
+}
+function hide_word(word_type){
+    switch(word_type){
+        case "both":
+            $(".target, .distractor").css("visibility","hidden");
+            break;
+        case "target":
+            $(".target").css("visibility","hidden");
+            break;
+        case "distractor":
+            $(".distractor").css("visibility","hidden");
+            break;
+    }
+}
+
+// show the cloud
+// start the timer
+function show_stim(block,flash_time){
+    $("#notification").html("");
+    $("#center_cross").off();
+    show_word("both");
+    startTime = new Date();
+
+    if (block === true){
+        var create_block = ()=>{
+            $.each($(".target"), (index, target) => {
+                var target_left = parseFloat(target.style.left);
+                var target_top = parseFloat(target.style.top);
+                var block = makeBlock("block" + index, target_left, target_top);
+                hide_word("target");
+                $("#JQWC").append(block);
+
+                $("#block" + index).bind("click", function () {
+                    // highlight the clicked block
+                    if (clicked_word_stack === null) {
+                        $(this).css("border", "3px solid");
+                    }
+                    // hide the irrelevant words and blocks to prevent changing mind
+                    hide_word("both");
+                    $(".block").css("visibility","hidden");
+
+                    // trigger the target underneath's click, which add this word
+                    // to the clicked_word_stack
+                    $("#target" + index).trigger("click");
+                });
+            });
+        }
+        timeout_func = setTimeout(create_block,flash_time);
+    }
+}
+
 
 // Two targets drawn opposite along the diameter of a circle
 // Click block then click the central cross to continue
@@ -318,12 +382,19 @@ function drawTargetsOpposite(target_array, distractor_array, distance_between, f
     var targets_distance = Math.sqrt(Math.pow(targets_x_distance, 2) + Math.pow(targets_y_distance, 2));
     console.log("distance between the two target is: " + targets_distance);
 
-    callback(distractor_array, true, flash_time);
+    var flash = Boolean;
+    if (flash_time !== -1){
+        flash = true;
+    } else {
+        flash = false;
+    }
+    callback(distractor_array, flash, flash_time);
 }
 
 // Multiple targets drawn on a single circle
 // Click the block first then click the central red cross to continue
 function drawTargetsOnRing(target_array, distractor_array, radius, flash_time, callback) {
+    // $("#Status_Bar").append('<div id="notification" style="font-size: larger; text-align: center;">Loading...</div>');
     $("#JQWC").addClass("jqcloud");
     var cloud_center_x = $("#JQWC").width() / 2.0;
     var cloud_center_y = $("#JQWC").height() / 2.0;
@@ -388,7 +459,13 @@ function drawTargetsOnRing(target_array, distractor_array, radius, flash_time, c
 
         already_placed_targets.push(word_span[0]);
     });
-    callback(distractor_array, true, flash_time);
+    var flash = Boolean;
+    if (flash_time !== -1){
+        flash = true;
+    } else {
+        flash = false;
+    }
+    callback(distractor_array, flash, flash_time);
 }
 
 function drawTargetsMultiRings(target_2Darray, distractor_array, flash_time) {
@@ -470,23 +547,53 @@ function drawTargetsMultiRings(target_2Darray, distractor_array, flash_time) {
     });
 }
 
+function drawDistractorsCallback(word_array, block, flash_time) {
+    $("#JQWC").jQCloud(word_array, already_placed_targets, "distractor",{
+        delayedMode: false,
+        afterCloudRender: () => {
+            if ($(".target").length > target_num && $(".distractor").length >250) {
+                console.log("too many targets and distractors appeared on screen")
+                nextTask();
+            }
+            else {
+                // console.log(block);
+                // console.log(flash_time);
+                $("#notification").html("Task loaded. Click the red cross to start")
+                // $("#Status_Bar").append('<div id="notification" style="font-size: larger;">Task loaded. Click the red cross to start.</div>');
+                $("#center_cross").css("cursor","pointer").off()
+                    .bind("click",()=>{show_stim(block,flash_time)});
+            }
+        }
+    });
+}
+function makeBlock(id, left, top) {
+    var block = $('<span>').attr('id', id)
+        .attr('class', 'block')
+        .css('font-size', '25px')
+        .css('padding-left', '30px')
+        .css('background', '#2C3539')
+        .css('position', 'absolute')
+        .css('left', left)
+        .css('top', top)
+        .css('cursor', 'pointer')
+        .html('&nbsp;&nbsp;&nbsp;&nbsp;');
+    return block;
+}
+
+
 function click_word(clickedword) {
     endTime = new Date();
-    clearTimeout(timeout_block);
-    $(".distractor").css("visibility", "hidden");
-    $(".target").css("visibility", "hidden");
-    $("#Status_Bar").append('<div id="notification" style="font-size: larger;">Click the red cross to proceed to the next task</div>');
-    if (clicked_word_stack === null) {
-        clicked_word_stack = clickedword;
-    }
-    else {
-        alert("Please trust your intuition :)")
-    }
+    clearTimeout(timeout_func);
+    hide_word("both");
+    $("#notification").html("Processing...");
+    // $("#Status_Bar").append('<div id="notification" style="font-size: larger; text-align: center;">Processing...</div>');
+    clicked_word_stack = clickedword;
+    submit_word();
 }
 
 function submit_word() {
     if (clicked_word_stack != null) {
-        switch (ring_type) {
+        switch (experiment) {
             case "opposite_on_circle":
                 postData(clicked_word_stack);
                 break;
@@ -507,94 +614,10 @@ function submit_word() {
 
 
 
-function drawDistractorsCallback(word_array, block, flash_time) {
-    $("#JQWC").jQCloud(word_array, already_placed_targets, "distractor",{
-        delayedMode: false,
-        afterCloudRender: () => {
-            if ($(".target").length > target_num && $(".distractor").length >250) {
-                console.log("Multiple Targets appeared on screen")
-                nextTask();
-            }
-            else {startTime = new Date();
-
-                if (block === true) {
-                    var block_target = () => {
-                        $.each($(".target"), (index, target) => {
-                            var target_left = parseFloat(target.style.left);
-                            var target_top = parseFloat(target.style.top);
-                            var block = makeBlock("block" + index, target_left, target_top);
-                            $("#JQWC").append(block);
-                            $(".target").css("visibility", "hidden");
-
-                            $("#block" + index).bind("click", function () {
-                                // highlight the clicked block
-                                if (clicked_word_stack === null) {
-                                    $(this).css("border", "3px solid");
-                                }
-                                // hide the irrelevant words and blocks to prevent changing mind
-                                $(".distractor").css("visibility", "hidden");
-                                $(".block").css("visibility", "hidden");
-
-                                // trigger the target underneath's click, which add this word
-                                // to the clicked_word_stack
-                                $("#target" + index).trigger("click");
-                            });
-                        });
-                    }
-                    // timeout_block = setTimeout(block_target, flash_time);
-                }
-
-                $.each($(".target"), (index, target) => {
-                    target.style.visibility = "visible";
-                }).promise().done(()=>{timeout_block = setTimeout(block_target,flash_time);});
-
-                // if (block === true) {
-                //     var block_target = () => {
-                //         $.each($(".target"), (index, target) => {
-                //             var target_left = parseFloat(target.style.left);
-                //             var target_top = parseFloat(target.style.top);
-                //             var block = makeBlock("block" + index, target_left, target_top);
-                //             $("#JQWC").append(block);
-                //             $(".target").css("visibility", "hidden");
-
-                //             $("#block" + index).bind("click", function () {
-                //                 // highlight the clicked block
-                //                 if (clicked_word_stack === null) {
-                //                     $(this).css("border", "3px solid");
-                //                 }
-                //                 // hide the irrelevant words and blocks to prevent changing mind
-                //                 $(".distractor").css("visibility", "hidden");
-                //                 $(".block").css("visibility", "hidden");
-
-                //                 // trigger the target underneath's click, which add this word
-                //                 // to the clicked_word_stack
-                //                 $("#target" + index).trigger("click");
-                //             });
-                //         });
-                //     }
-                //     // timeout_block = setTimeout(block_target, flash_time);
-                // }
-            }
-        }
-    });
-}
-function makeBlock(id, left, top) {
-    var block = $('<span>').attr('id', id)
-        .attr('class', 'block')
-        .css('font-size', '25px')
-        .css('padding-left', '30px')
-        .css('background', '#2C3539')
-        .css('position', 'absolute')
-        .css('left', left)
-        .css('top', top)
-        .css('cursor', 'pointer')
-        .html('&nbsp;&nbsp;&nbsp;&nbsp;');
-    return block;
-}
-
 // The postData function used for opposite_on_circle
 function postData(clickedword) {
-    clearTimeout(timeout_block);
+    // alert(task['flash_time'])
+    clearTimeout(timeout_func);
     // endTime = new Date();
     var timeDiff = endTime - startTime; // in ms
     timeDiff /= 1000; // strip the ms
@@ -679,7 +702,9 @@ function postData(clickedword) {
         "question_index": question_index,
 
         "block_width": block_width,
-        "block_height": block_height
+        "block_height": block_height,
+
+        "flash_time": task["flash_time"]
     };
 
     // $.post("/randomStim/post_data", word_data);
@@ -690,9 +715,7 @@ function postData(clickedword) {
         data: JSON.stringify(word_data),
         contentType: "application/json",
         success: function (response) {
-            // alert('Response collected, please be ready for the next one');
             nextTask();
-            // console.log(word_data);
             console.log(response);
         },
         error: function (error) {
@@ -703,6 +726,7 @@ function postData(clickedword) {
 }
 
 function postDataMulti(clickedword) {
+    // alert(task['flash_time'])
     // endTime = new Date();
     var timeDiff = endTime - startTime; // in ms
     timeDiff /= 1000; // strip the ms
@@ -767,7 +791,9 @@ function postDataMulti(clickedword) {
 
         "question_index": question_index,
         "block_width": block_width,
-        "block_height": block_height
+        "block_height": block_height,
+
+        "flash_time": task["flash_time"]
     };
 
     $.ajax({
@@ -796,8 +822,7 @@ function nextTask() {
         var input = $("<input>").attr("type", "hidden").attr("name", "turker_id").val(turker_id);
         $('#get_completion_page').append(input).submit();
     } else {
-        setTimeout(onStartButtonClicked, 10);
-        // onStartButtonClicked();
+        setTimeout(onStartButtonClicked);
     }
 }
 
