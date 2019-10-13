@@ -206,6 +206,38 @@ def getMultiTargets(number_of_targets,correct_fontsize,wrong_fontsize,word_lengt
     # print("the targets are: ", target_words)
     return json.dumps(target_words)
 
+# Get n target words from this topic
+# Used for gist-forming
+@app.route('/_getTopicTargets/<number_of_targets>/<correct_fontsize>/<wrong_fontsize>')
+def getTopicTargets(number_of_targets,correct_fontsize,wrong_fontsize):
+    category_words = {'animal':['meow','purr','milk','yarn','whiskers'],
+                        'food':['cake','coffee','sushi','burger','salad'],
+                        'beach':['sand','waves','swimsuit','sunscreen','shell'],
+                        'coffee':['starbucks','drink','cafe','latte','cappucino'],
+                        'chicken':['kentucky','fried','bird','eat','meat'],
+                        'banana':['monkey','fruit','yellow','curved','tropical']}
+    # legit_words = get_legit_word(decent_word_list,int(word_length),int(word_length))
+    target_words = []
+    topic = random.choice(list(category_words))
+    target_words = category_words[topic]
+
+    for i in range(int(number_of_targets)):
+        target_words[i] = {'text': target_words[i], 'fontsize': 22, 'html': topic}
+    
+    # for i in range(int(number_of_targets)):
+    #     correct_target = random.choice(legit_words)
+    #     legit_words.remove(correct_target)
+    #     target_words.append(correct_target)
+
+    # for i in range(int(number_of_targets)):
+    #     if i == 0:
+    #         target_words[i] = {'text': target_words[i], 'fontsize': correct_fontsize, 'html': 'target'}
+    #     else:
+    #         target_words[i] = {'text': target_words[i], 'fontsize': wrong_fontsize, 'html': 'target'}
+    # print("the targets are: ", target_words)
+    return json.dumps(target_words)
+
+
 # Used for hypo2
 # Specifications about word length, fontsize, and number of distractors
 # are found in the config file

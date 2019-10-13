@@ -169,6 +169,77 @@ function load_cloud(){
                 dataType: "json"
             });
             break;
+        // case "multiple_circles":
+        //     experiment = "multiple_circles";
+        //     target_num = task["number_of_targets"]
+        //     // 3 targets on each level of circle
+        //     var number_of_rings = 3;
+        //     var distractors;
+        //     var targets;
+        //     $.ajax({
+        //         url: $SCRIPT_ROOT+'/_getDistractors',
+        //         success:
+        //             function (data) {
+        //                 distractors = data.map(function (dictionary) {
+        //                     // So in order for your code to work 
+        //                     // change data.map() to data.products.map() 
+        //                     // since products is an array which you can iterate upon.
+        //                     // Here, specify the ajax dataType as "json" also works
+        //                     return {
+        //                         text: dictionary['text'],
+        //                         weight: dictionary['fontsize'],
+        //                         html: { class: dictionary['html'],
+        //                                 style: 'visibility: hidden' },
+        //                         handlers: { mouseover: function () { this.style.cursor = "default"; } }
+        //                     }
+        //                 });
+
+        //                 // the 2nd ajax call to gain the targets data
+        //                 // Create 2D array that contains the targets on each circle.
+        //                 targets = [];
+        //                 for (var i = 0; i < number_of_rings; i++) {
+        //                     (function (i) {
+        //                         var number_of_targets = task["number_of_targets"];
+        //                         var correct_fontsize = task["big_fontsize"];
+        //                         var wrong_fontsize = task["small_fontsize"];
+        //                         var word_length = task["smallword_length"];
+        //                         $.ajax({
+        //                             url: $SCRIPT_ROOT + `/_getMultiTargets/${number_of_targets}/${correct_fontsize}/${wrong_fontsize}/${word_length}`,
+        //                             success:
+        //                                 function (data) {
+        //                                     formed_targets = data.map(function (dictionary) {
+        //                                         return {
+        //                                             text: dictionary['text'],
+        //                                             weight: dictionary['fontsize'],
+        //                                             html: { class: dictionary['html'],
+        //                                                     style: 'visibility: hidden' },
+        //                                             handlers: {
+        //                                                 click: function () { postDataMulti($(this)); },
+        //                                                 mouseover: function () { this.style.cursor = "pointer"; }
+        //                                             }
+        //                                         }
+        //                                     });
+        //                                     // alert(formed_targets);
+        //                                     targets[i] = formed_targets;
+        //                                     if (i === number_of_rings - 1) { // This is at the end of the for loop
+        //                                         // Don't quite understand why success happens after all the url have been done
+        //                                         // Tried complete:, but it assume the ajax is complete after the url request, 
+        //                                         // but not after the three success callback
+        //                                         drawTargetsMultiRings(targets, distractors, task["flash_time"]);
+        //                                     }
+        //                                 },
+        //                             dataType: "json"
+        //                         });
+        //                     })(i);  // i.e. wrap the whole contents of your loop in an self-executing function.
+        //                     // Here, the value of outer i gets passed into the wrapping self-executing anonymous function; this 
+        //                     // unique value's location gets captured by the async callback. In this way, each async gets its own 
+        //                     // value, determined at the moment the self-executing function is invoked.
+        //                 }
+        //             },
+        //         dataType: "json"
+        //     });
+        //     break;
+            
         case "multiple_circles":
             experiment = "multiple_circles";
             target_num = task["number_of_targets"]
@@ -204,7 +275,7 @@ function load_cloud(){
                                 var wrong_fontsize = task["small_fontsize"];
                                 var word_length = task["smallword_length"];
                                 $.ajax({
-                                    url: $SCRIPT_ROOT + `/_getMultiTargets/${number_of_targets}/${correct_fontsize}/${wrong_fontsize}/${word_length}`,
+                                    url: $SCRIPT_ROOT + `/_getTopicTargets/${number_of_targets}/${correct_fontsize}/${wrong_fontsize}`,
                                     success:
                                         function (data) {
                                             formed_targets = data.map(function (dictionary) {
@@ -238,7 +309,7 @@ function load_cloud(){
                     },
                 dataType: "json"
             });
-            break;
+            break;    
         default:
             alert("rule not understand");
     }
@@ -473,11 +544,14 @@ function drawTargetsMultiRings(target_2Darray, distractor_array, flash_time) {
     var drawTargetsEachRing = (target_array, index, counter) => {
         var cloud_center_x = $("#JQWC").width() / 2.0;
         var cloud_center_y = $("#JQWC").height() / 2.0;
-        var distance_between = index * 200 + 100;
+        var distance_between = index * 300 + 150;
         var ring_num = index;
         target_array.forEach((target_word, index, array) => {
             var font_size = target_word["weight"];
-            var word_span = $('<span>').attr(target_word.html).addClass("ring" + ring_num).css("id", "ring" + ring_num + "target" + index);
+            var word_span = $('<span>').attr(target_word.html)
+                                        .addClass("target")
+                                        .addClass("ring" + ring_num)
+                                        .css("id", "ring" + ring_num + "target" + index);
             word_span.append(target_word.text);
             $("#JQWC").append(word_span);
             word_span[0].style.visibility = "hidden";
@@ -724,6 +798,20 @@ function postData(clickedword) {
         }
     });
 }
+
+function topics_data(){
+    topics = [];
+    // get the topics of this wordcloud
+    $(".target").each(function(index,target){
+        topic = target.classList[0];
+        if (!topics.includes(topic)){
+            topics.push(topic);
+        }
+    });
+    return topics;
+
+}
+
 
 function postDataMulti(clickedword) {
     // alert(task['flash_time'])
