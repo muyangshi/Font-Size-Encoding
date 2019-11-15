@@ -49,7 +49,7 @@
 
 		<h3>Whom Should I Contact If I Have Questions?</h3>
 
-		<p>You may ask any questions about the research at any time. If you have questions about the research after you leave today you should contact the Principal Investigator Dr Eric Alexander at 507-222-4170. If you are not satisfied with response of research team, have more questions, or want to talk with someone about your rights as a research participant, you may contact Carleton College's IRB Chair, Justin London, at 507-222-4397.</p>
+		<p>You may ask any questions about the research at any time. If you have questions about the research after you leave today you should contact the Principal Investigator Dr Eric Alexander at 507-222-4170. If you are not satisfied with response of research team, have more questions, or want to talk with someone about your rights as a research participant, you may contact the Institutional Review Board for Research with Human Subjects at Carleton College, c/o Office of the Associate Dean of the College, Carleton College, One North College Street, Northfield MN, 55057; telephone (507) 222-4301.</p>
 
 		<p>Your participation is completely voluntary. If you begin participation and change your mind you may end your participation at any time without penalty.</p>
 
@@ -57,7 +57,7 @@
 
 		<p>Filling in your Amazon Mechanical Turk ID and hitting the "Ready" button  indicates that you have read this consent form, have an opportunity to ask any questions about your participation in this research and voluntarily consent to participate.</p>
 
-	
+
 		<p>Please provide you Amazon Turker ID</p>
 		<input id="turker_id"><button id="next" disabled="disabled">Ready</button>
 
@@ -94,7 +94,7 @@
 				success: function(response) {
 					console.log(response);
 					// var experiment;
-					
+
 					var input = $("<input>").attr("type","hidden").attr("name","turker_id").val(turker_id);
 					var exp_type = $("<input>").attr("type","hidden").attr("name","experiment").val(experiment);
 					$('#get_description_page').append(exp_type).append(input).submit();
