@@ -88,7 +88,7 @@ def get_description():
     connection = get_connection()
     cursor = connection.cursor()
     participant = 'new'
-    cursor.execute("SELECT turker_id FROM %s WHERE turker_id = %s",(turker_database,turker_id))
+    cursor.execute(sql.SQL("SELECT turker_id FROM %s WHERE turker_id = %s").format(sql.Identifier(turker_database)),(turker_id,))
     if len(cursor.fetchall()) > 1:
         participant = 'tested'
     else:
@@ -347,16 +347,16 @@ def post_data():
 
     connection = get_connection()
     cursor = connection.cursor()
-    cursor.execute("""
-            INSERT INTO %s (turker_id,cloud_width,cloud_height,cloud_center_x,cloud_center_y,
+    cursor.execute(sql.SQL("""
+            INSERT INTO {} (turker_id,cloud_width,cloud_height,cloud_center_x,cloud_center_y,
             clicked_word,correct_word,wrong_word,distance_between_targets,time,
             correct_word_x,correct_word_y,correct_word_fontsize,correct_word_width,correct_word_height,correct_word_center_distance,
             wrong_word_x,wrong_word_y,wrong_word_fontsize,wrong_word_width,wrong_word_height,wrong_word_center_distance,
             number_of_words,span_content,question_index,
             sizeDiff,accuracy,clicked_x,clicked_y,angle,index_of_difficulty,index_of_performance,flash_time,time_stamp)
             VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);
-            """,
-            (opposite_on_circle_database,turker_id,cloud_width,cloud_height,cloud_center_x,cloud_center_y,
+            """).format(sql.Identifier(opposite_on_circle_database)),
+            (turker_id,cloud_width,cloud_height,cloud_center_x,cloud_center_y,
             clicked_word,correct_word,wrong_word,distance_between_targets,time,
             correct_word_x,correct_word_y,correct_word_fontsize,correct_word_width,correct_word_height,correct_word_center_distance,
             wrong_word_x,wrong_word_y,wrong_word_fontsize,wrong_word_width,wrong_word_height,wrong_word_center_distance,
@@ -421,14 +421,14 @@ def post_data_multi():
 
     connection = get_connection()
     cursor = connection.cursor()
-    cursor.execute("""
+    cursor.execute(sql.SQL("""
             INSERT INTO %s (turker_id,cloud_width,cloud_height,cloud_center_x,cloud_center_y,
             clicked_word,time,clicked_word_x,clicked_word_y,clicked_word_center_distance,clicked_word_fontsize,correct_fontsize,wrong_fontsize,
             num_words_in_ring0,num_words_in_ring1,num_words_in_ring2,number_of_targets,number_of_words,span_content,
             question_index,sizeDiff,accuracy,angle,index_of_difficulty,index_of_performance,flash_time,time_stamp)
             VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);
-            """,
-            (single_circle_database,turker_id,cloud_width,cloud_height,cloud_center_x,cloud_center_y,
+            """).format(sql.Identifier(single_circle_database)),
+            (turker_id,cloud_width,cloud_height,cloud_center_x,cloud_center_y,
             clicked_word,time,clicked_word_x,clicked_word_y,clicked_word_center_distance,clicked_word_fontsize,correct_fontsize,wrong_fontsize,
             num_words_in_ring0,num_words_in_ring1,num_words_in_ring2,number_of_targets,number_of_words,span_content,
             question_index,sizeDiff,accuracy,angle,index_of_difficulty,index_of_performance,flash_time,time_stamp))
@@ -462,11 +462,11 @@ def post_demographic_data():
 
     connection = get_connection()
     cursor = connection.cursor()
-    cursor.execute("""
-            INSERT INTO %s (turker_id,age,gender,hand,education,device,browser,game,difficulty,confidence,eyetrace,comments)
+    cursor.execute(sql.SQL("""
+            INSERT INTO {} (turker_id,age,gender,hand,education,device,browser,game,difficulty,confidence,eyetrace,comments)
             VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
-                """,
-            (demographics_database,turker_id,age,gender,hand,education,device,browser,game,difficulty,confidence,eyetrace,comments))
+            """).format(sql.Identifier(demographics_database)),
+            (turker_id,age,gender,hand,education,device,browser,game,difficulty,confidence,eyetrace,comments))
     connection.commit()
     cursor.close()
     connection.close()
