@@ -13,6 +13,7 @@ from flask_util_js import FlaskUtilJs
 from Configures import tasklist_config as config
 # import config
 import psycopg2
+from psycopg2 import sql
 import math
 from datetime import datetime
 
@@ -272,7 +273,7 @@ def receive_id():
     cursor = connection.cursor()
     # cursor.execute("SELECT turker_id FROM turker WHERE turker_id = %s",(turker_id,))
     # if len(cursor.fetchall()) == 0:
-    cursor.execute("INSERT INTO %s (turker_id,hashcode) VALUES (%s, %s)",(turker_database,turker_id,hashcode))
+    cursor.execute(sql.SQL("INSERT INTO {} (turker_id,hashcode) VALUES (%s, %s)").format(sql.Identifier(turker_database)),(turker_id,hashcode))
     connection.commit()
     cursor.close()
     connection.close()
