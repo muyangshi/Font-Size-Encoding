@@ -16,7 +16,7 @@
                 Thank you! You have completed the experiment. <br>
                 Would you fill out the inofrmation down below? They will be kept confidence. <br>
                 After you finish, please click the "Next" button. <br>
-                Then the webpage will prepare for you a completion code, which you can use on Amazon to redeem you reward.
+                Then the webpage will prepare for you a completion code, which you can use on Amazon to redeem you compensation.
             </p>
             </fieldset>
         </div>
@@ -121,7 +121,7 @@
         </div>
         
         <div style="margin: auto; width: 60%; ">
-            <p id="hashcode" style="visibility: hidden;">Your completion code is: {{ Hash_Code }}</p>
+            <p id="hashcode" style="visibility: hidden; font-size: x--large">Your completion code is: {{ Hash_Code }}</p>
         </div>
         
         
@@ -190,7 +190,7 @@
                     data: JSON.stringify(demographic_data),
                     contentType: "application/json",
                     success: function(response){
-                        alert("redirect to Amazon");
+                        $("#demographic").html("");
                     },
                     error: function(error){
                         alert("error saving data");
