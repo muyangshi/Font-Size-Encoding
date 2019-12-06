@@ -20,11 +20,11 @@ from datetime import datetime
 app = flask.Flask(__name__)
 fujs = FlaskUtilJs(app)
 
-turker_database = 'turker'
-opposite_on_circle_database = 'pilot_opposite_on_circle'
+turker_database = 'll_e1_turkers'
+opposite_on_circle_database = 'll_e1_results'
 single_circle_database = 'pilot_single_circle'
 multiple_circle_database = 'pilot_multiple_circles'
-demographics_database = 'pilot_demographics'
+demographics_database = 'll_e1_dem'
 
 def get_connection():
 	'''
