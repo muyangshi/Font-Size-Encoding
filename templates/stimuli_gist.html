@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>WordCloud Stimuli</title>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="{{url_for('static', filename='jqcloud.css')}}">
+        <script type="text/javascript" src="{{ url_for('flask_util_js') }}"></script>
+	</head>
+
+	<body>
+        <div id="Status_Bar" style="z-index: 2; position: fixed;"></div>
+        
+        <div id="WordCloudContainer" style="text-align: center; position:relative">
+            <div id="form_container" style="position:relative;margin-top:5em;text-align:left;float:left;"><form id="collect_response"></form></div>
+            <div id="JQWC" style="width: 1000px; height: 1000px; display: inline-block; position: relative;"><span id="center_cross" style="position: absolute;top: 480px;left: 487.0156px;font-size: 30px;color: red;">&#10011;</span></div>
+        </div>
+        
+
+        <form action="{{url_for('get_completion')}}" method = "POST" id="get_completion_page"></form>
+        
+        <script type="text/javascript" src="{{url_for('static', filename='jquery-3.4.1.min.js')}}"></script>
+        <script type="text/javascript">$SCRIPT_ROOT = {{ request.script_root|tojson|safe }};</script>
+        <script>
+            var turker_id = '{{ ID }}';
+            var tasklist = {{ List_From_Server|tojson }}
+            var post_data_url = '{{url_for("post_data")}}'
+            var post_data_multi_url = '{{url_for("post_data_multi")}}'
+            var post_topic_measurements_url = '{{url_for("post_topic_measurements")}}'
+        </script>
+
+        <script type="text/javascript" src="{{url_for('static', filename='jqcloud-1.0.4.js')}}"></script>
+        <script type="text/javascript" src="{{url_for('static', filename='stimuli_gist.js')}}"></script>
+    </body>
+</html>
