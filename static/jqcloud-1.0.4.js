@@ -224,8 +224,8 @@
                         radius += step;
                         angle += (index % 2 === 0 ? 1 : -1)*step;
 
-                        left = options.center.x - (width / 2.0) + (radius*Math.cos(angle)) * aspect_ratio * 10;
-                        top = options.center.y + radius*Math.sin(angle) * 8 - (height / 2.0);
+                        left = options.center.x - (width / 2.0) + (radius*Math.cos(angle)) * aspect_ratio;
+                        top = options.center.y + radius*Math.sin(angle) - (height / 2.0);
                     }
                     word_style.left = left + "px";
                     word_style.top = top + "px";
