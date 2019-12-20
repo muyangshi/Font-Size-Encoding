@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Gist Experiment Description</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{{url_for('static', filename='jqcloud.css')}}">
+    <script type="text/javascript" src="{{url_for('static',filename='jquery-3.4.1.min.js')}}"></script>
+</head>
+
+<body>
+    <div id="instruction" style="margin: auto; width: 1000px">
+        <fieldset>
+            <legend>
+                <h1>Hello, {{ ID }}</h1>
+            </legend>
+
+            <p>Please read these instructions. Remember that you can choose to exit the task at any time, but you will
+                not receive compensation unless you finish the task.</p>
+        </fieldset>
+
+        <fieldset>
+            <legend>
+                <h2>Instructions</h2>
+            </legend>
+
+            <p>For each question, you will be presented with a word cloud like the one below. Some of the words are
+                highlighted in <strong>black font</strong>. Your task is to click on the black word with the
+                <strong>largest font size</strong>.</p>
+
+            <p>For instance, in the word cloud below, "<strong>assure</strong>" and "<strong>romans</strong>" are
+                highlighted in black font. Of the two,
+                "<strong>assure</strong>" has the larger font size. Therefore, clicking "<strong>assure</strong>" would be
+                the correct answer.</p>
+
+            <p>Try not to read the meaning of the word, because you will not have enough time to do so. The highlighted
+                words will be shown only for a <strong>limited time</strong>.
+                Please simply select the word that appears bigger.</p>
+
+            <p>After your "view time" is up, each of the highlighted black words will be covered by a equal-sized black
+                box
+                <span id="sample_block"></span> to prevent you from seeing the words.
+                Click on the box that you think covers the largest black word.</p>
+
+            <p>After your click is registered, the browser window will be cleaned. Then you can click on the central
+                <strong style="color: red">red cross &#10011;</strong> to proceed to the next word cloud, at your pace.
+                You will see
+                your progress bar on the top right corner of your page.</p>
+
+            <p>Finally, while performing this task, keep your eyes fixed on the <strong style="color: red">red
+                    cross &#10011;</strong> in the middle of the word cloud rather than looking at the words (as well as
+                you are
+                able).</p>
+        </fieldset>
+    </div>
+    <div>
+        <div id="WordCloudContainer" style="text-align: center;">
+            <div id="JQWC" style="width: 1000px; height: 1000px; display: inline-block; position: relative;" class="jqcloud">
+                <span class="distractor" id="JQWC_word_196" style="position: absolute; left: 350.551px; top: 860.716px; font-size: 20px;">mover</span>
+                <span class="distractor" id="JQWC_word_195" style="position: absolute; left: 827.198px; top: 250.953px; font-size: 16px;">rumor</span>
+                <span class="distractor" id="JQWC_word_193" style="position: absolute; left: 467.825px; top: 762.378px; font-size: 16px;">woven</span>
+                <span class="distractor" id="JQWC_word_192" style="position: absolute; left: 177.573px; top: 240.246px; font-size: 19px;">sen</span>
+                <span class="distractor" id="JQWC_word_191" style="position: absolute; left: 20.4127px; top: 346.731px; font-size: 19px;">mac</span>
+                <span class="distractor" id="JQWC_word_190" style="position: absolute; left: 614.029px; top: 412.675px; font-size: 16px;">wee</span>
+                <span class="distractor" id="JQWC_word_189" style="position: absolute; left: 770.551px; top: 379.769px; font-size: 17px;">resonance</span>
+                <span class="distractor" id="JQWC_word_188" style="position: absolute; left: 842.082px; top: 196.653px; font-size: 25px;">canvas</span>
+                <span class="distractor" id="JQWC_word_187" style="position: absolute; left: 934.811px; top: 397.825px; font-size: 16px;">cannons</span>
+                <span class="distractor" id="JQWC_word_186" style="position: absolute; left: 238.085px; top: 197.537px; font-size: 24px;">wore</span>
+                <span class="distractor" id="JQWC_word_185" style="position: absolute; left: 754.535px; top: 191.141px; font-size: 22px;">cam</span>
+                <span class="distractor" id="JQWC_word_184" style="position: absolute; left: 783.434px; top: 824.83px; font-size: 19px;">oeuvre</span>
+                <span class="distractor" id="JQWC_word_183" style="position: absolute; left: 602.878px; top: 139.42px; font-size: 18px;">resource</span>
+                <span class="distractor" id="JQWC_word_182" style="position: absolute; left: 856.17px; top: 636.678px; font-size: 18px;">error</span>
+                <span class="distractor" id="JQWC_word_181" style="position: absolute; left: 413.952px; top: 871.066px; font-size: 25px;">scams</span>
+                <span class="distractor" id="JQWC_word_180" style="position: absolute; left: 54.8234px; top: 406.138px; font-size: 20px;">omen</span>
+                <span class="distractor" id="JQWC_word_179" style="position: absolute; left: 926.992px; top: 634.46px; font-size: 22px;">cows</span>
+                <span class="distractor" id="JQWC_word_178" style="position: absolute; left: 792.315px; top: 548.003px; font-size: 16px;">erroneous</span>
+                <span class="distractor" id="JQWC_word_177" style="position: absolute; left: 188.483px; top: 381.454px; font-size: 18px;">crown</span>
+                <span class="distractor" id="JQWC_word_176" style="position: absolute; left: 410.569px; top: 839.796px; font-size: 16px;">excesses</span>
+                <span class="distractor" id="JQWC_word_175" style="position: absolute; left: 486.138px; top: 858.485px; font-size: 23px;">seas</span>
+                <span class="distractor" id="JQWC_word_174" style="position: absolute; left: 283.842px; top: 766.154px; font-size: 16px;">n.c</span>
+                <span class="distractor" id="JQWC_word_173" style="position: absolute; left: 442.605px; top: 155.44px; font-size: 15px;">curses</span>
+                <span class="distractor" id="JQWC_word_171" style="position: absolute; left: 619.349px; top: 869.642px; font-size: 25px;">successor</span>
+                <span class="distractor" id="JQWC_word_170" style="position: absolute; left: 881.555px; top: 661.144px; font-size: 23px;">aurora</span>
+                <span class="distractor" id="JQWC_word_169" style="position: absolute; left: 120.995px; top: 267.588px; font-size: 24px;">u.n</span>
+                <span class="distractor" id="JQWC_word_168" style="position: absolute; left: 929.698px; top: 369.864px; font-size: 24px;">curses</span>
+                <span class="distractor" id="JQWC_word_167" style="position: absolute; left: 106px; top: 297.543px; font-size: 18px;">concur</span>
+                <span class="distractor" id="JQWC_word_166" style="position: absolute; left: 457.7px; top: 91.1874px; font-size: 20px;">rec</span>
+                <span class="distractor" id="JQWC_word_165" style="position: absolute; left: 159.432px; top: 717.576px; font-size: 15px;">summers</span>
+                <span class="distractor" id="JQWC_word_164" style="position: absolute; left: 270.756px; top: 240.523px; font-size: 18px;">ceo</span>
+                <span class="distractor" id="JQWC_word_163" style="position: absolute; left: 357.752px; top: 810.195px; font-size: 20px;">mon</span>
+                <span class="distractor" id="JQWC_word_162" style="position: absolute; left: 288.629px; top: 304.358px; font-size: 15px;">never</span>
+                <span class="distractor" id="JQWC_word_161" style="position: absolute; left: 142.491px; top: 745.625px; font-size: 25px;">summer</span>
+                <span class="distractor" id="JQWC_word_160" style="position: absolute; left: 287.791px; top: 270.077px; font-size: 20px;">ram</span>
+                <span class="distractor" id="JQWC_word_159" style="position: absolute; left: 330.666px; top: 624.02px; font-size: 20px; cursor: default;">corner</span>
+                <span class="distractor" id="JQWC_word_158" style="position: absolute; left: 321.369px; top: 175.941px; font-size: 18px;">suzanne</span>
+                <span class="distractor" id="JQWC_word_157" style="position: absolute; left: 430.661px; top: 507.011px; font-size: 19px;">arm</span>
+                <span class="distractor" id="JQWC_word_156" style="position: absolute; left: 37.8553px; top: 666.262px; font-size: 25px;">sec</span>
+                <span class="distractor" id="JQWC_word_155" style="position: absolute; left: 251.258px; top: 553.432px; font-size: 25px;">woven</span>
+                <span class="distractor" id="JQWC_word_154" style="position: absolute; left: 702.334px; top: 721.299px; font-size: 25px;">rex</span>
+                <span class="distractor" id="JQWC_word_153" style="position: absolute; left: 883.497px; top: 608.597px; font-size: 19px;">assumes</span>
+                <span class="distractor" id="JQWC_word_152" style="position: absolute; left: 370.718px; top: 729px; font-size: 19px;">sew</span>
+                <span class="distractor" id="JQWC_word_151" style="position: absolute; left: 264.216px; top: 796.358px; font-size: 24px;">ussr</span>
+                <span class="distractor" id="JQWC_word_150" style="position: absolute; left: 739.95px; top: 339.002px; font-size: 21px;">seam</span>
+                <span class="distractor" id="JQWC_word_149" style="position: absolute; left: 130.794px; top: 629.103px; font-size: 16px;">mascara</span>
+                <span class="distractor" id="JQWC_word_148" style="position: absolute; left: 482.687px; top: 826.428px; font-size: 25px;">renown</span>
+                <span class="distractor" id="JQWC_word_147" style="position: absolute; left: 351.118px; top: 341.898px; font-size: 19px;">revenue</span>
+                <span class="distractor" id="JQWC_word_146" style="position: absolute; left: 911.622px; top: 420.587px; font-size: 25px; cursor: default;">awareness</span>
+                <span class="distractor" id="JQWC_word_145" style="position: absolute; left: 571.434px; top: 161.36px; font-size: 25px;">c'm</span>
+                <span class="distractor" id="JQWC_word_144" style="position: absolute; left: 210.656px; top: 231.36px; font-size: 21px;">women</span>
+                <span class="distractor" id="JQWC_word_143" style="position: absolute; left: 834.651px; top: 318.303px; font-size: 25px;">warsaw</span>
+                <span class="distractor" id="JQWC_word_142" style="position: absolute; left: 889.291px; top: 540.671px; font-size: 22px;">amazes</span>
+                <span class="distractor" id="JQWC_word_141" style="position: absolute; left: 593.706px; top: 711.931px; font-size: 18px;">vance</span>
+                <span class="distractor" id="JQWC_word_140" style="position: absolute; left: 756.61px; top: 160.524px; font-size: 25px;">scorer</span>
+                <span class="distractor" id="JQWC_word_139" style="position: absolute; left: 223.406px; top: 716.182px; font-size: 22px;">crown</span>
+                <span class="distractor" id="JQWC_word_138" style="position: absolute; left: 873.917px; top: 483.984px; font-size: 16px;">occurs</span>
+                <span class="distractor" id="JQWC_word_137" style="position: absolute; left: 817.066px; top: 444.329px; font-size: 25px; cursor: default;">move</span>
+                <span class="distractor" id="JQWC_word_136" style="position: absolute; left: 9.00711px; top: 492.546px; font-size: 22px;">cameron</span>
+                <span class="distractor" id="JQWC_word_135" style="position: absolute; left: 852.583px; top: 569.614px; font-size: 18px;">reassure</span>
+                <span class="distractor" id="JQWC_word_134" style="position: absolute; left: 791.899px; top: 710.086px; font-size: 23px;">marcus</span>
+                <span class="distractor" id="JQWC_word_133" style="position: absolute; left: 86.5961px; top: 360.717px; font-size: 17px;">concur</span>
+                <span class="distractor" id="JQWC_word_132" style="position: absolute; left: 700.35px; top: 756.505px; font-size: 20px;">woman</span>
+                <span class="distractor" id="JQWC_word_131" style="position: absolute; left: 291.487px; top: 202.174px; font-size: 18px;">measures</span>
+                <span class="distractor" id="JQWC_word_130" style="position: absolute; left: 0.695498px; top: 470.271px; font-size: 15px;">newcomers</span>
+                <span class="distractor" id="JQWC_word_129" style="position: absolute; left: 637.382px; top: 365.904px; font-size: 17px;">conn</span>
+                <span class="distractor" id="JQWC_word_128" style="position: absolute; left: 823.25px; top: 408.907px; font-size: 16px;">serum</span>
+                <span class="distractor" id="JQWC_word_127" style="position: absolute; left: 743.207px; top: 673.28px; font-size: 18px;">caucuses</span>
+                <span class="distractor" id="JQWC_word_126" style="position: absolute; left: 776.479px; top: 746.133px; font-size: 19px;">cannes</span>
+                <span class="distractor" id="JQWC_word_125" style="position: absolute; left: 324.699px; top: 747.571px; font-size: 16px;">sum</span>
+                <span class="distractor" id="JQWC_word_124" style="position: absolute; left: 744.815px; top: 254.997px; font-size: 25px;">nascar</span>
+                <span class="distractor" id="JQWC_word_123" style="position: absolute; left: 798.167px; top: 622.18px; font-size: 20px;">wares</span>
+                <span class="distractor" id="JQWC_word_122" style="position: absolute; left: 705.259px; top: 647.172px; font-size: 19px;">smear</span>
+                <span class="distractor" id="JQWC_word_121" style="position: absolute; left: 839.688px; top: 502.81px; font-size: 17px;">carcasses</span>
+                <span class="distractor" id="JQWC_word_120" style="position: absolute; left: 371.458px; top: 232.199px; font-size: 23px;">renew</span>
+                <span class="distractor" id="JQWC_word_119" style="position: absolute; left: 391.025px; top: 191.55px; font-size: 19px;">successes</span>
+                <span class="distractor" id="JQWC_word_118" style="position: absolute; left: 76.0399px; top: 430.728px; font-size: 19px; cursor: default;">romance</span>
+                <span class="distractor" id="JQWC_word_117" style="position: absolute; left: 614.123px; top: 258.817px; font-size: 24px;">scams</span>
+                <span class="distractor" id="JQWC_word_116" style="position: absolute; left: 224.447px; top: 266.977px; font-size: 25px;">exec</span>
+                <span class="distractor" id="JQWC_word_115" style="position: absolute; left: 586.805px; top: 827.565px; font-size: 23px;">crossover</span>
+                <span class="distractor" id="JQWC_word_114" style="position: absolute; left: 632.315px; top: 198.387px; font-size: 18px;">coroner</span>
+                <span class="distractor" id="JQWC_word_113" style="position: absolute; left: 89.8599px; top: 553.625px; font-size: 15px;">mere</span>
+                <span class="distractor" id="JQWC_word_112" style="position: absolute; left: 576.853px; top: 784.877px; font-size: 21px;">memo</span>
+                <span class="distractor" id="JQWC_word_111" style="position: absolute; left: 766.717px; top: 309.2px; font-size: 22px;">m.a</span>
+                <span class="distractor" id="JQWC_word_110" style="position: absolute; left: 751.689px; top: 443.211px; font-size: 17px;">mason</span>
+                <span class="distractor" id="JQWC_word_109" style="position: absolute; left: 108.853px; top: 574.663px; font-size: 15px;">moreno</span>
+                <span class="distractor" id="JQWC_word_108" style="position: absolute; left: 102.156px; top: 499.2px; font-size: 20px;">roam</span>
+                <span class="distractor" id="JQWC_word_107" style="position: absolute; left: 172.698px; top: 413.806px; font-size: 24px;">areas</span>
+                <span class="distractor" id="JQWC_word_106" style="position: absolute; left: 757.795px; top: 645.036px; font-size: 21px;">crass</span>
+                <span class="distractor" id="JQWC_word_105" style="position: absolute; left: 119.11px; top: 599.174px; font-size: 20px;">access</span>
+                <span class="distractor" id="JQWC_word_104" style="position: absolute; left: 222.561px; top: 677.891px; font-size: 15px;">cancers</span>
+                <span class="distractor" id="JQWC_word_103" style="position: absolute; left: 358.171px; top: 760.926px; font-size: 24px;">ncaa</span>
+                <span class="distractor" id="JQWC_word_102" style="position: absolute; left: 697.238px; top: 786.952px; font-size: 25px;">resonance</span>
+                <span class="distractor" id="JQWC_word_101" style="position: absolute; left: 170.881px; top: 318.9px; font-size: 23px;">consumers</span>
+                <span class="distractor" id="JQWC_word_100" style="position: absolute; left: 627.613px; top: 445.132px; font-size: 15px; cursor: default;">oscar</span>
+                <span class="distractor" id="JQWC_word_99" style="position: absolute; left: 325.021px; top: 414.616px; font-size: 15px;">annan</span>
+                <span class="distractor" id="JQWC_word_98" style="position: absolute; left: 721.875px; top: 484.312px; font-size: 20px;">mean</span>
+                <span class="distractor" id="JQWC_word_97" style="position: absolute; left: 522.259px; top: 205.099px; font-size: 25px;">summon</span>
+                <span class="distractor" id="JQWC_word_96" style="position: absolute; left: 322.942px; top: 568.808px; font-size: 18px;">runner</span>
+                <span class="distractor" id="JQWC_word_95" style="position: absolute; left: 429.66px; top: 727.864px; font-size: 19px;">owners</span>
+                <span class="distractor" id="JQWC_word_94" style="position: absolute; left: 658.702px; top: 221.366px; font-size: 22px;">seen</span>
+                <span class="distractor" id="JQWC_word_93" style="position: absolute; left: 210.134px; top: 591.974px; font-size: 17px;">scum</span>
+                <span class="distractor" id="JQWC_word_92" style="position: absolute; left: 293.433px; top: 706.596px; font-size: 19px;">moroccan</span>
+                <span class="distractor" id="JQWC_word_91" style="position: absolute; left: 314.043px; top: 487.549px; font-size: 15px;">museum</span>
+                <span class="distractor" id="JQWC_word_90" style="position: absolute; left: 178.005px; top: 491.92px; font-size: 18px;">rumor</span>
+                <span class="distractor" id="JQWC_word_89" style="position: absolute; left: 383.754px; top: 261.617px; font-size: 17px;">carson</span>
+                <span class="distractor" id="JQWC_word_88" style="position: absolute; left: 749.191px; top: 576.263px; font-size: 25px;">commons</span>
+                <span class="distractor" id="JQWC_word_87" style="position: absolute; left: 788.147px; top: 349.846px; font-size: 23px;">server</span>
+                <span class="distractor" id="JQWC_word_86" style="position: absolute; left: 625.838px; top: 770.55px; font-size: 20px;">error</span>
+                <span class="distractor" id="JQWC_word_85" style="position: absolute; left: 120.48px; top: 396.85px; font-size: 23px;">anne</span>
+                <span class="distractor" id="JQWC_word_84" style="position: absolute; left: 743.413px; top: 401.106px; font-size: 18px;">recovers</span>
+                <span class="distractor" id="JQWC_word_83" style="position: absolute; left: 295.314px; top: 327.22px; font-size: 23px;">suv</span>
+                <span class="distractor" id="JQWC_word_82" style="position: absolute; left: 793.322px; top: 473.84px; font-size: 16px;">warmer</span>
+                <span class="distractor" id="JQWC_word_81" style="position: absolute; left: 194.834px; top: 473.222px; font-size: 15px;">monroe</span>
+                <span class="distractor" id="JQWC_word_80" style="position: absolute; left: 723.915px; top: 509.478px; font-size: 16px;">recesses</span>
+                <span class="distractor" id="JQWC_word_79" style="position: absolute; left: 303.876px; top: 651.166px; font-size: 19px;">commune</span>
+                <span class="distractor" id="JQWC_word_78" style="position: absolute; left: 440.631px; top: 582.714px; font-size: 16px;">morrow</span>
+                <span class="distractor" id="JQWC_word_77" style="position: absolute; left: 378.51px; top: 415.072px; font-size: 20px;">marc</span>
+                <span class="distractor" id="JQWC_word_76" style="position: absolute; left: 184.07px; top: 649.421px; font-size: 20px;">vancouver</span>
+                <span class="distractor" id="JQWC_word_75" style="position: absolute; left: 561.497px; top: 446.477px; font-size: 15px;">mover</span>
+                <span class="distractor" id="JQWC_word_74" style="position: absolute; left: 115.044px; top: 468.583px; font-size: 19px;">sermon</span>
+                <span class="distractor" id="JQWC_word_73" style="position: absolute; left: 549.057px; top: 707.981px; font-size: 15px;">russ</span>
+                <span class="distractor" id="JQWC_word_72" style="position: absolute; left: 612.089px; top: 531.891px; font-size: 16px;">omen</span>
+                <span class="distractor" id="JQWC_word_71" style="position: absolute; left: 479.905px; top: 794.463px; font-size: 25px;">arenas</span>
+                <span class="distractor" id="JQWC_word_70" style="position: absolute; left: 138.612px; top: 535.148px; font-size: 19px;">manure</span>
+                <span class="distractor" id="JQWC_word_69" style="position: absolute; left: 489.524px; top: 234.666px; font-size: 21px;">crows</span>
+                <span class="distractor" id="JQWC_word_68" style="position: absolute; left: 333.451px; top: 280.196px; font-size: 16px;">exxon</span>
+                <span class="distractor" id="JQWC_word_67" style="position: absolute; left: 564.388px; top: 736.995px; font-size: 24px;">armor</span>
+                <span class="distractor" id="JQWC_word_66" style="position: absolute; left: 402.365px; top: 637.269px; font-size: 20px;">moss</span>
+                <span class="distractor" id="JQWC_word_65" style="position: absolute; left: 211.063px; top: 528.521px; font-size: 24px;">uss</span>
+                <span class="distractor" id="JQWC_word_64" style="position: absolute; left: 460.763px; top: 298.996px; font-size: 25px;">vases</span>
+                <span class="distractor" id="JQWC_word_63" style="position: absolute; left: 263.429px; top: 582.622px; font-size: 17px;">warsaw</span>
+                <span class="distractor" id="JQWC_word_62" style="position: absolute; left: 656.743px; top: 588.496px; font-size: 20px; cursor: default;">camera</span>
+                <span class="distractor" id="JQWC_word_61" style="position: absolute; left: 433.286px; top: 677.63px; font-size: 22px;">mao</span>
+                <span class="distractor" id="JQWC_word_60" style="position: absolute; left: 398.734px; top: 293.455px; font-size: 20px;">ever</span>
+                <span class="distractor" id="JQWC_word_59" style="position: absolute; left: 380.007px; top: 541.08px; font-size: 15px;">casa</span>
+                <span class="distractor" id="JQWC_word_58" style="position: absolute; left: 238.773px; top: 612.006px; font-size: 21px; cursor: default;">wearer</span>
+                <span class="distractor" id="JQWC_word_57" style="position: absolute; left: 638.804px; top: 297.786px; font-size: 23px;">reverence</span>
+                <span class="distractor" id="JQWC_word_56" style="position: absolute; left: 159.722px; top: 442.304px; font-size: 21px;">warsaw</span>
+                <span class="distractor" id="JQWC_word_55" style="position: absolute; left: 175.494px; top: 353.202px; font-size: 24px;">neurons</span>
+                <span class="distractor" id="JQWC_word_54" style="position: absolute; left: 673.4px; top: 456.383px; font-size: 18px;">romeo</span>
+                <span class="distractor" id="JQWC_word_53" style="position: absolute; left: 302.424px; top: 359.601px; font-size: 16px;">exxon</span>
+                <span class="distractor" id="JQWC_word_52" style="position: absolute; left: 320.518px; top: 680.41px; font-size: 18px;">convene</span>
+                <span class="distractor" id="JQWC_word_51" style="position: absolute; left: 694.26px; top: 619.098px; font-size: 21px;">commerce</span>
+                <span class="distractor" id="JQWC_word_50" style="position: absolute; left: 735.714px; top: 535.96px; font-size: 23px;">carr</span>
+                <span class="distractor" id="JQWC_word_49" style="position: absolute; left: 658.673px; top: 337.898px; font-size: 22px;">noon</span>
+                <span class="distractor" id="JQWC_word_48" style="position: absolute; left: 358.851px; top: 318.3px; font-size: 21px;">reverses</span>
+                <span class="distractor" id="JQWC_word_47" style="position: absolute; left: 245.239px; top: 421.074px; font-size: 19px;">museums</span>
+                <span class="distractor" id="JQWC_word_46" style="position: absolute; left: 636.552px; top: 675.127px; font-size: 25px;">sense</span>
+                <span class="distractor" id="JQWC_word_45" style="position: absolute; left: 499.869px; top: 729.861px; font-size: 23px;">mecca</span>
+                <span class="distractor" id="JQWC_word_44" style="position: absolute; left: 461.847px; top: 266.514px; font-size: 23px;">corcoran</span>
+                <span class="distractor" id="JQWC_word_43" style="position: absolute; left: 711.55px; top: 366.941px; font-size: 17px;">macon</span>
+                <span class="distractor" id="JQWC_word_42" style="position: absolute; left: 325.739px; top: 602.146px; font-size: 15px;">creases</span>
+                <span class="distractor" id="JQWC_word_41" style="position: absolute; left: 316.811px; top: 391.572px; font-size: 16px;">monaco</span>
+                <span class="distractor" id="JQWC_word_40" style="position: absolute; left: 503.668px; top: 680.486px; font-size: 24px;">sarcasm</span>
+                <span class="distractor" id="JQWC_word_39" style="position: absolute; left: 644.963px; top: 414.449px; font-size: 24px;">consume</span>
+                <span class="distractor" id="JQWC_word_38" style="position: absolute; left: 581.644px; top: 631.451px; font-size: 17px;">moe</span>
+                <span class="distractor" id="JQWC_word_37" style="position: absolute; left: 566.203px; top: 348.517px; font-size: 18px;">excess</span>
+                <span class="distractor" id="JQWC_word_36" style="position: absolute; left: 532.678px; top: 306.292px; font-size: 19px;">co-owner</span>
+                <span class="distractor" id="JQWC_word_35" style="position: absolute; left: 270.893px; top: 399.167px; font-size: 16px;">nunn</span>
+                <span class="distractor" id="JQWC_word_34" style="position: absolute; left: 355.154px; top: 364.24px; font-size: 22px;">memos</span>
+                <span class="distractor" id="JQWC_word_33" style="position: absolute; left: 265.311px; top: 445.503px; font-size: 22px;">areas</span>
+                <span class="distractor" id="JQWC_word_32" style="position: absolute; left: 436.326px; top: 437.956px; font-size: 19px;">waco</span>
+                <span class="distractor" id="JQWC_word_31" style="position: absolute; left: 324.141px; top: 511.371px; font-size: 23px;">moms</span>
+                <span class="distractor" id="JQWC_word_30" style="position: absolute; left: 670.222px; top: 534.687px; font-size: 20px;">crowe</span>
+                <span class="distractor" id="JQWC_word_29" style="position: absolute; left: 510.486px; top: 365.873px; font-size: 16px;">excuse</span>
+                <span class="distractor" id="JQWC_word_28" style="position: absolute; left: 262.208px; top: 482.856px; font-size: 18px;">rare</span>
+                <span class="distractor" id="JQWC_word_27" style="position: absolute; left: 622.972px; top: 628.86px; font-size: 21px;">cow</span>
+                <span class="distractor" id="JQWC_word_26" style="position: absolute; left: 594.534px; top: 600.249px; font-size: 20px; cursor: default;">mason</span>
+                <span class="distractor" id="JQWC_word_25" style="position: absolute; left: 289.475px; top: 515.595px; font-size: 21px;">aaa</span>
+                <span class="distractor" id="JQWC_word_24" style="position: absolute; left: 472.031px; top: 330.571px; font-size: 25px;">areas</span>
+                <span class="distractor" id="JQWC_word_23" style="position: absolute; left: 489.247px; top: 633.982px; font-size: 24px;">masses</span>
+                <span class="distractor" id="JQWC_word_22" style="position: absolute; left: 396.654px; top: 602.55px; font-size: 22px; cursor: default;">nascar</span>
+                <span class="distractor" id="JQWC_word_21" style="position: absolute; left: 626.245px; top: 560.581px; font-size: 20px; cursor: default;">oversaw</span>
+                <span class="distractor" id="JQWC_word_20" style="position: absolute; left: 617.314px; top: 386.807px; font-size: 21px;">consumes</span>
+                <span class="distractor" id="JQWC_word_19" style="position: absolute; left: 563.351px; top: 416.438px; font-size: 23px;">rum</span>
+                <span class="distractor" id="JQWC_word_18" style="position: absolute; left: 436.868px; top: 564.78px; font-size: 15px;">crease</span>
+                <span class="distractor" id="JQWC_word_17" style="position: absolute; left: 371.508px; top: 394.969px; font-size: 17px;">xerox</span>
+                <span class="distractor" id="JQWC_word_16" style="position: absolute; left: 330.861px; top: 540.78px; font-size: 16px;">arena</span>
+                <span class="distractor" id="JQWC_word_15" style="position: absolute; left: 502.812px; top: 601.783px; font-size: 21px;">'re</span>
+                <span class="distractor" id="JQWC_word_14" style="position: absolute; left: 538.183px; top: 389.377px; font-size: 17px;">mason</span>
+                <span class="distractor" id="JQWC_word_13" style="position: absolute; left: 641.791px; top: 497.033px; font-size: 25px;">memo</span>
+                <span class="distractor" id="JQWC_word_12" style="position: absolute; left: 338.772px; top: 442.059px; font-size: 21px; cursor: default;">caucuses</span>
+                <span class="distractor" id="JQWC_word_11" style="position: absolute; left: 384.648px; top: 570.989px; font-size: 19px;">memo</span>
+                <span class="distractor" id="JQWC_word_10" style="position: absolute; left: 441.992px; top: 382.268px; font-size: 24px;">worms</span>
+                <span class="distractor" id="JQWC_word_9" style="position: absolute; left: 382.881px; top: 501.097px; font-size: 21px;">rene</span>
+                <span class="distractor" id="JQWC_word_8" style="position: absolute; left: 549.439px; top: 572.481px; font-size: 23px;">was</span>
+                <span class="distractor" id="JQWC_word_7" style="position: absolute; left: 459.912px; top: 410.5px; font-size: 17px;">consumers</span>
+                <span class="distractor" id="JQWC_word_6" style="position: absolute; left: 382.787px; top: 480.482px; font-size: 15px;">ncaa</span>
+                <span class="distractor" id="JQWC_word_5" style="position: absolute; left: 422.788px; top: 471.71px; font-size: 16px;">crowe</span>
+                <span class="distractor" id="JQWC_word_4" style="position: absolute; left: 507.015px; top: 552.465px; font-size: 21px;">mum</span>
+                <span class="distractor" id="JQWC_word_3" style="position: absolute; left: 563.189px; top: 463.627px; font-size: 25px;">surname</span>
+                <span class="distractor" id="JQWC_word_2" style="position: absolute; left: 548.704px; top: 525.832px; font-size: 25px;">mesa</span>
+                <span class="distractor" id="JQWC_word_1" style="position: absolute; left: 557.839px; top: 494.554px; font-size: 24px;">exams</span>
+                <span class="distractor" id="JQWC_word_0" style="position: absolute; left: 465px; top: 490.5px; font-size: 19px;">reverses</span>
+                <span id="center_cross" style="position: absolute; top: 480px; left: 487.016px; font-size: 30px; color: red; cursor: pointer;">✛</span>
+                <span class="target ring0" id="target0" style="visibility: visible; font-size: 24px; color: black; position: absolute; left: 439.959px; top: 530.557px;">assure</span>
+                <span class="target ring0" id="target1" style="visibility: visible; font-size: 20px; color: black; position: absolute; left: 492.041px; top: 445.943px;">romans</span>
+            </div>
+        </div>
+    </div>
+
+    <div style="margin:auto; width:1000px">
+        <fieldset>
+            <legend> <h2>Continue: </h3></legend>
+            <a id="simple_link" onclick="addBlock()" href="javascript:void(0);">
+                See the blocking effect
+            </a>
+            <p>When you are ready, click "Next" below.<br></p>
+            <button id="start_stim">Next</button>
+        </fieldset>
+    </div>
+
+    <form action="{{url_for('get_stimuli_gist_page')}}" method="POST" id="get_stimuli_page">
+        <input type="hidden" name="experiment" value="gist">
+    </form>
+
+    <script type="text/javascript" src="{{url_for('static', filename='jquery-3.4.1.min.js')}}"></script>
+    <script type="text/javascript">
+        var turker_id = '{{ ID }}';
+        var participant = '{{ Participant }}'
+        
+        initialize();
+
+        function initialize() {
+            var next = document.getElementById('start_stim');
+            if (next) {
+                next.onclick = onNextClicked;
+            }
+            console.log(turker_id);
+            if (participant === "tested"){
+                $("body").html("Hello "+turker_id+", you have already participated in this research. \n If this is your first time participating in this research, please contant us at xxx@carleton.edu. \n Thank you for your understanding.")
+            }
+        }
+        
+        $("#sample_block").attr('class', 'block')
+            .css('font-size', '25px')
+            .css('padding-left', '30px')
+            .css('background', '#2C3539')
+            .css('cursor', 'pointer')
+            .html('&nbsp;&nbsp;&nbsp;&nbsp;');
+
+        function addBlock(){
+            $("#JQWC").append('<span id="block0"class="block" style="font-size: 25px; padding-left: 30px; background: rgb(44, 53, 57); position: absolute; left: 439.959px; top: 530.557px; cursor: pointer;">&nbsp;&nbsp;&nbsp;&nbsp;</span><span id="block1" class="block" style="font-size: 25px; padding-left: 30px; background: rgb(44, 53, 57); position: absolute; left: 492.041px; top: 445.943px; cursor: pointer;">&nbsp;&nbsp;&nbsp;&nbsp;</span>');
+        }
+
+        function onNextClicked() {
+            var input = $("<input>").attr("type","hidden").attr("name","turker_id").val(turker_id);
+            $('#get_stimuli_page').append(input).submit();
+        }
+    </script>
+
+</body>
+
+</html>

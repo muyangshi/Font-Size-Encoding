@@ -14,6 +14,7 @@ from Configures import tasklist_config as config
 # import config
 import psycopg2
 import math
+import numpy
 from datetime import datetime
 
 app = flask.Flask(__name__)
@@ -58,6 +59,8 @@ def get_landing_page(exp):
         experiment = 'multiple_circles'
     elif exp == '1n':
         experiment = 'opposite_on_circle_no_flash'
+    elif exp =='gist':
+        experiment = 'gist'
     return flask.render_template('landing.html',Experiment = experiment)
 
 # Get the description page, with turker_id as the data passed from HTML form from landing page
@@ -89,6 +92,13 @@ def get_stimuli_page():
     # print(turker_id)
     return flask.render_template('stimuli.html', ID = turker_id, List_From_Server=get_tasklist(experiment))
 
+@app.route('/word_cognition_study/stimuli_gist',methods=['POST'])
+def get_stimuli_gist_page():
+    turker_id = flask.request.form['turker_id']
+    experiment = flask.request.form['experiment']
+    print(experiment)
+    return flask.render_template('stimuli_gist.html', ID = turker_id, List_From_Server=get_tasklist(experiment))
+
 @app.route('/word_cognition_study/completion', methods=['POST'])
 def get_completion():
     data = flask.request.form
@@ -107,14 +117,6 @@ def get_completion():
 # The format of the tasklist is 
 # [{'small_fontsize':int,'smallword_length':int,'big_fontsize':int,'bigword_length':int},{},{},...]
 def get_tasklist(experiment):
-    # if experiment == "opposite_on_circle":
-    #     tasklist = config.loadTask(config.tasklist_opposite_on_circle)
-    # elif experiment == "single_circle":
-    #     tasklist = config.loadTask(config.tasklist_single_circle)
-    # elif experiment == "multiple_circles":
-    #     tasklist = config.loadTask(config.tasklist_multiple_circles)
-    # elif experiment == "opposite_on_circle_no_flash":
-    #     tasklist = config.loadTask(config.tasklist_opposite_on_circle_no_flash)
     return config.loadTask(config.tasklist_path(experiment))
 
 # This getStim is used for generating the words for experiment "opposite_on_circle". 
@@ -237,6 +239,35 @@ def getTopicTargets(number_of_targets,correct_fontsize,wrong_fontsize):
     # print("the targets are: ", target_words)
     return json.dumps(target_words)
 
+# Used for fetching words for the gist experiment
+@app.route('/_getTopicWords/<topic_num>/<size1mean>/<size1sd>/<dist1mean>/<dist1sd>/<n1>/<size2mean>/<size2sd>/<dist2mean>/<dist2sd>/<n2>')
+def getTopicWords(topic_num,size1mean,size1sd,dist1mean,dist1sd,n1,size2mean,size2sd,dist2mean,dist2sd,n2):
+    with open('dict.json') as json_file:
+        Topic_Words = json.load(json_file)
+    # topic1 = ''
+    # topic2 = ''
+    # topic_distractor = ''
+    topics = []
+    word_list = []
+    num_words = [int(n1),int(n2)]
+    size_means = [int(size1mean),int(size2mean)]
+    size_sds = [int(size1sd),int(size2sd)]
+    dist_means = [int(dist1mean),int(dist2mean)]
+    dist_sds = [int(dist1sd),int(dist2sd)]
+    for i in range(int(topic_num)): # For each topic, fetch n_i words from that topic
+        topic = random.choice(list(Topic_Words))
+        topics.append(topic) # Push topic1 and topic2 in order
+        for _ in range(num_words[i]):
+            text = random.choice(Topic_Words[topic])
+            if len(Topic_Words[topic]) > 1:
+                Topic_Words[topic].remove(text)
+            fontsize = int(numpy.random.normal(size_means[i],size_sds[i]))
+            dist = int(numpy.random.normal(dist_means[i],dist_sds[i]))
+            word = {'text':text,'fontsize':fontsize,'dist':dist,'topic':topic,'html':'target '+topic}
+            word_list.append(word)
+        del Topic_Words[topic]
+    topics.append(random.choice(list(Topic_Words))) # Push a third topic_distractor
+    return json.dumps({'topics':topics,'word_list':word_list})
 
 # Used for hypo2
 # Specifications about word length, fontsize, and number of distractors
@@ -431,7 +462,60 @@ def post_demographic_data():
     #     # writer.writerow(['tuerker_id','age','gender','hand','difficulty','confidence','eyetrace'])
     #     writer.writerow([turker_id,age,gender,hand,difficulty,confidence,eyetrace])
     return json.dumps("success saving data")
+
+
+@app.route('/_postTopicMeasurements',methods=['POST'])
+def post_topic_measurements():
+    json_data=json.loads(flask.request.data)
+    method,data,cloud,time,response,wordcloud_name = json_data["method"],json_data["arr"],json_data["cloud"],json_data["time"],json_data["response"],json_data["wordcloud_name"]
+    #data is a list, [[{topic:1}],[{topic:2}]]
+    topic_list = []
+    mean_dist = []
+    sd_dist = []
+    mean_size = []
+    sd_size = []
+    num = []
+    for topic in data: # data = [[topic1],[topic2]]
+        dist_list = []
+        size_list = []
+        for word in topic: # topic = [{"topic":topic,"size":size,"center_dist":center_dist,"x_dist":x_dist,"y_dist":y_dist,"word":word},...]
+            dist_list.append(word["center_dist"])
+            size_list.append(word["size"])
+        topic_list.append(topic[0]["topic"])
+        mean_dist.append(numpy.mean(dist_list))
+        sd_dist.append(numpy.std(dist_list))
+        mean_size.append(numpy.mean(size_list))
+        sd_size.append(numpy.mean(size_list))
+        num.append(len(dist_list))
+    # print((topic_list,mean_dist,sd_dist,mean_size,sd_size,num))
+    # write_dist(mean_dist+sd_dist+num)
+    topic_list.append(json_data["distractor"])
+    print(method)
+    write_measure(method,topic_list+mean_dist+mean_size+response+[wordcloud_name]+sd_dist+sd_size+num+[time],cloud)
+    return json.dumps("lol")
 ##########################################################################################################################################################################################################################
+
+    # with open('pilot_client_id.csv','a', newline='') as csvfile:
+    #     writer = csv.writer(csvfile, delimiter = ',', quotechar='"')
+    #     # hashcode = hash(turker_id+'Carleton')
+    #     writer.writerow([turker_id,hashcode])
+
+def write_dist(dist):
+    with open('spiral_dist.csv','a',newline='') as csvfile:
+        writer = csv.writer(csvfile,delimiter=',',quotechar='"')
+        writer.writerow(dist)
+
+def write_measure(method,measurements,cloud):
+    measurement_file = method+'.csv'
+    with open(measurement_file,'a',newline='') as m_csvfile:
+        writer = csv.writer(m_csvfile,delimiter=',',quotechar='"')
+        writer.writerow(measurements)
+    cloud_file = method+'_cloud.csv'
+    # print(cloud)
+    with open(cloud_file,'a',newline='',encoding="utf-8") as c_csvfile:
+        writer = csv.writer(c_csvfile,delimiter=',',quotechar='"')
+        writer.writerow([cloud]) #It expects a sequence (eg: a list or tuple) of strings. You're giving it a single string. A string happens to be a sequence of strings too, but it's a sequence of 1 character strings, which isn't what you want.
+
 
 whole_word_list = []
 def load_all_word():
