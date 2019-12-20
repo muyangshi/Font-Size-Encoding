@@ -20,7 +20,6 @@ def loadTask(tasklist_csv_path):
                 this_task[heading[i]] = int(row[i])
             this_task[heading[-1]] = row[-1]
             tasklist.append(this_task)
-    # print(tasklist)
     return tasklist
 
 # tasklist_csv = os.path.join(os.path.dirname(os.path.abspath(__file__)),'test_length.csv')

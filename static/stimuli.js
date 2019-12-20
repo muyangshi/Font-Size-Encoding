@@ -114,7 +114,7 @@ function load_cloud(){
 
                         targets = [];
                         for (var i = 0; i < 2; i++) {
-                            targets.push(distractors.shift());
+                            targets.push(distractors.shift()); //Looking back at my code, this is quite stupid ...
                         }
                         drawTargetsOpposite(targets, distractors, task["distance_between"], task["flash_time"], drawDistractorsCallback);
                     },
