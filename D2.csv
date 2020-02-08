@@ -1,1 +1,6 @@
 topic1,topic2,topic_distractor,mean_dist1,mean_dist2,mean_size1,mean_size2,topic_1_score,topic_2_score,topic_dis_score,wordcloud_name,sd_dist1,sd_dist2,sd_size1,sd_size2,num1,num2,time
+Birthday,Biome,Ways_to_say_Happy,213.13845234432875,227.94839688381393,24.175,26.0,5,2,3,birthday party,95.41465880302643,124.36446889884064,24.175,26.0,40,40,31.927
+Buildings_and_Other_Structures,Beach,Car_Parts,241.83620730596508,219.5247221031625,24.95,27.1,5,5,3,west coast,104.79719828969279,99.97307872360462,24.95,27.1,40,40,59.964
+Birthday,Camping,Car_Parts,227.45108187308102,190.89457093193147,25.7,24.75,5,5,2,vacation,97.1619591009257,93.42463356136982,25.7,24.75,40,40,23.902
+Reptiles__Turtles__and_Tortoises,Energy,Cat,244.92412403134122,234.83507594404745,24.7,25.75,5,5,2,nature and environment,113.36599860883274,112.93877771456663,24.7,25.75,40,40,43.242
+Reptiles__Turtles__and_Tortoises,Insect_and_Bug,World_Languages,226.695004541,229.022975768,23.325,24.025,1,3,1,animal,108.13496357,121.200432214,23.325,24.025,40,40,8.594
