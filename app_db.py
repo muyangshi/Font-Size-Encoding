@@ -157,6 +157,14 @@ def get_completion():
     hash_code = hash(data['turker_id'] + 'Carleton')
     # print(hash_code,type(hash_code))
     return flask.render_template('completion.html', ID = turker_id, Hash_Code = hash_code)
+
+@app.route('/word_cognition_study/completion_gist', methods=['POST'])
+def get_completion_gist():
+    data = flask.request.form
+    turker_id = data['turker_id']
+    hash_code = hash(data['turker_id'] + 'Carleton')
+    # print(hash_code,type(hash_code))
+    return flask.render_template('completion_gist.html', ID = turker_id, Hash_Code = hash_code)
 ##########################################################################################################################################################################################################################
 
 

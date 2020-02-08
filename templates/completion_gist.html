@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Completion Page</title>
+        <meta charset="UTF-8">
+		
+	</head>
+
+	<body>
+        <h1 style="text-align: center;">Completion page</h1>
+
+        <div id="instruction" style="margin: auto; width: 60%; ">
+            <fieldset>
+            <legend><h3>Instructions:</h3></legend>
+            <p>
+                Thank you for completing the experiment.
+                Please kindly ignore anything below. They are for an older expeirment.
+            </p>
+            <!-- <p>
+                Thank you! You have completed the gist experiment. <br>
+                Would you fill out the inofrmation down below? They will be kept confidence. <br>
+                After you finish, please click the "Next" button. <br>
+                Then the webpage will prepare for you a completion code, which you can use on Amazon to redeem you compensation.
+            </p> -->
+            </fieldset>
+        </div>
+        <br>
+        <br>
+        <!-- <div id="demographic" style="margin: auto; width: 60%; ">
+            <fieldset>
+                <legend><h3>Demographics:</h3></legend>
+                
+                <b>Age (in years):</b><br>
+                <input type="text" name="age"><br>
+                
+                <br>
+                <b>Gender:</b><br>
+                <form id="gender_form">
+                    <input type="radio" name="gender" value="male" />Male<br>
+                    <input type="radio" name="gender" value="female" />Female<br>
+                    <input type="radio" name="gender" value="no" />Prefer Not to Specify<br>
+                    <input type="radio" name="gender" value="other" id="radio_gender_other"/>Other: 
+                    <input id="gender_other" type="text" name="gender" style="visibility: hidden;"/>
+                </form>
+
+                <br>
+                <b>Handedness:</b><br>
+                <form id="hand_form">
+                    <input type="radio" name="hand" value="left" />I am left-handed
+                    <input type="radio" name="hand" value="right" />I am right-handed
+                </form>
+
+                <br>
+                <b>Education Level:</b><br>
+                <form id="edu_form">
+                    <input type="radio" name="edu" value="1" />Some High School
+                    <input type="radio" name="edu" value="2" />High School Graduate
+                    <input type="radio" name="edu" value="3" />Some College
+                    <input type="radio" name="edu" value="4" />College Graduate
+                    <input type="radio" name="edu" value="5" />Graduate Degree
+                </form>
+
+                <br>
+                <b>Device:</b><br>
+                i) Which browser are you using?
+                <form id="browser_form">
+                    <input type="radio" name="browser" value="1" />Chrome
+                    <input type="radio" name="browser" value="2" />Firefox
+                    <input type="radio" name="browser" value="3" />Safari
+                    <input type="radio" name="browser" value="4" />Microsoft Edge
+                    <input type="radio" name="browser" value="5" />Opera
+                    <input type="radio" name="browser" value="6" />IE
+                    <input type="radio" name="browser" value="7" />Other
+                </form>
+                <br>
+                ii) Are you using a trackpad or a physical mouse?
+                <form id="device_form">
+                    <input type="radio" name="device" value="1" />Trackpad
+                    <input type="radio" name="device" value="2" />Physical mouse
+                    <input type="radio" name="device" value="3" />Other
+                </form>
+
+                <br>
+                <b>How often do you play Firts Person Shooter games?</b>
+                <form id="game_form">
+                    <input type="radio" name="game" value="1" />Never
+                    <input type="radio" name="game" value="2" />Seldom
+                    <input type="radio" name="game" value="3" />Sometimes
+                    <input type="radio" name="game" value="4" />Often
+                    <input type="radio" name="game" value="5" />Very Frequently
+                </form>
+
+                
+                <br>
+                <b>Difficulty:<br>
+                i) How difficult was it to distinguish between the smaller word and the larger word? On a scale from 1 (very easy) - 5 (very difficult)<br></b>
+                1 (very easy) <input type="range" min="1" max="5" value="1" class="slider" id="difficulty_range" style="width: 30%"> 5 (very difficult) <br>
+                Value: <span id="difficulty_value"></span><br>
+
+                <br>
+                <b>ii) What percentage of the questions do you think you got correct? (From 0% to 100%)<br></b>
+                0% <input type="range" min="0" max="100" value="0" step="5" class="slider" id="confidence_range" style="width: 50%"> 100%<br>
+                Value: <span id="confidence_value"></span>%<br>
+
+                <br>
+                <b>Were you able to keep your eyes fixated on the red dot at the center of the page for all questions? <br></b>
+                <form id="eyetrace_form">
+                    <input type="radio" name="eyetrace" value="fixed">Yes, my eyes were consistently fixed.<br>
+                    <input type="radio" name="eyetrace" value="mostly">Mostly, my eyes occasioinally shifted away.<br>
+                    <input type="radio" name="eyetrace" value="somewhat">Somewhat, I tried to keep my eyes fixed, but they quickly strayed away from the dot.<br>
+                    <input type="radio" name="eyetrace" value="no">No, my eyes consistently strayed away from the red dot<br>
+                    <input type="radio" name="eyetrace" value="other" id="radio_eyetrace_other">Other: 
+                    <input type="text" name="eyetrace" id="eyetrace_other" style="visibility: hidden;"><br>
+                </form>
+
+                <br>
+                <b>We'd love to hear your feedbacks!</b><br>
+                <textarea id="comments" rows="4" cols = "100" placeholder="Please feel to point out any deficiency on experiment design/user experience/bugs,etc. Your comment is greatly appreciated."></textarea>
+            </fieldset>
+
+            <br>
+            <div style="text-align: center;">
+                <button id="nextButton" style="text-align: center;">Next</button>
+            </div>
+        </div>
+        
+        <div style="margin: auto; width: 60%; ">
+            <p id="hashcode" style="visibility: hidden; font-size: x-large">Your completion code is: {{ Hash_Code }}</p>
+        </div> -->
+        
+        
+        <!-- <script type="text/javascript" src="{{url_for('static', filename='jquery-3.4.1.min.js')}}"></script> -->
+        <script type="text/javascript" src="../static/jquery-3.4.1.min.js"></script>
+        <!-- <script>
+            var code = '{{ Hash_Code }}';
+            var turker_id = '{{ ID }}';
+            var post_demographic_url = '{{url_for("post_demographic_data")}}';
+            var difficulty_slider = document.getElementById("difficulty_range");
+            var difficulty_value = document.getElementById("difficulty_value");
+            difficulty_value.innerHTML = difficulty_slider.value;
+            difficulty_slider.oninput = ()=>{difficulty_value.innerHTML = difficulty_slider.value;};
+
+            var confidence_slider = document.getElementById("confidence_range");
+            var confidence_value = document.getElementById("confidence_value");
+            confidence_value.innerHTML = confidence_slider.value;
+            confidence_slider.oninput = ()=>{confidence_value.innerHTML = confidence_slider.value;};
+
+            nextButton = document.getElementById("nextButton");
+            nextButton.onclick = ()=>{
+                document.getElementById("hashcode").style.visibility="visible";
+                post_demographic_data();
+                document.getElementById("nextButton").style.visibility="hidden";
+            };
+
+            $("#radio_gender_other").click(()=>{$("#gender_other")[0].style.visibility="visible";});
+            $("#radio_eyetrace_other").click(()=>{$("#eyetrace_other")[0].style.visibility="visible";});
+
+
+            function post_demographic_data(){
+                var age = document.getElementsByName("age")[0].value;
+                var difficulty = document.getElementById("difficulty_range").value;
+                var confidence = document.getElementById("confidence_range").value;
+                var edu = getRadioVal(document.getElementById("edu_form"),"edu");
+                var hand = getRadioVal(document.getElementById("hand_form"),"hand");
+                var comments = document.getElementById("comments").value;
+                var device = getRadioVal($("#device_form")[0],"device");
+                var browser = getRadioVal($("#browser_form")[0],"browser");
+                var game = getRadioVal($("#game_form")[0],"game");         
+                var gender = getRadioVal(document.getElementById("gender_form"),"gender");
+                if (gender === "other"){
+                    gender = $("#gender_other").value;
+                }
+                var eyetrace = getRadioVal(document.getElementById("eyetrace_form"),"eyetrace");
+                if (eyetrace === "other"){
+                    eyetrace = $("#eyetrace_other").value;
+                }
+                var demographic_data = {
+                    "turker_id": turker_id,
+                    "age": age,
+                    "gender": gender,
+                    "hand": hand,
+                    "education": edu,
+                    "device": device,
+                    "browser": browser,
+                    "game": game,
+                    "difficulty": difficulty,
+                    "confidence": confidence,
+                    "eyetrace": eyetrace,
+                    "comments": comments,
+                };
+                $.ajax({
+                    type: 'POST',
+                    url: post_demographic_url,
+                    data: JSON.stringify(demographic_data),
+                    contentType: "application/json",
+                    success: function(response){
+                        $("#demographic").html("");
+                    },
+                    error: function(error){
+                        alert("error saving data");
+                        console.log(error);
+                    }
+                });
+            }
+            function getRadioVal(form, name) {
+                var val;
+                // get list of radio buttons with specified name
+                var radios = form.elements[name];
+                
+                // loop through list of radio buttons
+                for (var i=0, len=radios.length; i<len; i++) {
+                    if ( radios[i].checked ) { // radio checked?
+                        val = radios[i].value; // if so, hold its value in val
+                        break; // and break out of for loop
+                    }
+                }
+                // console.log(typeof(val)+val);
+                if (val === undefined){
+                    val = 0;
+                }
+                return val; // return value of checked radio or undefined if none checked
+            }
+        </script> -->
+    </body>
+    
+</html>

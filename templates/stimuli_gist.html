@@ -16,7 +16,7 @@
         </div>
         
 
-        <form action="{{url_for('get_completion')}}" method = "POST" id="get_completion_page"></form>
+        <form action="{{url_for('get_completion_gist')}}" method = "POST" id="get_completion_page"></form>
         
         <script type="text/javascript" src="{{url_for('static', filename='jquery-3.4.1.min.js')}}"></script>
         <script type="text/javascript">$SCRIPT_ROOT = {{ request.script_root|tojson|safe }};</script>
