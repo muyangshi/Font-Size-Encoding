@@ -66,8 +66,9 @@
 		<form action="{{url_for('get_description')}}" method = "POST" id="get_description_page"></form>
 	<script type="text/javascript">
 		var $SCRIPT_ROOT = {{request.script_root|tojson|safe}}
-        var turker_id_url = '{{url_for("receive_id")}}';
+        // var turker_id_url = '{{url_for("receive_id")}}';
 		var experiment = '{{Experiment}}';
+		var turker_id_url = '{{url_for("receive_id",experiment = experiment)}}';
 		turker_id_url = turker_id_url + '/' + experiment;
 		initialize();
 
