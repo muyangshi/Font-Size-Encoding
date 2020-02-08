@@ -12,6 +12,7 @@ import csv
 from flask_util_js import FlaskUtilJs
 from Configures import tasklist_config as config
 # import config
+import numpy
 import psycopg2
 from psycopg2 import sql
 import math
@@ -20,11 +21,24 @@ from datetime import datetime
 app = flask.Flask(__name__)
 fujs = FlaskUtilJs(app)
 
-turker_database = 'll_e1_turkers'
-opposite_on_circle_database = 'll_e1_results'
+ll_e1_turker_db = 'll_e1_turkers'
+
+ll_e1n_turker_db = 'll_e1n_turkers'
+ll_e1n_results_db = 'll_e1n_results'
+ll_e1n_dem_db = 'll_e1n_dem'
+
+pilot_gits_turker_db = 'gist_turkers'
 single_circle_database = 'pilot_single_circle'
-multiple_circle_database = 'pilot_multiple_circles'
-demographics_database = 'll_e1_dem'
+
+turker_database = ll_e1n_turker_db
+opposite_on_circle_database = ll_e1n_results_db
+demographics_database = ll_e1n_dem_db
+
+#turker_database = 'll_e1_turkers'
+#opposite_on_circle_database = 'll_e1_results'
+
+#multiple_circle_database = 'pilot_multiple_circles'
+#demographics_database = 'll_e1_dem'
 
 def get_connection():
 	'''
@@ -65,6 +79,8 @@ def get_landing_page(exp):
         experiment = 'multiple_circles'
     elif exp == '1n':
         experiment = 'opposite_on_circle_no_flash'
+    elif exp == 'gist':
+        experiment = 'gist'
     return flask.render_template('landing.html',Experiment = experiment)
 
 # Get the description page, with turker_id as the data passed from HTML form from landing page
@@ -84,34 +100,36 @@ def get_description():
     #     template = 'experiment_opposite_on_circle.html'
 
     template = 'description_' + experiment + '.html'
-
-    connection = get_connection()
-    cursor = connection.cursor()
-    participant = 'new'
-    cursor.execute(sql.SQL("SELECT turker_id FROM {} WHERE turker_id = %s").format(sql.Identifier(turker_database)),(turker_id,))
-    if len(cursor.fetchall()) > 1:
-        participant = 'tested'
-    else:
+    if experiment != 'gist':
+        connection = get_connection()
+        cursor = connection.cursor()
         participant = 'new'
-    # cursor.execute("SELECT EXISTS(SELECT turker_id FROM pilot_opposite_on_circle WHERE turker_id = %s)",(turker_id,))
-    # existance = cursor.fetchone()[0]
-    # if existance == True:
-    #     participant = 'tested'
-    # else:
-    #     cursor.execute("SELECT EXISTS(SELECT turker_id FROM pilot_multi_targets WHERE turker_id = %s)",(turker_id,))
-    #     existance = cursor.fetchone()[0]
-    #     if existance == True:
-    #         participant = 'tested'
-    #     else:
-    #         cursor.execute("SELECT EXISTS(SELECT turker_id FROM pilot_multi_rings WHERE turker_id = %s)",(turker_id,))
-    #         existance = cursor.fetchone()[0]
-    #         if existance == True:
-    #             participant = 'tested'
+        cursor.execute(sql.SQL("SELECT turker_id FROM {} WHERE turker_id = %s").format(sql.Identifier(turker_database)),(turker_id,))
+        if len(cursor.fetchall()) > 1:
+            participant = 'tested'
+        else:
+            participant = 'new'
+        # cursor.execute("SELECT EXISTS(SELECT turker_id FROM pilot_opposite_on_circle WHERE turker_id = %s)",(turker_id,))
+        # existance = cursor.fetchone()[0]
+        # if existance == True:
+        #     participant = 'tested'
+        # else:
+        #     cursor.execute("SELECT EXISTS(SELECT turker_id FROM pilot_multi_targets WHERE turker_id = %s)",(turker_id,))
+        #     existance = cursor.fetchone()[0]
+        #     if existance == True:
+        #         participant = 'tested'
+        #     else:
+        #         cursor.execute("SELECT EXISTS(SELECT turker_id FROM pilot_multi_rings WHERE turker_id = %s)",(turker_id,))
+        #         existance = cursor.fetchone()[0]
+        #         if existance == True:
+        #             participant = 'tested'
 
-    # print(existance,type(existance))
-    connection.commit()
-    cursor.close()
-    connection.close()
+        # print(existance,type(existance))
+        connection.commit()
+        cursor.close()
+        connection.close()
+    else: #piloting for gist experiment
+        participant = 'new'
     
     if turker_id == 'superman':
         participant = 'new'
@@ -124,6 +142,13 @@ def get_stimuli_page():
     experiment = flask.request.form['experiment']
     print(experiment)
     return flask.render_template('stimuli.html', ID = turker_id, List_From_Server=get_tasklist(experiment))
+
+@app.route('/word_cognition_study/stimuli_gist',methods=['POST'])
+def get_stimuli_gist_page():
+    turker_id = flask.request.form['turker_id']
+    experiment = flask.request.form['experiment']
+    print(experiment)
+    return flask.render_template('stimuli_gist.html', ID = turker_id, List_From_Server=get_tasklist(experiment))
 
 @app.route('/word_cognition_study/completion', methods=['POST'])
 def get_completion():
@@ -221,6 +246,67 @@ def get_english_stimuli(num_of_distractor, target1, target2):
 
     return json.dumps(target_words + distractor_words)
 
+# Get n target words from this topic
+# Used for gist-forming
+@app.route('/_getTopicTargets/<number_of_targets>/<correct_fontsize>/<wrong_fontsize>')
+def getTopicTargets(number_of_targets,correct_fontsize,wrong_fontsize):
+    category_words = {'animal':['meow','purr','milk','yarn','whiskers'],
+                        'food':['cake','coffee','sushi','burger','salad'],
+                        'beach':['sand','waves','swimsuit','sunscreen','shell'],
+                        'coffee':['starbucks','drink','cafe','latte','cappucino'],
+                        'chicken':['kentucky','fried','bird','eat','meat'],
+                        'banana':['monkey','fruit','yellow','curved','tropical']}
+    # legit_words = get_legit_word(decent_word_list,int(word_length),int(word_length))
+    target_words = []
+    topic = random.choice(list(category_words))
+    target_words = category_words[topic]
+
+    for i in range(int(number_of_targets)):
+        target_words[i] = {'text': target_words[i], 'fontsize': 22, 'html': topic}
+    
+    # for i in range(int(number_of_targets)):
+    #     correct_target = random.choice(legit_words)
+    #     legit_words.remove(correct_target)
+    #     target_words.append(correct_target)
+
+    # for i in range(int(number_of_targets)):
+    #     if i == 0:
+    #         target_words[i] = {'text': target_words[i], 'fontsize': correct_fontsize, 'html': 'target'}
+    #     else:
+    #         target_words[i] = {'text': target_words[i], 'fontsize': wrong_fontsize, 'html': 'target'}
+    # print("the targets are: ", target_words)
+    return json.dumps(target_words)
+
+# Used for fetching words for the gist experiment
+@app.route('/_getTopicWords/<topic_num>/<size1mean>/<size1sd>/<dist1mean>/<dist1sd>/<n1>/<size2mean>/<size2sd>/<dist2mean>/<dist2sd>/<n2>')
+def getTopicWords(topic_num,size1mean,size1sd,dist1mean,dist1sd,n1,size2mean,size2sd,dist2mean,dist2sd,n2):
+    with open('dict.json') as json_file:
+        Topic_Words = json.load(json_file)
+    # topic1 = ''
+    # topic2 = ''
+    # topic_distractor = ''
+    topics = []
+    word_list = []
+    num_words = [int(n1),int(n2)]
+    size_means = [int(size1mean),int(size2mean)]
+    size_sds = [int(size1sd),int(size2sd)]
+    dist_means = [int(dist1mean),int(dist2mean)]
+    dist_sds = [int(dist1sd),int(dist2sd)]
+    for i in range(int(topic_num)): # For each topic, fetch n_i words from that topic
+        topic = random.choice(list(Topic_Words))
+        topics.append(topic) # Push topic1 and topic2 in order
+        for _ in range(num_words[i]):
+            text = random.choice(Topic_Words[topic])
+            if len(Topic_Words[topic]) > 1:
+                Topic_Words[topic].remove(text)
+            fontsize = int(numpy.random.normal(size_means[i],size_sds[i]))
+            dist = int(numpy.random.normal(dist_means[i],dist_sds[i]))
+            word = {'text':text,'fontsize':fontsize,'dist':dist,'topic':topic,'html':'target '+topic}
+            word_list.append(word)
+        del Topic_Words[topic]
+    topics.append(random.choice(list(Topic_Words))) # Push a third topic_distractor
+    return json.dumps({'topics':topics,'word_list':word_list})
+
 # Used for hypo2
 # Specifications about the length of targets, fontsize of the correct and wrong, and the number of words
 # are passed from the frontend to the server
@@ -263,21 +349,21 @@ def getDistractors():
 # Write data to csvfile/database
 ##########################################################################################################################################################################################################################
 # Write the turker's id into a csvfile --> client_id.csv
-@app.route('/_turker_id', methods = ['POST'])
-def receive_id():
-    data = flask.request.form
-    turker_id = data["turker_id"]
-    hashcode = hash(turker_id+'Carleton')
+@app.route('/_turker_id/<experiment>', methods = ['POST'])
+def receive_id(experiment):
+    if experiment != 'gist':
+        data = flask.request.form
+        turker_id = data["turker_id"]
+        hashcode = hash(turker_id+'Carleton')
 
-    connection = get_connection()
-    cursor = connection.cursor()
-    # cursor.execute("SELECT turker_id FROM turker WHERE turker_id = %s",(turker_id,))
-    # if len(cursor.fetchall()) == 0:
-    cursor.execute(sql.SQL("INSERT INTO {} (turker_id,hashcode) VALUES (%s, %s)").format(sql.Identifier(turker_database)),(turker_id,hashcode))
-    connection.commit()
-    cursor.close()
-    connection.close()
-
+        connection = get_connection()
+        cursor = connection.cursor()
+        # cursor.execute("SELECT turker_id FROM turker WHERE turker_id = %s",(turker_id,))
+        # if len(cursor.fetchall()) == 0:
+        cursor.execute(sql.SQL("INSERT INTO {} (turker_id,hashcode) VALUES (%s, %s)").format(sql.Identifier(turker_database)),(turker_id,hashcode))
+        connection.commit()
+        cursor.close()
+        connection.close()
     # with open('pilot_client_id.csv','a', newline='') as csvfile:
     #     writer = csv.writer(csvfile, delimiter = ',', quotechar='"')
     #     # hashcode = hash(turker_id+'Carleton')
@@ -442,6 +528,36 @@ def post_data_multi():
                         num_words_in_ring0,num_words_in_ring1,num_words_in_ring2,number_of_targets,number_of_words,
                         sizeDiff,accuracy,angle,index_of_difficulty,flash_time,time_stamp])
 
+# Posting topic data to csv
+@app.route('/_postTopicMeasurements',methods=['POST'])
+def post_topic_measurements():
+    json_data=json.loads(flask.request.data)
+    method,data,cloud,time,response,wordcloud_name = json_data["method"],json_data["arr"],json_data["cloud"],json_data["time"],json_data["response"],json_data["wordcloud_name"]
+    #data is a list, [[{topic:1}],[{topic:2}]]
+    topic_list = []
+    mean_dist = []
+    sd_dist = []
+    mean_size = []
+    sd_size = []
+    num = []
+    for topic in data: # data = [[topic1],[topic2]]
+        dist_list = []
+        size_list = []
+        for word in topic: # topic = [{"topic":topic,"size":size,"center_dist":center_dist,"x_dist":x_dist,"y_dist":y_dist,"word":word},...]
+            dist_list.append(word["center_dist"])
+            size_list.append(word["size"])
+        topic_list.append(topic[0]["topic"])
+        mean_dist.append(numpy.mean(dist_list))
+        sd_dist.append(numpy.std(dist_list))
+        mean_size.append(numpy.mean(size_list))
+        sd_size.append(numpy.mean(size_list))
+        num.append(len(dist_list))
+    # print((topic_list,mean_dist,sd_dist,mean_size,sd_size,num))
+    # write_dist(mean_dist+sd_dist+num)
+    topic_list.append(json_data["distractor"])
+    print(method)
+    write_measure(method,topic_list+mean_dist+mean_size+response+[wordcloud_name]+sd_dist+sd_size+num+[time],cloud)
+    return json.dumps("lol")
 
 # Post demographic data
 @app.route('/_post_demographic_data', methods=['POST'])
@@ -477,6 +593,23 @@ def post_demographic_data():
     #     writer.writerow([turker_id,age,gender,hand,difficulty,confidence,eyetrace])
     return json.dumps("success saving data")
 ##########################################################################################################################################################################################################################
+
+# Some helper method for recording gist data
+def write_dist(dist):
+    with open('spiral_dist.csv','a',newline='') as csvfile:
+        writer = csv.writer(csvfile,delimiter=',',quotechar='"')
+        writer.writerow(dist)
+
+def write_measure(method,measurements,cloud):
+    measurement_file = method+'.csv'
+    with open(measurement_file,'a',newline='') as m_csvfile:
+        writer = csv.writer(m_csvfile,delimiter=',',quotechar='"')
+        writer.writerow(measurements)
+    cloud_file = method+'_cloud.csv'
+    # print(cloud)
+    with open(cloud_file,'a',newline='',encoding="utf-8") as c_csvfile:
+        writer = csv.writer(c_csvfile,delimiter=',',quotechar='"')
+        writer.writerow([cloud]) #It expects a sequence (eg: a list or tuple) of strings. You're giving it a single string. A string happens to be a sequence of strings too, but it's a sequence of 1 character strings, which isn't what you want.
 
 whole_word_list = []
 def load_all_word():
