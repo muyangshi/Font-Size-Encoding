@@ -68,6 +68,7 @@
 		var $SCRIPT_ROOT = {{request.script_root|tojson|safe}}
         var turker_id_url = '{{url_for("receive_id")}}';
 		var experiment = '{{Experiment}}';
+		turker_id_url = turker_id_url + '/' + experiment;
 		initialize();
 
 		function initialize() {
