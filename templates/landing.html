@@ -69,7 +69,7 @@
         
 		var experiment = '{{Experiment}}';
 		var turker_id_url = '{{url_for("receive_id",experiment = experiment)}}';
-		// turker_id_url = turker_id_url + '/' + experiment;
+		turker_id_url = turker_id_url + experiment;
 		initialize();
 
 		function initialize() {
