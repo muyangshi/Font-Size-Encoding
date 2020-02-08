@@ -351,11 +351,10 @@ def getDistractors():
 # Write the turker's id into a csvfile --> client_id.csv
 @app.route('/_turker_id/<experiment>', methods = ['POST'])
 def receive_id(experiment):
+    data = flask.request.form
+    turker_id = data["turker_id"]
+    hashcode = hash(turker_id+'Carleton')
     if experiment != 'gist':
-        data = flask.request.form
-        turker_id = data["turker_id"]
-        hashcode = hash(turker_id+'Carleton')
-
         connection = get_connection()
         cursor = connection.cursor()
         # cursor.execute("SELECT turker_id FROM turker WHERE turker_id = %s",(turker_id,))
