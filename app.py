@@ -61,6 +61,8 @@ def get_landing_page(exp):
         experiment = 'opposite_on_circle_no_flash'
     elif exp =='gist':
         experiment = 'gist'
+    elif exp == 'color':
+        experiment = 'color'
     return flask.render_template('landing.html',Experiment = experiment)
 
 # Get the description page, with turker_id as the data passed from HTML form from landing page
@@ -79,7 +81,7 @@ def get_description():
 
     template = 'description_' + experiment + '.html'
 
-    
+
     participant = 'new'
     return flask.render_template(template, ID = turker_id, Participant = participant)
 
@@ -114,12 +116,12 @@ def get_completion():
 # Send information from server py to frontend JS
 ##########################################################################################################################################################################################################################
 # Get the tasklist from test_length_config.py, the tasklist is from test_length.csv
-# The format of the tasklist is 
+# The format of the tasklist is
 # [{'small_fontsize':int,'smallword_length':int,'big_fontsize':int,'bigword_length':int},{},{},...]
 def get_tasklist(experiment):
     return config.loadTask(config.tasklist_path(experiment))
 
-# This getStim is used for generating the words for experiment "opposite_on_circle". 
+# This getStim is used for generating the words for experiment "opposite_on_circle".
 # num_of_distractor + 2 makes a total number of 202 words.
 # the first two of those words are targets, and the 200 rest are distractors
 @app.route('/_getStim/<small_fontsize>/<smallword_length>/<big_fontsize>/<bigword_length>')
@@ -168,7 +170,7 @@ def get_english_stimuli(num_of_distractor, target1, target2):
         if(len(target1_text) == target1['length']):
             legit_words.remove(target1_text)
             break
-    
+
     target2_text = ''
     while True:
         target2_text = random.choice(legit_words)
@@ -199,7 +201,7 @@ def getMultiTargets(number_of_targets,correct_fontsize,wrong_fontsize,word_lengt
         correct_target = random.choice(legit_words)
         legit_words.remove(correct_target)
         target_words.append(correct_target)
-    
+
     for i in range(int(number_of_targets)):
         if i == 0:
             target_words[i] = {'text': target_words[i], 'fontsize': correct_fontsize, 'html': 'target'}
@@ -225,7 +227,7 @@ def getTopicTargets(number_of_targets,correct_fontsize,wrong_fontsize):
 
     for i in range(int(number_of_targets)):
         target_words[i] = {'text': target_words[i], 'fontsize': 22, 'html': topic}
-    
+
     # for i in range(int(number_of_targets)):
     #     correct_target = random.choice(legit_words)
     #     legit_words.remove(correct_target)
@@ -546,7 +548,7 @@ def check_hashcode(hashcode):
         for row in reader:
             if str(hashcode) == row[1]:
                 return True
-    return False 
+    return False
 
 def myround(x,base):
     return base * round(x/base)
@@ -566,7 +568,7 @@ if __name__ == '__main__':
 		print('Usage: {0} host port'.format(sys.argv[0]))
 		print('  Example: {0} allen.mathcs.carleton.edu xxxx'.format(sys.argv[0]))
 		exit()
-	
+
 	host = sys.argv[1]
 	port = int(sys.argv[2])
 	app.run(host=host, port=port, debug=True)

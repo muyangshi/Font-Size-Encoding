@@ -3,17 +3,17 @@
  * Muyang Shi, 25 June 2019
  * Currently being used for the pilot study of comparing the fontsize
  * of TWO target words -- Not anymore! :D
- * 
+ *
  * as of 31 July, starting to implement for hypo2
- * 
+ *
  * as of Aug 8, we want N target words for hypo1
- * 
+ *
  * as of Aug 9, some changes in the design.
  * Specify "single_circle" or "multiple_circles" in the test_length.csv
- * there can be multiple targets on a single_circle, except that 
+ * there can be multiple targets on a single_circle, except that
  * they will no be exactly on the opposite side of each other
  * since there  could be more than two target words
- * 
+ *
  * as of Aug 22, try to let click_on_cross = visible, to reduce visual lag.
  */
 
@@ -39,6 +39,10 @@ var already_placed_targets;
 var clicked_word_stack = null; // "stack" that holds the clicked_word
 var experiment = null; //Specify which postData function to be used
 
+function getTargetColor(luminosity) {
+  return d3.lab(luminosity, 100, 100).formatHex();
+}
+
 
 (function initialize() {
     // var start = document.getElementById('Button_startStimuli');
@@ -55,7 +59,7 @@ function onStartButtonClicked() {
     $("#center_cross").css("cursor", "pointer").off();
     // $("#Status_Bar").append('<div id="notification" style="font-size: larger; text-align: center;">Loading...</div>');
     task = tasklist[0];
-        
+
     // Clear the page content to contain only the fixation cross, and empty the word arrays
     already_placed_targets = [];
     clicked_word_stack = null;
@@ -65,7 +69,7 @@ function onStartButtonClicked() {
     $("#Status_Bar").append('<div id="notification" style="font-size: larger; text-align: center;">Loading...</div>');
     load_cloud();
 }
- 
+
 function load_cloud(){
     // task = tasklist[0];
     var rule = task["rule"];
@@ -181,8 +185,8 @@ function load_cloud(){
         //         success:
         //             function (data) {
         //                 distractors = data.map(function (dictionary) {
-        //                     // So in order for your code to work 
-        //                     // change data.map() to data.products.map() 
+        //                     // So in order for your code to work
+        //                     // change data.map() to data.products.map()
         //                     // since products is an array which you can iterate upon.
         //                     // Here, specify the ajax dataType as "json" also works
         //                     return {
@@ -223,7 +227,7 @@ function load_cloud(){
         //                                     targets[i] = formed_targets;
         //                                     if (i === number_of_rings - 1) { // This is at the end of the for loop
         //                                         // Don't quite understand why success happens after all the url have been done
-        //                                         // Tried complete:, but it assume the ajax is complete after the url request, 
+        //                                         // Tried complete:, but it assume the ajax is complete after the url request,
         //                                         // but not after the three success callback
         //                                         drawTargetsMultiRings(targets, distractors, task["flash_time"]);
         //                                     }
@@ -231,15 +235,15 @@ function load_cloud(){
         //                             dataType: "json"
         //                         });
         //                     })(i);  // i.e. wrap the whole contents of your loop in an self-executing function.
-        //                     // Here, the value of outer i gets passed into the wrapping self-executing anonymous function; this 
-        //                     // unique value's location gets captured by the async callback. In this way, each async gets its own 
+        //                     // Here, the value of outer i gets passed into the wrapping self-executing anonymous function; this
+        //                     // unique value's location gets captured by the async callback. In this way, each async gets its own
         //                     // value, determined at the moment the self-executing function is invoked.
         //                 }
         //             },
         //         dataType: "json"
         //     });
         //     break;
-            
+
         case "multiple_circles":
             experiment = "multiple_circles";
             target_num = task["number_of_targets"]
@@ -252,8 +256,8 @@ function load_cloud(){
                 success:
                     function (data) {
                         distractors = data.map(function (dictionary) {
-                            // So in order for your code to work 
-                            // change data.map() to data.products.map() 
+                            // So in order for your code to work
+                            // change data.map() to data.products.map()
                             // since products is an array which you can iterate upon.
                             // Here, specify the ajax dataType as "json" also works
                             return {
@@ -294,7 +298,7 @@ function load_cloud(){
                                             targets[i] = formed_targets;
                                             if (i === number_of_rings - 1) { // This is at the end of the for loop
                                                 // Don't quite understand why success happens after all the url have been done
-                                                // Tried complete:, but it assume the ajax is complete after the url request, 
+                                                // Tried complete:, but it assume the ajax is complete after the url request,
                                                 // but not after the three success callback
                                                 drawTargetsMultiRings(targets, distractors, task["flash_time"]);
                                             }
@@ -302,14 +306,14 @@ function load_cloud(){
                                     dataType: "json"
                                 });
                             })(i);  // i.e. wrap the whole contents of your loop in an self-executing function.
-                            // Here, the value of outer i gets passed into the wrapping self-executing anonymous function; this 
-                            // unique value's location gets captured by the async callback. In this way, each async gets its own 
+                            // Here, the value of outer i gets passed into the wrapping self-executing anonymous function; this
+                            // unique value's location gets captured by the async callback. In this way, each async gets its own
                             // value, determined at the moment the self-executing function is invoked.
                         }
                     },
                 dataType: "json"
             });
-            break;    
+            break;
         default:
             alert("rule not understand");
     }
@@ -394,7 +398,13 @@ function drawTargetsOpposite(target_array, distractor_array, distance_between, f
     $("#JQWC").append(word_span);
     word_span[0].style.visibility = "hidden";
     word_span[0].style.fontSize = font_size + "px";
-    word_span[0].style.color = "black";
+    // Check to see if task defines color--default to black
+    if (!task.hasOwnProperty('big_luminosity')) {
+      word_span[0].style.color = "black";
+    } else {
+      word_span[0].style.color = getTargetColor(task.big_luminosity);
+    }
+
     var width = word_span.width();
     var height = word_span.height();
     var left;
@@ -425,7 +435,13 @@ function drawTargetsOpposite(target_array, distractor_array, distance_between, f
     $("#JQWC").append(word_span);
     word_span[0].style.visibility = "hidden";
     word_span[0].style.fontSize = font_size + "px";
-    word_span[0].style.color = "black";
+
+    if (!task.hasOwnProperty('small_luminosity')) {
+      word_span[0].style.color = "black";
+    } else {
+      word_span[0].style.color = getTargetColor(task.small_luminosity);
+    }
+
     var width = word_span.width();
     var height = word_span.height();
     var left;
@@ -916,19 +932,19 @@ function nextTask() {
 
 function shuffle(array) {
     var currentIndex = array.length, temporaryValue, randomIndex;
-  
+
     // While there remain elements to shuffle...
     while (0 !== currentIndex) {
-  
+
       // Pick a remaining element...
       randomIndex = Math.floor(Math.random() * currentIndex);
       currentIndex -= 1;
-  
+
       // And swap it with the current element.
       temporaryValue = array[currentIndex];
       array[currentIndex] = array[randomIndex];
       array[randomIndex] = temporaryValue;
     }
-  
+
     return array;
 }
