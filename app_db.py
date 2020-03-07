@@ -18,21 +18,26 @@ from psycopg2 import sql
 import math
 from datetime import datetime
 
+from Configures import dbconfig_color as dbconfig
+turker_database = dbconfig.turker_db
+opposite_on_circle_database = dbconfig.results_db
+demographics_database = dbconfig.dem_db
+
 app = flask.Flask(__name__)
 fujs = FlaskUtilJs(app)
 
-ll_e1_turker_db = 'll_e1_turkers'
-
-ll_e1n_turker_db = 'll_e1n_turkers'
-ll_e1n_results_db = 'll_e1n_results'
-ll_e1n_dem_db = 'll_e1n_dem'
+# ll_e1_turker_db = 'll_e1_turkers'
+#
+# ll_e1n_turker_db = 'll_e1n_turkers'
+# ll_e1n_results_db = 'll_e1n_results'
+# ll_e1n_dem_db = 'll_e1n_dem'
 
 pilot_gits_turker_db = 'gist_turkers'
 single_circle_database = 'pilot_single_circle'
 
-turker_database = ll_e1n_turker_db
-opposite_on_circle_database = ll_e1n_results_db
-demographics_database = ll_e1n_dem_db
+# turker_database = ll_e1n_turker_db
+# opposite_on_circle_database = ll_e1n_results_db
+# demographics_database = ll_e1n_dem_db
 
 #turker_database = 'll_e1_turkers'
 #opposite_on_circle_database = 'll_e1_results'
@@ -81,6 +86,10 @@ def get_landing_page(exp):
         experiment = 'opposite_on_circle_no_flash'
     elif exp == 'gist':
         experiment = 'gist'
+    elif exp == 'c':
+        experiment = 'color_no_flash'
+    elif exp == 'cn':
+        experiment = 'color_flash'
     return flask.render_template('landing.html',Experiment = experiment)
 
 # Get the description page, with turker_id as the data passed from HTML form from landing page
@@ -100,7 +109,7 @@ def get_description():
     #     template = 'experiment_opposite_on_circle.html'
 
     template = 'description_' + experiment + '.html'
-    if experiment != 'gist':
+    if not app.debug and experiment != 'gist':
         connection = get_connection()
         cursor = connection.cursor()
         participant = 'new'
@@ -362,7 +371,7 @@ def receive_id(experiment):
     data = flask.request.form
     turker_id = data["turker_id"]
     hashcode = hash(turker_id+'Carleton')
-    if experiment != 'gist':
+    if not app.debug and experiment != 'gist':
         connection = get_connection()
         cursor = connection.cursor()
         # cursor.execute("SELECT turker_id FROM turker WHERE turker_id = %s",(turker_id,))
@@ -393,7 +402,7 @@ def post_data():
     correct_word = data["correct_word"] #6 TEXT
     wrong_word = data["wrong_word"] #7 TEXT
     distance_between_targets = myround(float(data["distance_between_targets"]),100) #8 INTEGER
-    time = float(data["time"]) #9 REAL
+    timeTaken = float(data["time"]) #9 REAL
 
     correct_word_x = float(data["correct_word_x"]) #10 REAL
     correct_word_y = float(data["correct_word_y"]) #11 REAL
@@ -418,6 +427,11 @@ def post_data():
 
     time_stamp = str(datetime.utcnow()) # 26 TEXT
 
+    # Added color values
+    correct_word_lightness = int(data["correct_word_lightness"])
+    wrong_word_lightness = int(data["wrong_word_lightness"])
+    lightnessDiff = wrong_word_lightness - correct_word_lightness # Darker word is correct, and has lower lightness value
+
     # The below values are calculated
     sizeDiff = correct_word_fontsize - wrong_word_fontsize
     accuracy = 1 if clicked_word == correct_word else 0
@@ -436,30 +450,31 @@ def post_data():
         block_width = -1
         block_height = -1
         index_of_difficulty = math.log2(distance_between_targets/get_hypotenuse(angle,clicked_word_height,clicked_word_width))
-    index_of_performance = index_of_difficulty/time
+    index_of_performance = index_of_difficulty/timeTaken
 
-    connection = get_connection()
-    cursor = connection.cursor()
-    cursor.execute(sql.SQL("""
-            INSERT INTO {} (turker_id,cloud_width,cloud_height,cloud_center_x,cloud_center_y,
-            clicked_word,correct_word,wrong_word,distance_between_targets,time,
-            correct_word_x,correct_word_y,correct_word_fontsize,correct_word_width,correct_word_height,correct_word_center_distance,
-            wrong_word_x,wrong_word_y,wrong_word_fontsize,wrong_word_width,wrong_word_height,wrong_word_center_distance,
-            number_of_words,span_content,question_index,
-            sizeDiff,accuracy,clicked_x,clicked_y,angle,index_of_difficulty,index_of_performance,flash_time,time_stamp)
-            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);
-            """).format(sql.Identifier(opposite_on_circle_database)),
-            (turker_id,cloud_width,cloud_height,cloud_center_x,cloud_center_y,
-            clicked_word,correct_word,wrong_word,distance_between_targets,time,
-            correct_word_x,correct_word_y,correct_word_fontsize,correct_word_width,correct_word_height,correct_word_center_distance,
-            wrong_word_x,wrong_word_y,wrong_word_fontsize,wrong_word_width,wrong_word_height,wrong_word_center_distance,
-            number_of_words,span_content,question_index,
-            sizeDiff,accuracy,clicked_x,clicked_y,angle,index_of_difficulty,index_of_performance,flash_time,time_stamp))
-    connection.commit()
-    cursor.close()
-    connection.close()
+    if not app.debug:
+        connection = get_connection()
+        cursor = connection.cursor()
+        cursor.execute(sql.SQL("""
+                INSERT INTO {} (turker_id,cloud_width,cloud_height,cloud_center_x,cloud_center_y,
+                clicked_word,correct_word,wrong_word,distance_between_targets,time,
+                correct_word_x,correct_word_y,correct_word_fontsize,correct_word_width,correct_word_height,correct_word_center_distance,
+                wrong_word_x,wrong_word_y,wrong_word_fontsize,wrong_word_width,wrong_word_height,wrong_word_center_distance,
+                number_of_words,span_content,question_index,
+                sizeDiff,accuracy,clicked_x,clicked_y,angle,index_of_difficulty,index_of_performance,flash_time,time_stamp,correct_word_lightness,wrong_word_lightness,lightnessDiff)
+                VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);
+                """).format(sql.Identifier(opposite_on_circle_database)),
+                (turker_id,cloud_width,cloud_height,cloud_center_x,cloud_center_y,
+                clicked_word,correct_word,wrong_word,distance_between_targets,timeTaken,
+                correct_word_x,correct_word_y,correct_word_fontsize,correct_word_width,correct_word_height,correct_word_center_distance,
+                wrong_word_x,wrong_word_y,wrong_word_fontsize,wrong_word_width,wrong_word_height,wrong_word_center_distance,
+                number_of_words,span_content,question_index,
+                sizeDiff,accuracy,clicked_x,clicked_y,angle,index_of_difficulty,index_of_performance,flash_time,time_stamp,correct_word_lightness,wrong_word_lightness,lightnessDiff))
+        connection.commit()
+        cursor.close()
+        connection.close()
 
-    return json.dumps([turker_id,clicked_word,time,sizeDiff,accuracy,angle,index_of_difficulty,flash_time])
+    return json.dumps([turker_id,clicked_word,timeTaken,sizeDiff,accuracy,angle,index_of_difficulty,flash_time])
 
 # Post hypo2 stimuli data
 @app.route('/_post_data_multi',methods=['POST'])
@@ -473,7 +488,7 @@ def post_data_multi():
     cloud_center_y = int(data["cloud_center_y"]) #4
 
     clicked_word = data["clicked_word"] #5
-    time = float(data["time"]) #6
+    timeTaken = float(data["time"]) #6
     clicked_word_x = float(data["clicked_word_x"]) #7
     clicked_word_y = float(data["clicked_word_y"]) #8
     clicked_word_center_distance = myround(data["clicked_word_center_distance"],50) #9
@@ -510,27 +525,28 @@ def post_data_multi():
         block_width = -1
         block_height = -1
         index_of_difficulty = math.log2(2*clicked_word_center_distance/get_hypotenuse(angle,clicked_word_height,clicked_word_height))
-    index_of_performance = index_of_difficulty/time #24
+    index_of_performance = index_of_difficulty/timeTaken #24
 
-    connection = get_connection()
-    cursor = connection.cursor()
-    cursor.execute(sql.SQL("""
-            INSERT INTO %s (turker_id,cloud_width,cloud_height,cloud_center_x,cloud_center_y,
-            clicked_word,time,clicked_word_x,clicked_word_y,clicked_word_center_distance,clicked_word_fontsize,correct_fontsize,wrong_fontsize,
-            num_words_in_ring0,num_words_in_ring1,num_words_in_ring2,number_of_targets,number_of_words,span_content,
-            question_index,sizeDiff,accuracy,angle,index_of_difficulty,index_of_performance,flash_time,time_stamp)
-            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);
-            """).format(sql.Identifier(single_circle_database)),
-            (turker_id,cloud_width,cloud_height,cloud_center_x,cloud_center_y,
-            clicked_word,time,clicked_word_x,clicked_word_y,clicked_word_center_distance,clicked_word_fontsize,correct_fontsize,wrong_fontsize,
-            num_words_in_ring0,num_words_in_ring1,num_words_in_ring2,number_of_targets,number_of_words,span_content,
-            question_index,sizeDiff,accuracy,angle,index_of_difficulty,index_of_performance,flash_time,time_stamp))
-    connection.commit()
-    cursor.close()
-    connection.close()
+    if not app.debug:
+        connection = get_connection()
+        cursor = connection.cursor()
+        cursor.execute(sql.SQL("""
+                INSERT INTO %s (turker_id,cloud_width,cloud_height,cloud_center_x,cloud_center_y,
+                clicked_word,time,clicked_word_x,clicked_word_y,clicked_word_center_distance,clicked_word_fontsize,correct_fontsize,wrong_fontsize,
+                num_words_in_ring0,num_words_in_ring1,num_words_in_ring2,number_of_targets,number_of_words,span_content,
+                question_index,sizeDiff,accuracy,angle,index_of_difficulty,index_of_performance,flash_time,time_stamp)
+                VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);
+                """).format(sql.Identifier(single_circle_database)),
+                (turker_id,cloud_width,cloud_height,cloud_center_x,cloud_center_y,
+                clicked_word,timeTaken,clicked_word_x,clicked_word_y,clicked_word_center_distance,clicked_word_fontsize,correct_fontsize,wrong_fontsize,
+                num_words_in_ring0,num_words_in_ring1,num_words_in_ring2,number_of_targets,number_of_words,span_content,
+                question_index,sizeDiff,accuracy,angle,index_of_difficulty,index_of_performance,flash_time,time_stamp))
+        connection.commit()
+        cursor.close()
+        connection.close()
 
     return json.dumps([turker_id,
-                        clicked_word,time,clicked_word_x,clicked_word_y,clicked_word_center_distance,
+                        clicked_word,timeTaken,clicked_word_x,clicked_word_y,clicked_word_center_distance,
                         clicked_word_fontsize,correct_fontsize,wrong_fontsize,
                         num_words_in_ring0,num_words_in_ring1,num_words_in_ring2,number_of_targets,number_of_words,
                         sizeDiff,accuracy,angle,index_of_difficulty,flash_time,time_stamp])
@@ -583,16 +599,17 @@ def post_demographic_data():
     eyetrace = data["eyetrace"]
     comments = data["comments"]
 
-    connection = get_connection()
-    cursor = connection.cursor()
-    cursor.execute(sql.SQL("""
-            INSERT INTO {} (turker_id,age,gender,hand,education,device,browser,game,difficulty,confidence,eyetrace,comments)
-            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
-            """).format(sql.Identifier(demographics_database)),
-            (turker_id,age,gender,hand,education,device,browser,game,difficulty,confidence,eyetrace,comments))
-    connection.commit()
-    cursor.close()
-    connection.close()
+    if not app.debug:
+        connection = get_connection()
+        cursor = connection.cursor()
+        cursor.execute(sql.SQL("""
+                INSERT INTO {} (turker_id,age,gender,hand,education,device,browser,game,difficulty,confidence,eyetrace,comments)
+                VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
+                """).format(sql.Identifier(demographics_database)),
+                (turker_id,age,gender,hand,education,device,browser,game,difficulty,confidence,eyetrace,comments))
+        connection.commit()
+        cursor.close()
+        connection.close()
 
     # with open('pilot_demographic_data.csv','a',newline='') as csvfile:
     #     writer = csv.writer(csvfile,delimiter = ',',quotechar='"')

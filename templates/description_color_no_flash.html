@@ -25,22 +25,23 @@
             </legend>
 
             <p>For each question, you will be presented with a word cloud like the one below. Some of the words are
-                highlighted in <strong>black font</strong>. Your task is to click on the black word with the
-                <strong>largest font size</strong>.</p>
+                highlighted in <strong>different shades of red</strong>. Your task is to click on the red word that is
+                <strong>darker than the other</strong>.</p>
 
             <p>For instance, in the word cloud below, "<strong>assure</strong>" and "<strong>romans</strong>" are
-                highlighted in black font. Of the two,
-                "<strong>assure</strong>" has the larger font size. Therefore, clicking "<strong>assure</strong>" would be
+                different shades of red. Of the two,
+                "<strong>assure</strong>" is darker. Therefore, clicking "<strong>assure</strong>" would be
                 the correct answer.</p>
 
+            <!--
             <p>The highlighted
                 words will be shown only for a <strong>limited time</strong>.
                 Please simply select the word that appears bigger.</p>
 
-            <p>After your "view time" is up, each of the highlighted black words will be covered by a equal-sized black
+            <p>After your "view time" is up, each of the highlighted red words will be covered by a equal-sized black
                 box
                 <span id="sample_block"></span> to prevent you from seeing the words.
-                Click on the box that you think covers the largest black word.</p>
+                Click on the box that you think covers the darker of the two red words.</p>-->
 
             <p>After your click is registered, the page will be cleaned. You may then click on the central
                 <strong style="color: red">red cross &#10011;</strong> to proceed to the next word cloud, at your pace.
@@ -251,8 +252,8 @@
                 <span class="distractor" id="JQWC_word_1" style="position: absolute; left: 557.839px; top: 494.554px; font-size: 24px;">exams</span>
                 <span class="distractor" id="JQWC_word_0" style="position: absolute; left: 465px; top: 490.5px; font-size: 19px;">reverses</span>
                 <span id="center_cross" style="position: absolute; top: 480px; left: 487.016px; font-size: 30px; color: red; cursor: pointer;">✛</span>
-                <span class="target ring0" id="target0" style="visibility: visible; font-size: 24px; color: black; position: absolute; left: 439.959px; top: 530.557px;">assure</span>
-                <span class="target ring0" id="target1" style="visibility: visible; font-size: 20px; color: black; position: absolute; left: 492.041px; top: 445.943px;">romans</span>
+                <span class="target ring0" id="target0" style="visibility: visible; font-size: 21px; color: #931c0b; position: absolute; left: 439.959px; top: 530.557px;">assure</span>
+                <span class="target ring0" id="target1" style="visibility: visible; font-size: 21px; color: #ff8b68; position: absolute; left: 492.041px; top: 445.943px;">romans</span>
             </div>
         </div>
     </div>
@@ -260,16 +261,16 @@
     <div style="margin:auto; width:1000px">
         <fieldset>
             <legend> <h2>Continue: </h3></legend>
-            <a id="simple_link" onclick="addBlock()" href="javascript:void(0);">
+            <!--<a id="simple_link" onclick="addBlock()" href="javascript:void(0);">
                 See the blocking effect
-            </a>
+            </a>-->
             <p>When you are ready, click "Next" below.<br></p>
             <button id="start_stim">Next</button>
         </fieldset>
     </div>
 
     <form action="{{url_for('get_stimuli_page')}}" method="POST" id="get_stimuli_page">
-        <input type="hidden" name="experiment" value="color">
+        <input type="hidden" name="experiment" value="color_no_flash">
     </form>
 
     <script type="text/javascript" src="{{url_for('static', filename='jquery-3.4.1.min.js')}}"></script>

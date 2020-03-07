@@ -39,8 +39,22 @@ var already_placed_targets;
 var clicked_word_stack = null; // "stack" that holds the clicked_word
 var experiment = null; //Specify which postData function to be used
 
-function getTargetColor(luminosity) {
-  return d3.lab(luminosity, 100, 100).formatHex();
+// Lightness values range from 1 to 5 in the CSV
+// How that is converted into CIELAB colors is determined here
+var targetColors = [
+    '#000000',
+    d3.color(d3.interpolateLab('#000000','#ff0000')(1/4)),
+    d3.color(d3.interpolateLab('#000000','#ff0000')(2/4)),
+    d3.color(d3.interpolateLab('#000000','#ff0000')(3/4)),
+    '#ff0000',
+    d3.color(d3.interpolateLab('#ff0000','#ffffff')(1/4)),
+    d3.color(d3.interpolateLab('#ff0000','#ffffff')(2/4)),
+    d3.color(d3.interpolateLab('#ff0000','#ffffff')(3/4)),
+    '#ffffff'
+];
+function getTargetColor(lightness) {
+  //return d3.lab(lightness, 100, 100).formatHex();
+    return targetColors[lightness];
 }
 
 
@@ -399,10 +413,10 @@ function drawTargetsOpposite(target_array, distractor_array, distance_between, f
     word_span[0].style.visibility = "hidden";
     word_span[0].style.fontSize = font_size + "px";
     // Check to see if task defines color--default to black
-    if (!task.hasOwnProperty('big_luminosity')) {
+    if (!task.hasOwnProperty('big_lightness')) {
       word_span[0].style.color = "black";
     } else {
-      word_span[0].style.color = getTargetColor(task.big_luminosity);
+      word_span[0].style.color = getTargetColor(task.big_lightness);
     }
 
     var width = word_span.width();
@@ -436,10 +450,10 @@ function drawTargetsOpposite(target_array, distractor_array, distance_between, f
     word_span[0].style.visibility = "hidden";
     word_span[0].style.fontSize = font_size + "px";
 
-    if (!task.hasOwnProperty('small_luminosity')) {
+    if (!task.hasOwnProperty('small_lightness')) {
       word_span[0].style.color = "black";
     } else {
-      word_span[0].style.color = getTargetColor(task.small_luminosity);
+      word_span[0].style.color = getTargetColor(task.small_lightness);
     }
 
     var width = word_span.width();
@@ -779,6 +793,7 @@ function postData(clickedword) {
         "correct_word_width": correct_word_width,
         "correct_word_height": correct_word_height,
         "correct_word_center_distance": correct_word_center_distance,
+        "correct_word_lightness": task.big_lightness,
 
         "wrong_word_x": wrong_word_x,
         "wrong_word_y": wrong_word_y,
@@ -786,6 +801,7 @@ function postData(clickedword) {
         "wrong_word_width": wrong_word_width,
         "wrong_word_height": wrong_word_height,
         "wrong_word_center_distance": wrong_word_center_distance,
+        "wrong_word_lightness": task.small_lightness,
 
         "number_of_words": number_of_words,
         "span_content": span_content,
