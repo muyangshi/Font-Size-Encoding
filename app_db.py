@@ -87,9 +87,9 @@ def get_landing_page(exp):
     elif exp == 'gist':
         experiment = 'gist'
     elif exp == 'c':
-        experiment = 'color_no_flash'
-    elif exp == 'cn':
         experiment = 'color_flash'
+    elif exp == 'cn':
+        experiment = 'color_no_flash'
     return flask.render_template('landing.html',Experiment = experiment)
 
 # Get the description page, with turker_id as the data passed from HTML form from landing page
