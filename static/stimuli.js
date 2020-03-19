@@ -100,7 +100,9 @@ function onStartButtonClicked() {
     clicked_word_stack = null;
 
     // Add Process bar to the Status_Bar div
-    document.getElementById("Status_Bar").innerHTML = '<div id="progress_bar" style="text-align: center;"><h3>You have ' + tasklist.length + ' tasks left</h3></div>';
+    var directionStr = task.hasOwnProperty('big_lightness') ? 'Click the DARKER red word. ' : '';
+    document.getElementById("Status_Bar").innerHTML =
+        '<div id="progress_bar" style="text-align: center;"><h3>' + directionStr + 'You have ' + tasklist.length + ' tasks left</h3></div>';
     $("#Status_Bar").append('<div id="notification" style="font-size: larger; text-align: center;">Loading...</div>');
     load_cloud();
 }
