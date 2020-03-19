@@ -775,9 +775,19 @@ function postData(clickedword) {
     var targets_y_distance = Math.abs((target_0.height() / 2.0 + parseFloat(target_0[0].style.top)) - (target_1.height() / 2.0 + parseFloat(target_1[0].style.top)));
     var distance_between_targets = Math.sqrt(Math.pow(targets_x_distance, 2) + Math.pow(targets_y_distance, 2));
 
-    var correct_word = target_0.css('font-size') > target_1.css('font-size') ? target_0 : target_1;
-    var wrong_word = target_0.css('font-size') < target_1.css('font-size') ? target_0 : target_1;
-    console.log(correct_word === clickedword ? 'CORRECT!' : 'WRONG!');
+    var correct_word, wrong_word;
+    if (!task.hasOwnProperty('big_lightness')) {
+        correct_word = target_0.css('font-size') > target_1.css('font-size') ? target_0 : target_1;
+        wrong_word = target_0.css('font-size') < target_1.css('font-size') ? target_0 : target_1;
+    } else {
+        var lightness_0 = targetColors.indexOf(d3.color(target_0.css('color')).formatHex());
+        var lightness_1 = targetColors.indexOf(d3.color(target_1.css('color')).formatHex());
+        correct_word = lightness_0 < lightness_1 ? target_0 : target_1;
+        wrong_word = lightness_0 < lightness_1 ? target_1 : target_0;
+    }
+    console.log(correct_word.text() === clickedword.text() ?
+                'CORRECT!' :
+                'WRONG! clicked ' + clickedword.text() + ' but correct was ' + correct_word.text());
 
     var correct_word_fontsize = parseInt(correct_word.css("font-size"));
     var wrong_word_fontsize = parseInt(wrong_word.css("font-size"));
