@@ -72,12 +72,20 @@ var distractorColors = [
     '#67b3e5',
     '#79c3f6'
 ]
-
-function getTargetColor(lightness) {
-  //return d3.lab(lightness, 100, 100).formatHex();
-    return targetColors[lightness];
+//var baseTargetColor = '#d6604d';
+//var baseTargetColor = '#bb4838';
+var baseTargetColor = '#a03024'
+function getTargetColor(lStarDelta) {
+    var labColor = d3.lab(baseTargetColor);
+    labColor.l += lStarDelta;
+    return labColor.formatHex();
 }
-
+function getLStarDelta(color) {
+    //  targetColors.indexOf(d3.color(target_0.css('color')).formatHex());
+    var baseL = d3.lab(baseTargetColor).l;
+    var colorL = d3.lab(color).l;
+    return Math.round(colorL - baseL);
+}
 
 (function initialize() {
     // var start = document.getElementById('Button_startStimuli');
@@ -782,14 +790,17 @@ function postData(clickedword) {
         correct_word = target_0.css('font-size') > target_1.css('font-size') ? target_0 : target_1;
         wrong_word = target_0.css('font-size') < target_1.css('font-size') ? target_0 : target_1;
     } else {
-        var lightness_0 = targetColors.indexOf(d3.color(target_0.css('color')).formatHex());
-        var lightness_1 = targetColors.indexOf(d3.color(target_1.css('color')).formatHex());
+        var lightness_0 = getLStarDelta(target_0.css('color'));
+        var lightness_1 = getLStarDelta(target_1.css('color'));
         correct_word = lightness_0 < lightness_1 ? target_0 : target_1;
         wrong_word = lightness_0 < lightness_1 ? target_1 : target_0;
     }
+    var lightnessComparisonStr = '(' + lightness_0 + ' JNDs vs ' + lightness_1 + ' JNDs)';
     console.log(correct_word.text() === clickedword.text() ?
-                'CORRECT!' :
-                'WRONG! clicked ' + clickedword.text() + ' but correct was ' + correct_word.text());
+                'CORRECT! ' + lightnessComparisonStr :
+                'WRONG! clicked ' + clickedword.text() + ', correct was ' + correct_word.text() + ' ' + lightnessComparisonStr);
+    //if (3*Math.round(lightness_0 / 3) % 3 !== 0) { alert('ALERT: Target 0 not a JND multiple.'); }
+    //if (3*Math.round(lightness_1 / 3) % 3 !== 0) { alert('ALERT: Target 1 not a JND multiple.'); }
 
     var correct_word_fontsize = parseInt(correct_word.css("font-size"));
     var wrong_word_fontsize = parseInt(wrong_word.css("font-size"));
