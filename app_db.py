@@ -469,7 +469,7 @@ def post_data():
                 wrong_word_x,wrong_word_y,wrong_word_fontsize,wrong_word_width,wrong_word_height,wrong_word_center_distance,
                 number_of_words,span_content,question_index,
                 sizeDiff,accuracy,clicked_x,clicked_y,angle,index_of_difficulty,index_of_performance,flash_time,time_stamp,correct_word_lightness,wrong_word_lightness,lightnessDiff,encoding)
-                VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);
+                VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);
                 """).format(sql.Identifier(opposite_on_circle_database)),
                 (turker_id,cloud_width,cloud_height,cloud_center_x,cloud_center_y,
                 clicked_word,correct_word,wrong_word,distance_between_targets,timeTaken,
