@@ -16,9 +16,11 @@ def loadTask(tasklist_csv_path):
         heading = next(reader) # Do not use reader.next() because that is python 2
         for row in reader:
             this_task = {}
-            for i in range(len(heading)-1):
-                this_task[heading[i]] = int(row[i])
-            this_task[heading[-1]] = row[-1]
+            for i in range(len(heading)):
+                if row[i].isdigit():
+                    this_task[heading[i]] = int(row[i])
+                else:
+                    this_task[heading[i]] = row[i]
             tasklist.append(this_task)
     return tasklist
 

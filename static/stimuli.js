@@ -108,7 +108,15 @@ function onStartButtonClicked() {
     clicked_word_stack = null;
 
     // Add Process bar to the Status_Bar div
-    var directionStr = task.hasOwnProperty('big_lightness') ? 'Click the DARKER red word. ' : '';
+    var directionStr;
+    if (task.hasOwnProperty('encoding')) {
+        directionStr = task.encoding == 'color' ? 'Click the DARKER red word.'
+            : 'Click the LARGER red word.'
+    } else if (task.hasOwnProperty('big_lightness')) {
+        directionStr = 'Click the DARKER red word.';
+    } else {
+        directionStr = '';
+    }
     document.getElementById("Status_Bar").innerHTML =
         '<div id="progress_bar" style="text-align: center;"><h3>' + directionStr + 'You have ' + tasklist.length + ' tasks left</h3></div>';
     $("#Status_Bar").append('<div id="notification" style="font-size: larger; text-align: center;">Loading...</div>');
@@ -786,19 +794,30 @@ function postData(clickedword) {
     var distance_between_targets = Math.sqrt(Math.pow(targets_x_distance, 2) + Math.pow(targets_y_distance, 2));
 
     var correct_word, wrong_word;
+    var lightness_0 = getLStarDelta(target_0.css('color'));
+    var lightness_1 = getLStarDelta(target_1.css('color'));
+    var fontSize_0 = parseInt(target_0.css("font-size"));
+    var fontSize_1 = parseInt(target_1.css("font-size"));
     if (!task.hasOwnProperty('big_lightness')) {
         correct_word = target_0.css('font-size') > target_1.css('font-size') ? target_0 : target_1;
         wrong_word = target_0.css('font-size') < target_1.css('font-size') ? target_0 : target_1;
+    } else if (task.hasOwnProperty('encoding')) { // experiment e3
+        if (task.encoding == 'font') {
+            correct_word = fontSize_0 < fontSize_1 ? target_1 : target_0;
+            wrong_word = fontSize_0 < fontSize_1 ? target_0 : target_1;
+        } else {
+            correct_word = lightness_0 < lightness_1 ? target_0 : target_1;
+            wrong_word = lightness_0 < lightness_1 ? target_1 : target_0;
+        }
     } else {
-        var lightness_0 = getLStarDelta(target_0.css('color'));
-        var lightness_1 = getLStarDelta(target_1.css('color'));
         correct_word = lightness_0 < lightness_1 ? target_0 : target_1;
         wrong_word = lightness_0 < lightness_1 ? target_1 : target_0;
     }
-    var lightnessComparisonStr = '(' + lightness_0 + ' JNDs vs ' + lightness_1 + ' JNDs)';
+    var compStr = `(${target_0.text()}: ${fontSize_0} px, ${lightness_0} L*) (${target_1.text()}: ${fontSize_1} px, ${lightness_1} L*)`
+    //var lightnessComparisonStr = '(' + lightness_0 + ' JNDs vs ' + lightness_1 + ' JNDs)';
     console.log(correct_word.text() === clickedword.text() ?
-                'CORRECT! ' + lightnessComparisonStr :
-                'WRONG! clicked ' + clickedword.text() + ', correct was ' + correct_word.text() + ' ' + lightnessComparisonStr);
+                'CORRECT! ' + compStr :
+                'WRONG! clicked ' + clickedword.text() + ', correct was ' + correct_word.text() + ' ' + compStr);
     //if (3*Math.round(lightness_0 / 3) % 3 !== 0) { alert('ALERT: Target 0 not a JND multiple.'); }
     //if (3*Math.round(lightness_1 / 3) % 3 !== 0) { alert('ALERT: Target 1 not a JND multiple.'); }
 
@@ -861,6 +880,10 @@ function postData(clickedword) {
 
         "flash_time": task["flash_time"]
     };
+
+    if (task.hasOwnProperty('encoding')) {
+        word_data['encoding'] = task.encoding;
+    }
 
     // $.post("/randomStim/post_data", word_data);
 

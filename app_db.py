@@ -18,7 +18,7 @@ from psycopg2 import sql
 import math
 from datetime import datetime
 
-from Configures import dbconfig_color as dbconfig
+from Configures import dbconfig_e3 as dbconfig
 turker_database = dbconfig.turker_db
 opposite_on_circle_database = dbconfig.results_db
 demographics_database = dbconfig.dem_db
@@ -90,6 +90,10 @@ def get_landing_page(exp):
         experiment = 'color_flash'
     elif exp == 'cn':
         experiment = 'color_no_flash'
+    elif exp == 'e3_f':
+        experiment = 'e3_font'
+    elif exp == 'e3_c':
+        experiment = 'e3_color'
     return flask.render_template('landing.html',Experiment = experiment)
 
 # Get the description page, with turker_id as the data passed from HTML form from landing page
@@ -432,6 +436,9 @@ def post_data():
     wrong_word_lightness = int(data["wrong_word_lightness"])
     lightnessDiff = wrong_word_lightness - correct_word_lightness # Darker word is correct, and has lower lightness value
 
+    # Encoding just passed through
+    encoding = data['encoding']
+
     # The below values are calculated
     sizeDiff = correct_word_fontsize - wrong_word_fontsize
     accuracy = 1 if clicked_word == correct_word else 0
@@ -461,7 +468,7 @@ def post_data():
                 correct_word_x,correct_word_y,correct_word_fontsize,correct_word_width,correct_word_height,correct_word_center_distance,
                 wrong_word_x,wrong_word_y,wrong_word_fontsize,wrong_word_width,wrong_word_height,wrong_word_center_distance,
                 number_of_words,span_content,question_index,
-                sizeDiff,accuracy,clicked_x,clicked_y,angle,index_of_difficulty,index_of_performance,flash_time,time_stamp,correct_word_lightness,wrong_word_lightness,lightnessDiff)
+                sizeDiff,accuracy,clicked_x,clicked_y,angle,index_of_difficulty,index_of_performance,flash_time,time_stamp,correct_word_lightness,wrong_word_lightness,lightnessDiff,encoding)
                 VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);
                 """).format(sql.Identifier(opposite_on_circle_database)),
                 (turker_id,cloud_width,cloud_height,cloud_center_x,cloud_center_y,
@@ -469,7 +476,7 @@ def post_data():
                 correct_word_x,correct_word_y,correct_word_fontsize,correct_word_width,correct_word_height,correct_word_center_distance,
                 wrong_word_x,wrong_word_y,wrong_word_fontsize,wrong_word_width,wrong_word_height,wrong_word_center_distance,
                 number_of_words,span_content,question_index,
-                sizeDiff,accuracy,clicked_x,clicked_y,angle,index_of_difficulty,index_of_performance,flash_time,time_stamp,correct_word_lightness,wrong_word_lightness,lightnessDiff))
+                sizeDiff,accuracy,clicked_x,clicked_y,angle,index_of_difficulty,index_of_performance,flash_time,time_stamp,correct_word_lightness,wrong_word_lightness,lightnessDiff,encoding))
         connection.commit()
         cursor.close()
         connection.close()
