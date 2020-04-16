@@ -438,7 +438,7 @@ def post_data():
 
     # Encoding just passed through
     encoding = data['encoding']
-    agreement = data['encoding']
+    agreement = data['agreement']
 
     # The below values are calculated
     sizeDiff = correct_word_fontsize - wrong_word_fontsize
