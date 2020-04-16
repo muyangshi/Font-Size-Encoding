@@ -883,6 +883,7 @@ function postData(clickedword) {
 
     if (task.hasOwnProperty('encoding')) {
         word_data['encoding'] = task.encoding;
+        word_data['agreement'] = task.agreement;
     }
 
     // $.post("/randomStim/post_data", word_data);

@@ -438,10 +438,14 @@ def post_data():
 
     # Encoding just passed through
     encoding = data['encoding']
+    agreement = data['encoding']
 
     # The below values are calculated
     sizeDiff = correct_word_fontsize - wrong_word_fontsize
     accuracy = 1 if clicked_word == correct_word else 0
+
+    # Calculate agreement
+
 
     clicked_x = correct_word_x if accuracy == 1 else wrong_word_x
     clicked_y = correct_word_y if accuracy == 1 else wrong_word_y
@@ -468,15 +472,15 @@ def post_data():
                 correct_word_x,correct_word_y,correct_word_fontsize,correct_word_width,correct_word_height,correct_word_center_distance,
                 wrong_word_x,wrong_word_y,wrong_word_fontsize,wrong_word_width,wrong_word_height,wrong_word_center_distance,
                 number_of_words,span_content,question_index,
-                sizeDiff,accuracy,clicked_x,clicked_y,angle,index_of_difficulty,index_of_performance,flash_time,time_stamp,correct_word_lightness,wrong_word_lightness,lightnessDiff,encoding)
-                VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);
+                sizeDiff,accuracy,clicked_x,clicked_y,angle,index_of_difficulty,index_of_performance,flash_time,time_stamp,correct_word_lightness,wrong_word_lightness,lightnessDiff,encoding,agreement)
+                VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);
                 """).format(sql.Identifier(opposite_on_circle_database)),
                 (turker_id,cloud_width,cloud_height,cloud_center_x,cloud_center_y,
                 clicked_word,correct_word,wrong_word,distance_between_targets,timeTaken,
                 correct_word_x,correct_word_y,correct_word_fontsize,correct_word_width,correct_word_height,correct_word_center_distance,
                 wrong_word_x,wrong_word_y,wrong_word_fontsize,wrong_word_width,wrong_word_height,wrong_word_center_distance,
                 number_of_words,span_content,question_index,
-                sizeDiff,accuracy,clicked_x,clicked_y,angle,index_of_difficulty,index_of_performance,flash_time,time_stamp,correct_word_lightness,wrong_word_lightness,lightnessDiff,encoding))
+                sizeDiff,accuracy,clicked_x,clicked_y,angle,index_of_difficulty,index_of_performance,flash_time,time_stamp,correct_word_lightness,wrong_word_lightness,lightnessDiff,encoding,agreement))
         connection.commit()
         cursor.close()
         connection.close()
