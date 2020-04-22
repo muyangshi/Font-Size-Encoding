@@ -853,6 +853,7 @@ function postData(clickedword) {
         "correct_word": correct_word[0].innerHTML,
         "wrong_word": wrong_word[0].innerHTML,
         "distance_between_targets": distance_between_targets,
+        "d": task.distance_between,
         "time": timeDiff,
 
         "correct_word_x": correct_word_x,

@@ -17,9 +17,9 @@ def loadTask(tasklist_csv_path):
         for row in reader:
             this_task = {}
             for i in range(len(heading)):
-                if row[i].isdigit():
+                try:
                     this_task[heading[i]] = int(row[i])
-                else:
+                except ValueError:
                     this_task[heading[i]] = row[i]
             tasklist.append(this_task)
     return tasklist

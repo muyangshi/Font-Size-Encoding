@@ -94,6 +94,10 @@ def get_landing_page(exp):
         experiment = 'e3_font'
     elif exp == 'e3_c':
         experiment = 'e3_color'
+    elif exp == 'e3n_f':
+        experiment = 'e3n_font'
+    elif exp == 'e3n_c':
+        experiment = 'e3n_color'
     return flask.render_template('landing.html',Experiment = experiment)
 
 # Get the description page, with turker_id as the data passed from HTML form from landing page
@@ -405,7 +409,10 @@ def post_data():
     clicked_word = data["clicked_word"] #5 TEXT
     correct_word = data["correct_word"] #6 TEXT
     wrong_word = data["wrong_word"] #7 TEXT
-    distance_between_targets = myround(float(data["distance_between_targets"]),100) #8 INTEGER
+    #distance_between_targets = myround(float(data["distance_between_targets"]),100) #8 INTEGER
+    distance_between_targets = float(data["distance_between_targets"]) # For ll_e3n, stopped rounding
+    # Rounded distance can be found in attribute d
+    d = data["d"]
     timeTaken = float(data["time"]) #9 REAL
 
     correct_word_x = float(data["correct_word_x"]) #10 REAL
@@ -444,8 +451,6 @@ def post_data():
     sizeDiff = correct_word_fontsize - wrong_word_fontsize
     accuracy = 1 if clicked_word == correct_word else 0
 
-    # Calculate agreement
-
 
     clicked_x = correct_word_x if accuracy == 1 else wrong_word_x
     clicked_y = correct_word_y if accuracy == 1 else wrong_word_y
@@ -472,15 +477,15 @@ def post_data():
                 correct_word_x,correct_word_y,correct_word_fontsize,correct_word_width,correct_word_height,correct_word_center_distance,
                 wrong_word_x,wrong_word_y,wrong_word_fontsize,wrong_word_width,wrong_word_height,wrong_word_center_distance,
                 number_of_words,span_content,question_index,
-                sizeDiff,accuracy,clicked_x,clicked_y,angle,index_of_difficulty,index_of_performance,flash_time,time_stamp,correct_word_lightness,wrong_word_lightness,lightnessDiff,encoding,agreement)
-                VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);
+                sizeDiff,accuracy,clicked_x,clicked_y,angle,index_of_difficulty,index_of_performance,flash_time,time_stamp,correct_word_lightness,wrong_word_lightness,lightnessDiff,encoding,agreement,d)
+                VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);
                 """).format(sql.Identifier(opposite_on_circle_database)),
                 (turker_id,cloud_width,cloud_height,cloud_center_x,cloud_center_y,
                 clicked_word,correct_word,wrong_word,distance_between_targets,timeTaken,
                 correct_word_x,correct_word_y,correct_word_fontsize,correct_word_width,correct_word_height,correct_word_center_distance,
                 wrong_word_x,wrong_word_y,wrong_word_fontsize,wrong_word_width,wrong_word_height,wrong_word_center_distance,
                 number_of_words,span_content,question_index,
-                sizeDiff,accuracy,clicked_x,clicked_y,angle,index_of_difficulty,index_of_performance,flash_time,time_stamp,correct_word_lightness,wrong_word_lightness,lightnessDiff,encoding,agreement))
+                sizeDiff,accuracy,clicked_x,clicked_y,angle,index_of_difficulty,index_of_performance,flash_time,time_stamp,correct_word_lightness,wrong_word_lightness,lightnessDiff,encoding,agreement,d))
         connection.commit()
         cursor.close()
         connection.close()
